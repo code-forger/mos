@@ -1,9 +1,9 @@
-all: moss.bin
-	cp moss.bin isodir/boot/
-	grub-mkrescue -o moss.iso isodir
+all: mos.bin
+	cp mos.bin isodir/boot/
+	grub-mkrescue -o mos.iso isodir
 
-moss.bin: kernel.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o stdlib/string.o stdlib/stdio.o
-	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o moss.bin -ffreestanding -nostdlib boot.o kernel.o kernel-asm.o pic/pic.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o  io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o stdlib/stdio.o stdlib/string.o -lgcc
+mos.bin: kernel.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o stdlib/string.o stdlib/stdio.o
+	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib boot.o kernel.o kernel-asm.o pic/pic.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o  io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o stdlib/stdio.o stdlib/string.o -lgcc
 
 boot.o: boot.s
 	~/OS/buildtools/local/bin/i686-elf-as boot.s -o boot.o

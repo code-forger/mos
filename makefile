@@ -41,3 +41,14 @@ stdlib/string.o: stdlib/string.c stdlib/string.h
 
 stdlib/stdio.o: stdlib/stdio.c stdlib/stdio.h
 	~/OS/buildtools/local/bin/i686-elf-gcc -c stdlib/stdio.c -o stdlib/stdio.o -std=gnu99 -ffreestanding -Wall -Wextra
+
+clean:
+	rm -r *.o
+	rm -r init/*.o
+	rm -r interupts/*.o
+	rm -r pic/*.o
+	rm -r stdlib/*.o
+	rm -r drivers/*.o
+	rm -r io/*.o
+	rm mos.bin
+	rm isodir/boot/mos.bin

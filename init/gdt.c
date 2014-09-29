@@ -7,7 +7,7 @@ struct gdt_location gdtp;
 static void construct_gdtp()
 {
     gdtp.limit = sizeof(gdt);
-    gdtp.offset = &gdt;
+    gdtp.offset = (uint32_t)&gdt;
     set_gdtp();
 }
 
@@ -24,8 +24,8 @@ void gdt_init()
     }
 
     gdt_encode_entry(0, 0, 0, 0,0);
-    gdt_encode_entry(1, 0, 0xffffffff, 0x9A, 0xCF);
-    gdt_encode_entry(2, 0, 0xffffffff, 0x92, 0xCF);
+    gdt_encode_entry(1, 0, 0xffff, 0x9A, 0xCF);
+    gdt_encode_entry(2, 0, 0xffff, 0x92, 0xCF);
 
     construct_gdtp();
 }

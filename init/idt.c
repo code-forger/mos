@@ -7,7 +7,7 @@ struct idt_location idtp;
 static void construct_idtp()
 {
     idtp.limit = sizeof(idt);
-    idtp.offset = &idt;
+    idtp.offset = (uint32_t)&idt;
     set_idtp();
 }
 

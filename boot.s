@@ -25,6 +25,7 @@ _start:
 	movl $stack_top, %esp # set stack pointer
     cli # clear interrupts to set up GDT and IDT
     call pre_init # non hardware init's: terminal driver
+    push %ebx
 	call init_kernel # hardware init's: GDT IDT
 	
     # move into protected mode

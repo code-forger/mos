@@ -94,6 +94,21 @@ void terminal_putinthex(int in, int length)
         terminal_putchar(buff[(length-1)-i]);
 }
  
+void terminal_putintbin(int in, int length)
+{
+    int out, i;
+    char buff[length];
+    for (i = 0; i < length ; i++)
+    {
+        out = (in%2);
+        buff[(length-1)-i] = out + '0';
+        in/=2;
+    }
+
+    for (i--;i >= 0;i--)
+        terminal_putchar(buff[(length-1)-i]);
+}
+ 
 void terminal_print(const char* data)
 {
     uint32_t datalen = strlen(data);

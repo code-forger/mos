@@ -27,12 +27,18 @@ void init_kernel(multiboot_info_t *mbd, uint32_t magic)
     memory_init(mbd);
 }
 
-void kernel_main()
+void rebase_stack(uint32_t, void(*)(void));
+
+
+void higher_kernel()
 {
     asm("sti"); // re-enable interrupts for normal kernel operation.
-    terminal_print("Kernel Success!\n");
-    uint32_t page = get_free_page_and_allocate();
-    terminal_putinthex(page, 8);
-    terminal_print("\n");
+    terminal_print("Higher Kernel Ready!");
     for (;;);
+}
+
+void kernel_main()
+{
+    uint32_t page = get_free_page_and_allocate();
+    rebase_stack(page, *higher_kernel);
 }

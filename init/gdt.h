@@ -20,6 +20,6 @@ struct gdt_location
 
 void gdt_init();
 void gdt_print_entry(int i);
-void gdt_encode_entry(int i, uint32_t offset, uint16_t limit, uint8_t type, uint8_t granularity);
+void gdt_encode_entry(int i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity);
 
 void set_gdtp(void); // from gdt.asm

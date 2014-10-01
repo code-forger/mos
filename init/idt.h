@@ -24,5 +24,23 @@ void idt_encode_entry(int i, unsigned long offset, uint16_t selector, uint8_t ty
 void set_idtp(void); // from igt.asm
 
 // from interupts.asm
-void default_interupt(void);
+void int_zero_division(void);
+void int_debugger(void);
+void int_nmi(void);
+void int_breakpoint(void);
+void int_overflow(void);
+void int_bounds(void);
+void int_invalid_opcode(void);
+void int_coprocessor_not_available(void);
+void int_double_fault(void);
+void int_coprocessor_segment_overrun(void);
+void int_invalid_tss(void);
+void int_segment_not_present(void);
+void int_stack_fault(void);
 void int_general_protection(void);
+void int_page_fault(void);
+void int_reserved(void);
+void int_math_fault(void);
+void int_alignment_check(void);
+void int_machine_check(void);
+void int_simd_floating_point(void);

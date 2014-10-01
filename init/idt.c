@@ -21,10 +21,27 @@ void idt_init()
         idt[i].type = 0;
         idt[i].hi_offset = 0;
     }
-
-    for(int i = 0; i < IDT_SIZE; i++)
-        idt_encode_entry(i, (unsigned)&default_interupt, 0x08, 0x8E);
+    
+    idt_encode_entry(0, (unsigned)&int_zero_division, 0x08, 0x8E);
+    idt_encode_entry(1, (unsigned)&int_debugger, 0x08, 0x8E);
+    idt_encode_entry(2, (unsigned)&int_nmi, 0x08, 0x8E);
+    idt_encode_entry(3, (unsigned)&int_breakpoint, 0x08, 0x8E);
+    idt_encode_entry(4, (unsigned)&int_overflow, 0x08, 0x8E);
+    idt_encode_entry(5, (unsigned)&int_bounds, 0x08, 0x8E);
+    idt_encode_entry(6, (unsigned)&int_invalid_opcode, 0x08, 0x8E);
+    idt_encode_entry(7, (unsigned)&int_coprocessor_not_available, 0x08, 0x8E);
+    idt_encode_entry(8, (unsigned)&int_double_fault, 0x08, 0x8E);
+    idt_encode_entry(9, (unsigned)&int_coprocessor_segment_overrun, 0x08, 0x8E);
+    idt_encode_entry(10, (unsigned)&int_invalid_tss, 0x08, 0x8E);
+    idt_encode_entry(11, (unsigned)&int_segment_not_present, 0x08, 0x8E);
+    idt_encode_entry(12, (unsigned)&int_stack_fault, 0x08, 0x8E);
     idt_encode_entry(13, (unsigned)&int_general_protection, 0x08, 0x8E);
+    idt_encode_entry(14, (unsigned)&int_page_fault, 0x08, 0x8E);
+    idt_encode_entry(15, (unsigned)&int_reserved, 0x08, 0x8E);
+    idt_encode_entry(16, (unsigned)&int_math_fault, 0x08, 0x8E);
+    idt_encode_entry(17, (unsigned)&int_alignment_check, 0x08, 0x8E);
+    idt_encode_entry(18, (unsigned)&int_machine_check, 0x08, 0x8E);
+    idt_encode_entry(19, (unsigned)&int_simd_floating_point, 0x08, 0x8E);
 
     construct_idtp();
 }

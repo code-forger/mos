@@ -24,8 +24,8 @@ void gdt_init()
     }
 
     gdt_encode_entry(0, 0, 0, 0,0);
-    gdt_encode_entry(1, 0, 0xffff, 0x9A, 0xCF);
-    gdt_encode_entry(2, 0, 0xffff, 0x92, 0xCF);
+    gdt_encode_entry(1, 0, 0xffffffff, 0x9A, 0xCF);
+    gdt_encode_entry(2, 0, 0xffffffff, 0x92, 0xCF);
 
     construct_gdtp();
 }
@@ -45,7 +45,7 @@ void gdt_print_entry(int i)
     terminal_print(" FINISH\n");
 }
 
-void gdt_encode_entry(int i, uint32_t offset, uint16_t limit, uint8_t type, uint8_t granularity)
+void gdt_encode_entry(int i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity)
 {
     gdt[i].lo_offset = (offset & 0xFFFF);
     gdt[i].mid_offset = (offset >> 16) & 0xFF;

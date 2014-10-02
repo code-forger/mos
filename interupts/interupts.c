@@ -147,6 +147,7 @@ void  c_default_irq(void)
 
 void  c_timer_irq(void)
 {
+    scheduler_time_interupt();
     send_byte_to(MASTER_PIC, 0x20);
 }
 

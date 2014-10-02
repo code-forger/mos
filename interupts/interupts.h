@@ -4,6 +4,7 @@
 
 
 #include "../drivers/keyboard.h"
+#include "../scheduler/scheduler.h"
 
 void c_int_zero_division(void);
 void c_int_debugger(void);

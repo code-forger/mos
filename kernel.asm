@@ -1,6 +1,10 @@
 extern kernel_main
+extern stack_top
+extern stack_bottom
 
 global rebase_stack
+global kernel_get_stack_top
+global kernel_get_stack_bottom
 section .text
 global protected_mode
 align   4
@@ -17,6 +21,7 @@ rebase_stack:
     mov ebx, [esp + 8]
     push ebp
     mov ebp, esp
+    add eax, 4096
     mov esp, eax
     push ebp
     mov ebp, esp
@@ -26,3 +31,9 @@ rebase_stack:
     pop ebp
     sti
     ret
+
+kernel_get_stack_top:
+    mov eax, stack_top
+
+kernel_get_stack_bottom:
+    mov eax, stack_bottom

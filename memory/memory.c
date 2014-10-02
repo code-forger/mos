@@ -27,7 +27,7 @@ static int64_t find_free_page()
     return -1;
 }
 
-static void print_memory(multiboot_info_t *info)
+/*static void print_memory(multiboot_info_t *info)
 {
 
     for (memory_map_t *map = (memory_map_t*)info->mmap_addr;
@@ -44,11 +44,11 @@ static void print_memory(multiboot_info_t *info)
         terminal_putinthex(map->type, 8);
         terminal_print("\n");
     }
-}
+}*/
 
 void memory_init(multiboot_info_t *info)
 {
-    print_memory(info);
+    //print_memory(info);
     for (memory_map_t *map = (memory_map_t*)info->mmap_addr;
          (uint32_t)map < ((uint32_t)info->mmap_addr) + info->mmap_length;
          map = (memory_map_t*)(((uint32_t)map) + map->size + sizeof(uint32_t)))
@@ -86,7 +86,7 @@ void memory_init(multiboot_info_t *info)
 
             mark_page_allocated(0); // MARK THIS PAGE ALLOCATED
 
-            terminal_print("MEMORY MANAGED!\n");
+            //terminal_print("MEMORY MANAGED!\n");
             break;
         }
     }

@@ -2,7 +2,7 @@
 #include "../io/terminal.h"
 #include "../memory/memory.h"
 
-int fork();
+uint32_t fork();
 void scheduler_time_interupt();
 void scheduler_init();
 uint32_t scheduler_get_pid();

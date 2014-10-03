@@ -32,8 +32,8 @@ void rebase_stack(uint32_t, void(*)(void));
 void higher_kernel()
 {
     asm("sti"); // re-enable interrupts for normal kernel operation.
-    fork();
-    fork();
+    if (fork() != scheduler_get_pid())
+        fork();
     for (;;)
     {
         uint32_t sp;

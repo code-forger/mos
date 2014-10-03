@@ -4,18 +4,15 @@ static uint32_t current_pid;
 static uint32_t next_pid;
 static process_table_entry* process_table;
 
-int fork()
+uint32_t fork()
 {
     asm("cli");
     process_table[next_pid].flags = F_INIT;
+    uint32_t pid = next_pid;
     process_table[next_pid++].stack_bottom = current_pid;
     asm("sti");
     asm("int $32");
-    asm("cli");
-    //grab pid from the stack
-    //return pid
-    asm("sti");
-    return 0;
+    return pid;
 }
 
 void kill(uint32_t PiD)

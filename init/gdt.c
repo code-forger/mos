@@ -32,17 +32,7 @@ void gdt_init()
 
 void gdt_print_entry(int i)
 {
-    terminal_print("GDT ENTRY ");
-    terminal_putint(i, 3);
-    terminal_print("\n");
-    terminal_putint((gdt[i].hi_offset << 16) + (gdt[i].mid_offset << 8) + gdt[i].lo_offset, 8);
-    terminal_print(" ");
-    terminal_putint(gdt[i].lo_limit, 5);
-    terminal_print(" ");
-    terminal_putint(gdt[i].type, 4);
-    terminal_print("\nGDT ENTRY ");
-    terminal_putint(i, 3);
-    terminal_print(" FINISH\n");
+    printf("GDT ENTRY %d : %d %d %d\n", i, (gdt[i].hi_offset << 16) + (gdt[i].mid_offset << 8) + gdt[i].lo_offset, gdt[i].lo_limit, gdt[i].type);
 }
 
 void gdt_encode_entry(int i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity)

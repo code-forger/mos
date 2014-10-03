@@ -1,3 +1,4 @@
+#pragma once
 #include "../stdlib/string.h"
 typedef enum color
 {
@@ -27,9 +28,5 @@ uint16_t terminal_make_character(char c, uint8_t color);
 void terminal_initialize();
 
 void terminal_set_color(uint8_t color);
-void terminal_putchar_at(char c, size_t x, size_t y);
 void terminal_putchar(char c);
-void terminal_putint(int in, int length);
-void terminal_putinthex(int in, int length);
-void terminal_putintbin(int in, int length);
-void terminal_print(const char* data);
+void printf(const char* string, ...);

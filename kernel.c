@@ -4,7 +4,7 @@
 #include "scheduler/scheduler.h"
 void kerror(const char* data)
 {
-    terminal_print(data);
+    printf(data);
 }
 
 #if defined(__cplusplus)
@@ -33,20 +33,12 @@ void higher_kernel()
 {
     asm("sti"); // re-enable interrupts for normal kernel operation.
     fork();
+    fork();
     for (;;)
     {
-        asm ("cli");
-        terminal_print("I am process: ");
-        terminal_putint(scheduler_get_pid(), 1);
-        terminal_print(" ");
-
-        terminal_print("my stack pointer is");
         uint32_t sp;
-
         asm("movl %%esp, %0":"=r"(sp)::);
-        terminal_putinthex(sp, 8);
-        terminal_print("\n");
-        asm ("sti");
+        printf("I am process: %d my stack pointer is %h\n", scheduler_get_pid(), sp);;
     }
 }
 

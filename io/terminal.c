@@ -1,4 +1,5 @@
 #include "terminal.h"
+#include <stdarg.h>
  
 uint8_t terminal_make_color(terminal_color text, terminal_color back)
 {
@@ -39,12 +40,12 @@ void terminal_set_color(uint8_t color)
     current_color = color;
 }
  
-void terminal_putchar_at(char c, uint32_t x, uint32_t y)
+static void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
     terminal[y * VGA_WIDTH + x] = terminal_make_character(c, current_color);
 }
  
-void terminal_putchar(char c)
+void terminal_putchar(char c) // for keyboard.c
 {
     if (c == '\n')
     {
@@ -64,9 +65,15 @@ void terminal_putchar(char c)
     }
 }
 
-void terminal_putint(int in, int length)
+static void terminal_putint(int in)
 {
-    int out, i;
+    int out, i, length, tmp;
+    tmp = in;
+    tmp/=10;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=10;
+    }
     char buff[length];
     for (i = 0; i < length ; i++)
     {
@@ -79,9 +86,15 @@ void terminal_putint(int in, int length)
         terminal_putchar(buff[(length-1)-i]);
 }
  
-void terminal_putinthex(int in, int length)
+static void terminal_putinthex(int in)
 {
-    int out, i;
+    int out, i, length, tmp;
+    tmp = in;
+    tmp/=16;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=16;
+    }
     char buff[length];
     for (i = 0; i < length ; i++)
     {
@@ -94,9 +107,15 @@ void terminal_putinthex(int in, int length)
         terminal_putchar(buff[(length-1)-i]);
 }
  
-void terminal_putintbin(int in, int length)
+static void terminal_putintbin(int in)
 {
-    int out, i;
+    int out, i, length, tmp;
+    tmp = in;
+    tmp/=2;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=2;
+    }
     char buff[length];
     for (i = 0; i < length ; i++)
     {
@@ -109,9 +128,42 @@ void terminal_putintbin(int in, int length)
         terminal_putchar(buff[(length-1)-i]);
 }
  
-void terminal_print(const char* data)
+/*static void terminal_print(const char* data)
 {
     uint32_t datalen = strlen(data);
     for ( uint32_t i = 0; i < datalen; i++ )
         terminal_putchar(data[i]);
+}*/
+
+void printf(const char* string, ...)
+{
+    asm("cli");
+    va_list valist;
+
+    va_start(valist, string);
+
+    for (int i = 0;; i++)
+    {
+        if(string[i] == '\0')
+            break;
+        if(string[i] == '%')
+        {
+            if(string[i+1] == '%')
+                terminal_putchar('%');
+            if(string[i+1] == 'd')
+                terminal_putint(va_arg(valist, int));
+            if(string[i+1] == 'h')
+                terminal_putinthex(va_arg(valist, int));
+            if(string[i+1] == 'b')
+                terminal_putintbin(va_arg(valist, int));
+            i++;
+        }
+        else
+        {
+            terminal_putchar(string[i]);
+        }
+    }
+    /* clean memory reserved for valist */
+    va_end(valist);
+    asm("sti");
 }

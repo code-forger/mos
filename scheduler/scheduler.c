@@ -20,9 +20,7 @@ int fork()
 
 void kill(uint32_t PiD)
 {
-    PiD = PiD; // -Werror
-    //set process to END FOREVER
-    //Probably as simple as setting a field in the process table
+    process_table[PiD].flags += F_DEAD;
 }
 
 /*static void print_proccess_table()
@@ -68,7 +66,7 @@ void scheduler_time_interupt()
         }
         if (process_table[current_pid].flags & F_DEAD)
             continue;
-        if (process_table[current_pid].flags &  F_PAUSED)
+        if (process_table[current_pid].flags & F_PAUSED)
             continue;
         //terminal_print("SHIFTING INTO: ");
         //terminal_putint(current_pid, 8);
@@ -110,7 +108,7 @@ void scheduler_time_interupt()
     
     asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):);
     asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):);
-    asm("cli");
+    asm("sti");
 }
 
 uint32_t kernel_get_stack_top();

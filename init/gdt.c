@@ -13,7 +13,7 @@ static void construct_gdtp()
 
 void gdt_init()
 {
-    for(int i = 0; i < GDT_SIZE; i++)
+    for(uint32_t i = 0; i < GDT_SIZE; i++)
     {
         gdt[i].lo_limit = 0;
         gdt[i].lo_offset = 0;
@@ -30,12 +30,12 @@ void gdt_init()
     construct_gdtp();
 }
 
-void gdt_print_entry(int i)
+void gdt_print_entry(uint32_t i)
 {
     printf("GDT ENTRY %d : %d %d %d\n", i, (gdt[i].hi_offset << 16) + (gdt[i].mid_offset << 8) + gdt[i].lo_offset, gdt[i].lo_limit, gdt[i].type);
 }
 
-void gdt_encode_entry(int i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity)
+void gdt_encode_entry(uint32_t i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity)
 {
     gdt[i].lo_offset = (offset & 0xFFFF);
     gdt[i].mid_offset = (offset >> 16) & 0xFF;

@@ -65,9 +65,10 @@ void terminal_putchar(char c) // for keyboard.c
     }
 }
 
-static void terminal_putint(int in)
+static void terminal_putint(uint32_t in)
 {
-    int out, i, length, tmp;
+    int i, length;
+    uint32_t out, tmp;
     tmp = in;
     tmp/=10;
     for (length = 1; tmp != 0 ; length++)
@@ -86,9 +87,10 @@ static void terminal_putint(int in)
         terminal_putchar(buff[(length-1)-i]);
 }
  
-static void terminal_putinthex(int in)
+static void terminal_putinthex(uint32_t in)
 {
-    int out, i, length, tmp;
+    int i, length;
+    uint32_t out, tmp;
     tmp = in;
     tmp/=16;
     for (length = 1; tmp != 0 ; length++)
@@ -107,9 +109,10 @@ static void terminal_putinthex(int in)
         terminal_putchar(buff[(length-1)-i]);
 }
  
-static void terminal_putintbin(int in)
+static void terminal_putintbin(uint32_t in)
 {
-    int out, i, length, tmp;
+    int i, length;
+    uint32_t out, tmp;
     tmp = in;
     tmp/=2;
     for (length = 1; tmp != 0 ; length++)
@@ -142,7 +145,7 @@ void printf(const char* string, ...)
 
     va_start(valist, string);
 
-    for (int i = 0;; i++)
+    for (uint32_t i = 0;; i++)
     {
         if(string[i] == '\0')
             break;

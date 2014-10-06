@@ -13,7 +13,7 @@ static void construct_idtp()
 
 void idt_init()
 {
-    for(int i = 0; i < IDT_SIZE; i++)
+    for(uint32_t i = 0; i < IDT_SIZE; i++)
     {
         idt[i].lo_offset = 0;
         idt[i].selector = 0;
@@ -46,12 +46,12 @@ void idt_init()
     construct_idtp();
 }
 
-void idt_print_entry(int i)
+void idt_print_entry(uint32_t i)
 {
     printf("IDT ENTRY %d : %d %d %d\n", i, (idt[i].hi_offset << 16) + idt[i].lo_offset, idt[i].selector, idt[i].type);
 }
 
-void idt_encode_entry(int i, unsigned long offset, uint16_t selector, uint8_t type_attr)
+void idt_encode_entry(uint32_t i, unsigned long offset, uint16_t selector, uint8_t type_attr)
 {
     idt[i].lo_offset = (offset & 0xFFFF);
     idt[i].selector = selector;

@@ -18,8 +18,8 @@ struct idt_location
 } __attribute__((packed));
 
 void idt_init();
-void idt_print_entry(int i);
-void idt_encode_entry(int i, unsigned long offset, uint16_t selector, uint8_t type_attr);
+void idt_print_entry(uint32_t i);
+void idt_encode_entry(uint32_t i, unsigned long offset, uint16_t selector, uint8_t type_attr);
 
 void set_idtp(void); // from igt.asm
 

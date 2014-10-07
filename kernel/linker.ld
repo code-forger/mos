@@ -1,8 +1,8 @@
-ENTRY(_start)
+ENTRY(kernel_start)
 
 SECTIONS
 {
-	. = 1M;
+	. = 0xC0400000;
 
 	.text BLOCK(4K) : ALIGN(4K)
 	{

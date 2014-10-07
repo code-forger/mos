@@ -10,7 +10,7 @@ uint32_t fork()
     process_table[next_pid].flags = F_INIT;
     uint32_t pid = next_pid;
     process_table[next_pid++].stack_bottom = current_pid;
-    asm("sti");
+    //asm("sti");
     asm("int $32");
     return pid;
 }
@@ -105,7 +105,7 @@ void scheduler_time_interupt()
     
     asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):);
     asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):);
-    asm("sti");
+    //asm("sti");
 }
 
 uint32_t kernel_get_stack_top();
@@ -117,8 +117,6 @@ void scheduler_init()
     next_pid = 1;
     process_table = (process_table_entry*)get_free_page_and_allocate();
     process_table[0].flags = 0;
-    process_table[0].stack_top = kernel_get_stack_top();
-    process_table[0].stack_top = kernel_get_stack_bottom();
 }
 
 uint32_t scheduler_get_pid()

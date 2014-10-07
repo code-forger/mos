@@ -12,24 +12,35 @@ uint16_t terminal_make_character(char c, uint8_t color)
     return c16 | color16 << 8;
 }
  
-static const uint32_t VGA_WIDTH = 80;
-static const uint32_t VGA_HEIGHT = 25;
+static uint32_t VGA_WIDTH = 80;
+static uint32_t VGA_HEIGHT = 25;
  
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
 static uint8_t current_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
-static uint16_t* terminal = (uint16_t*) 0xB8000;
+static uint16_t* terminal = (uint16_t*) 0xc0002000;
 
 static void push_terminal_up()
 {
-    for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
+    for ( uint32_t y = 0; y < VGA_HEIGHT -1; y++ )
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
     current_row--;
 }
  
+static void terminal_putchar_at(char c, uint32_t x, uint32_t y)
+{
+    terminal[y * VGA_WIDTH + x] = terminal_make_character(c, current_color);
+}
+ 
 void terminal_initialize()
 {
+    terminal = (uint16_t*) 0xc0002000;
+    current_row = 0;
+    currnet_column = 0;
+    current_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
+    VGA_WIDTH = 80;
+    VGA_HEIGHT = 25;
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', current_color);
@@ -38,11 +49,6 @@ void terminal_initialize()
 void terminal_set_color(uint8_t color)
 {
     current_color = color;
-}
- 
-static void terminal_putchar_at(char c, uint32_t x, uint32_t y)
-{
-    terminal[y * VGA_WIDTH + x] = terminal_make_character(c, current_color);
 }
  
 void terminal_putchar(char c) // for keyboard.c
@@ -140,7 +146,7 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
-    asm("cli");
+    //asm("cli");
     va_list valist;
 
     va_start(valist, string);
@@ -168,5 +174,5 @@ void printf(const char* string, ...)
     }
     /* clean memory reserved for valist */
     va_end(valist);
-    asm("sti");
+    //asm("sti");
 }

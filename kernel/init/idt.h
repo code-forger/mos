@@ -1,4 +1,5 @@
 #include "../declarations.h"
+#include "gdt.h"
 
 #define IDT_SIZE 256
 
@@ -17,11 +18,15 @@ struct idt_location
     uint32_t offset;
 } __attribute__((packed));
 
+typedef struct idt_info_type_type
+{
+    struct idt_location idtp;
+    struct interrupt_gate idt[IDT_SIZE];
+} __attribute__((packed)) idt_info_type;
+
 void idt_init();
 void idt_print_entry(uint32_t i);
 void idt_encode_entry(uint32_t i, unsigned long offset, uint16_t selector, uint8_t type_attr);
-
-void set_idtp(void); // from igt.asm
 
 // from interupts.asm
 void int_zero_division(void);

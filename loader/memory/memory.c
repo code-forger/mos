@@ -68,10 +68,10 @@ void memory_init(multiboot_info_t *info, uint32_t magic)
 
             memory_free_map = (uint8_t*)(uint32_t)(start_address + sizeof(memory_map_entry)); // Give the first page to the memory free map 
 
-            uint64_t num_pages = length / (1024 * 4);
+            uint64_t num_pages = length / 0x1000;
 
-            if (num_pages / 8 > ((1024 * 4) - sizeof(memory_map_entry))) // Clip the free page list to fit into first page!
-                num_pages = (((1024 * 4) - sizeof(memory_map_entry)) * 8);
+            if (num_pages / 8 > (0x1000 - sizeof(memory_map_entry))) // Clip the free page list to fit into first page!
+                num_pages = ((0x1000 - sizeof(memory_map_entry)) * 8);
 
             p_memory_map[0].num_pages = num_pages;
 
@@ -95,16 +95,15 @@ uint32_t get_free_page_and_allocate()
     uint32_t upage = (uint32_t)page;
 
     mark_page_allocated(upage);
-    return ((uint32_t)p_memory_map[0].base) + (upage * (1024 * 4));
+    return ((uint32_t)p_memory_map[0].base) + (upage * 0x1000);
 }
 
 uint32_t get_address_of_page(uint32_t page)
 {
-    return ((uint32_t)p_memory_map[0].base) + (page * (1024 * 4));
+    return ((uint32_t)p_memory_map[0].base) + (page * 0x1000);
 }
 
 uint32_t get_page_of_address(uint32_t address)
 {    
-    printf("\nCALCULATING: %h - %h = %h / %h = %h\n",address, (uint32_t)p_memory_map[0].base, address - (uint32_t)p_memory_map[0].base, (1024*4), (address - (uint32_t)p_memory_map[0].base)/(1024*4));
-    return (address - (uint32_t)p_memory_map[0].base) / (1024 * 4);
+    return (address - (uint32_t)p_memory_map[0].base) / 0x1000;
 }

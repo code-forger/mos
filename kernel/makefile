@@ -1,10 +1,7 @@
 all: mos.bin
 
-mos.bin: kernel.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o stdlib/string.o stdlib/stdio.o scheduler/scheduler.o
-	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib boot.o kernel.o kernel-asm.o pic/pic.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/scheduler-asm.o stdlib/stdio.o stdlib/string.o -lgcc
-
-boot.o: boot.s
-	~/OS/buildtools/local/bin/i686-elf-as boot.s -o boot.o
+mos.bin: kernel.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o stdlib/string.o stdlib/stdio.o scheduler/scheduler.o
+	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib kernel.o kernel-asm.o pic/pic.o init/gdt.o init/idt.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/scheduler-asm.o stdlib/stdio.o stdlib/string.o -lgcc
 
 kernel.o: kernel.c kernel.asm
 	nasm -f elf32 kernel.asm -o kernel-asm.o
@@ -22,12 +19,10 @@ drivers/keyboard.o: drivers/keyboard.c drivers/keyboard.h
 pic/pic.o: pic/pic.c pic/pic.h
 	~/OS/buildtools/local/bin/i686-elf-gcc -c pic/pic.c -o pic/pic.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
-init/gdt.o: init/gdt.c init/gdt.h init/gdt.asm
-	nasm -f elf32 init/gdt.asm -o init/gdt-asm.o
+init/gdt.o: init/gdt.c init/gdt.h
 	~/OS/buildtools/local/bin/i686-elf-gcc -c init/gdt.c -o init/gdt.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
-init/idt.o: init/idt.c init/idt.h init/idt.asm
-	nasm -f elf32 init/idt.asm -o init/idt-asm.o
+init/idt.o: init/idt.c init/idt.h
 	~/OS/buildtools/local/bin/i686-elf-gcc -c init/idt.c -o init/idt.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
 scheduler/scheduler.o: scheduler/scheduler.c scheduler/scheduler.h scheduler/scheduler.asm

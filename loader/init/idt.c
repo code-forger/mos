@@ -22,5 +22,6 @@ void idt_init()
         idt_info->idt[i].type = 0;
         idt_info->idt[i].hi_offset = 0;
     }
+
     construct_idtp();
 }

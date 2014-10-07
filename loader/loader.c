@@ -28,9 +28,9 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     {
         printf("\n%d Modules Loaded\n", info->mods_count);
         printf("    at: %h to %h\n", ((module_t*)info->mods_addr)->mod_start, ((module_t*)info->mods_addr)->mod_end);
-        printf("  page: %d for %d pages\n", get_page_of_address(((module_t*)info->mods_addr)->mod_start), (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/(1024*4));
+        printf("  page: %d for %d pages\n", get_page_of_address(((module_t*)info->mods_addr)->mod_start), (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000);
         kernel_physical = ((module_t*)info->mods_addr)->mod_start;
-        kernel_num_pages =  (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/(1024*4) + 1;
+        kernel_num_pages =  (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000 + 1;
     }
 
     uint32_t* directory = (uint32_t*)get_free_page_and_allocate();
@@ -40,12 +40,13 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     for (uint32_t i = 0; i < 1024; i++) // identity map lower memory (so the loader doesnt page fault imediately.)
         page_table[i] = ((i * 4096) & 0xfffff000) | R_W_P;
     uint32_t* kernel_page_table = (uint32_t*)get_free_page_and_allocate();
-    for (uint32_t address = kernel_physical, i = 0; i < kernel_num_pages; i++, address += (1024 * 4)) // map the kernel to live at 0xc0000000
-        kernel_page_table[i] = ( address & 0xfffff000) | R_W_P;
+    for (uint32_t address = kernel_physical, i = 0; i < kernel_num_pages; i++, address += 0x1000) // map the kernel to live at 0xc0000000
+        kernel_page_table[i] = ( (address + 0x1000) & 0xfffff000) | R_W_P;
 
     uint32_t* kernel_meta_page_table = (uint32_t*)get_free_page_and_allocate(); // memory managemnt, gdt, idt
     kernel_meta_page_table[0] = ( get_address_of_page(0) & 0xfffff000) | R_W_P;
     kernel_meta_page_table[1] = ( get_address_of_page(1) & 0xfffff000) | R_W_P;
+    kernel_meta_page_table[2] = ( (0xB8000) & 0xfffff000) | R_W_P;
 
     uint32_t* kernel_stack_page_table = (uint32_t*)get_free_page_and_allocate();
     kernel_stack_page_table[0x3ff] = ( get_free_page_and_allocate() & 0xfffff000) | R_W_P;
@@ -63,6 +64,15 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     control_register |= 0x80000000;
     asm("mov %0, %%cr0"::"b"(control_register):);
 
+
+
+
+    //printf("KERNEL start: %h\n", (uint32_t)*((uint32_t*)0x40000080));
+
+
     printf("Loader Done!");
+    asm("cli");
+    asm("mov %0, %%esp"::"r"(0xffbfffff));
+    asm("jmp %0"::"r"(0xc0400080));
     for (;;);
 }

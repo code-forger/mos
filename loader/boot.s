@@ -16,8 +16,6 @@
 stack_bottom:
 .skip 16384 # 16 KiB
 stack_top:
-.global stack_bottom
-.global stack_top
 
 .section .text
 .global _start
@@ -25,18 +23,15 @@ stack_top:
 .type _start, @function
 
 _start:
-
-	movl $stack_top, %esp # set stack pointer
-    cli # clear interrupts to set up GDT and IDT
-    call pre_init # non hardware init's: terminal driver
+    cli
+	movl $stack_top, %esp
     push %ebx
-	call init_kernel # hardware init's: GDT IDT
-	
-    # move into protected mode
+    call memory_init
+    call gdt_init
+    call idt_init
 	movl %cr0, %eax
 	or %al, 1
 	movl %eax, %cr0
-
 	call protected_mode
 
 

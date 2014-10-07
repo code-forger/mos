@@ -1,4 +1,6 @@
+#pragma once
 #include "../declarations.h"
+#include "../memory/memory.h"
 
 #define GDT_SIZE 3
 
@@ -17,6 +19,12 @@ struct gdt_location
     uint16_t  limit;
     uint32_t offset;
 } __attribute__((packed));
+
+typedef struct gdt_info_type_type
+{
+    struct gdt_location gdtp;
+    struct gdt_entry gdt[GDT_SIZE];
+} __attribute__((packed)) gdt_info_type;
 
 void gdt_init();
 void gdt_print_entry(uint32_t i);

@@ -140,7 +140,6 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
-    asm("cli");
     va_list valist;
 
     va_start(valist, string);
@@ -168,5 +167,4 @@ void printf(const char* string, ...)
     }
     /* clean memory reserved for valist */
     va_end(valist);
-    asm("sti");
 }

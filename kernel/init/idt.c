@@ -1,11 +1,21 @@
 #include "idt.h"
 #include "../io/terminal.h"
+#include "../paging/paging.h"
 
 static idt_info_type* idt_info;
+struct idt_location idtp;
+
+void set_idtp(void);
+static void construct_idtp()
+{
+    idtp.limit = idt_info->idtp.limit = sizeof(idt_info->idt);
+    idtp.offset = idt_info->idtp.offset = (uint32_t)&(idt_info->idt);
+    set_idtp();
+}
 
 void idt_init()
 {
-    idt_info = (idt_info_type*)(0xC0001000 + sizeof(gdt_info_type));
+    idt_info = paging_get_idt();
     idt_encode_entry(0, (unsigned)&int_zero_division, 0x08, 0x8E);
     idt_encode_entry(1, (unsigned)&int_debugger, 0x08, 0x8E);
     idt_encode_entry(2, (unsigned)&int_nmi, 0x08, 0x8E);
@@ -26,6 +36,14 @@ void idt_init()
     idt_encode_entry(17, (unsigned)&int_alignment_check, 0x08, 0x8E);
     idt_encode_entry(18, (unsigned)&int_machine_check, 0x08, 0x8E);
     idt_encode_entry(19, (unsigned)&int_simd_floating_point, 0x08, 0x8E);
+
+    idt_encode_entry(80, (unsigned)&terminal_putchar_syscall, 0x08, 0x8E);
+    idt_encode_entry(81, (unsigned)&terminal_pushup_syscall, 0x08, 0x8E);
+
+    idt_encode_entry(90, (unsigned)&scheduler_fork_syscall, 0x08, 0x8E);
+    idt_encode_entry(91, (unsigned)&scheduler_pid_syscall, 0x08, 0x8E);
+    idt_encode_entry(92, (unsigned)&scheduler_exec_syscall, 0x08, 0x8E);
+    construct_idtp();
 }
 
 void idt_print_entry(uint32_t i)

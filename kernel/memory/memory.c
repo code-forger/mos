@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "../io/terminal.h"
+#include "../paging/paging.h"
 
 static memory_map_entry *p_memory_map;
 static uint8_t *memory_free_map;
@@ -48,8 +49,9 @@ static int64_t find_free_page()
 
 void memory_init()
 {
-    p_memory_map = (memory_map_entry*)0xC0000000;
-    memory_free_map = (uint8_t*)(uint32_t)(0xC0000000 + sizeof(memory_map_entry)); // Give the first page to the memory free map 
+    p_memory_map = paging_get_memory_map();
+    memory_free_map = paging_get_memory_free_map(); // Give the first page to the memory free map 
+    last_page = 0;
 }
 
 uint32_t get_free_page_and_allocate()
@@ -66,7 +68,7 @@ uint32_t get_free_page_and_allocate()
 
 uint32_t get_address_of_page(uint32_t page)
 {
-    return ((uint32_t)p_memory_map[0].base) + (page * 0x1000) + 0xc0000000;
+    return ((uint32_t)p_memory_map[0].base) + (page * 0x1000);
 }
 
 uint32_t get_page_of_address(uint32_t address)

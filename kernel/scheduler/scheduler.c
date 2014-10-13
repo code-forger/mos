@@ -1,61 +1,60 @@
 #include "scheduler.h"
+#include "../init/idt.h"
+#include "../init/gdt.h"
+#include "../paging/paging.h"
 
 static uint32_t current_pid;
+static uint32_t starting_pid;
 static uint32_t next_pid;
+static uint32_t source_pid;
 static process_table_entry* process_table;
+static uint32_t* program_pointers;
+static uint32_t kernel_esp, kernel_ebp;
 
 uint32_t fork()
 {
-    asm("cli");
+    //printf("INIT FORK %d to %d\n",current_pid, next_pid);
     process_table[next_pid].flags = F_INIT;
     uint32_t pid = next_pid;
-    process_table[next_pid++].stack_bottom = current_pid;
-    //asm("sti");
-    asm("int $32");
+    process_table[next_pid++].code_physical[0] = current_pid;
     return pid;
 }
 
-void kill(uint32_t PiD)
+void scheduler_exec(uint32_t program_number)
 {
-    process_table[PiD].flags += F_DEAD;
+    //printf("exec from %d to %d\n",current_pid,program_number);
+    paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)], 0x08048000);
+    paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000, 0x08049000);
 }
+
+/*void kill(uint32_t PiD)
+{
+    //process_table[PiD].flags += F_DEAD;
+}*/
 
 /*static void print_proccess_table()
 {
     for (uint32_t i = 0; i < next_pid; i++)
     {
-        terminal_print("P");
-        terminal_putint(i, 1);
-        terminal_print(": ");
-        terminal_putintbin(process_table[i].flags,4);
-        terminal_print(" ");
-        terminal_putinthex(process_table[i].esp,8);
-        terminal_print(" ");
-        terminal_putinthex(process_table[i].ebp,8);
-        terminal_print(" ");
-        terminal_putinthex(process_table[i].stack_top,8);
-        terminal_print(" ");
-        terminal_putinthex(process_table[i].stack_bottom,8);
-        terminal_print("\n");
+        //printf("P%d: %h %h %h %h\n", i, process_table[i].esp, process_table[i].ebp, process_table[i].code_physical, process_table[i].stack_physical);
     }
 }*/
-
-void scheduler_set_kernel_stack(uint32_t page)
-{
-    process_table[0].stack_bottom = page;
-    process_table[0].stack_top = page + 4096;
-}
 
 void scheduler_time_interupt()
 {
     asm("cli");
     //save esp and ebp into process table
-    asm("movl %%esp, %0":"=r"(process_table[current_pid].esp)::);
-    asm("movl %%ebp, %0":"=r"(process_table[current_pid].ebp)::);
-    ++current_pid;
-    for (;; ++current_pid)
+    asm("movl %%esp, %0":"=r"(process_table[current_pid].esp)::"ebx");
+    asm("movl %%ebp, %0":"=r"(process_table[current_pid].ebp)::"ebx");
+    //printf("1. GOT ESP %h, %h\n", process_table[current_pid].esp, process_table[current_pid].ebp);
+    asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
+    asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
+    //printf("2. KERNEL ESP IS AT: %h\n", kernel_esp);
+    starting_pid = current_pid;
+    for (;;)
     {
-        current_pid = current_pid % next_pid;
+        ++current_pid;
+        current_pid = (current_pid % next_pid);
         if (process_table[current_pid].flags & F_SKIP)
         {
             process_table[current_pid].flags -= F_SKIP;
@@ -65,59 +64,88 @@ void scheduler_time_interupt()
             continue;
         if (process_table[current_pid].flags & F_PAUSED)
             continue;
-        //terminal_print("SHIFTING INTO: ");
-        //terminal_putint(current_pid, 8);
-        //terminal_print("\n");
+        //printf("3. SWITCHING %d to %d\n", starting_pid, current_pid);
         break;
     }
     if (process_table[current_pid].flags & F_INIT)
     {
-        uint32_t source_pid = process_table[current_pid].stack_bottom;
-        uint32_t stop = process_table[source_pid].stack_top;
-        uint32_t sbottom = process_table[source_pid].stack_bottom;
+        source_pid = process_table[current_pid].code_physical[0];
 
-        process_table[current_pid].stack_bottom = get_free_page_and_allocate();
-        process_table[current_pid].stack_top = process_table[current_pid].stack_bottom + (4 * 1024);
-        uint32_t ttop = process_table[current_pid].stack_top;
-        //uint32_t tbottom = process_table[current_pid].stack_bottom;
-        uint32_t revs = 0;
-        for (uint32_t scurrent = stop; scurrent > sbottom; scurrent -= 4) // COPY THE WHOLLLLEEEE STACK!
-        {
-            uint32_t* pscurrent = (uint32_t*)scurrent;
-            uint32_t targ = stop - scurrent;
-            uint32_t tcurrent = ttop - targ;
-            uint32_t* ptcurrent = (uint32_t*)tcurrent;
+        //printf("4. INITING %d from %d\n", current_pid, source_pid);
+        process_table[current_pid].code_physical[0] = paging_copy_virtual_to_new(0x08048000);
+        process_table[current_pid].code_physical[1] = paging_copy_virtual_to_new(0x08049000);
+        process_table[current_pid].stack_physical = paging_copy_virtual_to_new(0xbffff000);
+        ////printf("5. COPPIED! %h, %h ,%h\n", process_table[current_pid].code_physical[0], process_table[current_pid].code_physical[1], process_table[current_pid].stack_physical);
+        
 
-            uint32_t val = * pscurrent;
-            if (val < stop && val > sbottom)
-            {
-                val = (ttop - (stop - val));
-            }
-
-            *ptcurrent = val;
-            revs++;
-        }
         process_table[current_pid].flags = 0;
-        process_table[current_pid].esp = ttop - (stop - process_table[source_pid].esp);
-        process_table[current_pid].ebp = ttop - (stop - process_table[source_pid].ebp);
+        process_table[current_pid].esp = process_table[source_pid].esp;
+        process_table[current_pid].ebp = process_table[source_pid].ebp;
+        process_table[current_pid].code_size = process_table[source_pid].code_size;
+        process_table[current_pid].stack_size = process_table[source_pid].stack_size;
+        
         //print_proccess_table();
-    }
-    
-    asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):);
-    asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):);
-    //asm("sti");
-}
+        //printf("6. DONE!\n");
+        current_pid = starting_pid;
 
-uint32_t kernel_get_stack_top();
-uint32_t kernel_get_stack_bottom();
+        asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
+        asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
+        ////printf("8. PERFORM ESP SWITCH %h, %h\n", process_table[current_pid].esp, process_table[current_pid].ebp);
+        asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):"ebx");
+        asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):"ebx");
+        
+        asm("sti");
+        return;
+    }
+    ////printf("7. PERFORM FULL SWITCH %h, %h, %h\n", process_table[current_pid].code_physical[0], process_table[current_pid].code_physical[1], process_table[current_pid].stack_physical);
+
+    paging_map_phys_to_virtual(process_table[current_pid].code_physical[0], 0x08048000);
+    paging_map_phys_to_virtual(process_table[current_pid].code_physical[1], 0x08049000);
+    paging_map_phys_to_virtual(process_table[current_pid].stack_physical, 0xbffff000);
+
+    asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
+    asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
+    ////printf("8. PERFORM ESP SWITCH %h, %h\n", process_table[current_pid].esp, process_table[current_pid].ebp);
+    asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):"ebx");
+    asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):"ebx");
+    //printf("GO!: %d\n", current_pid);
+    asm("sti");
+}
 
 void scheduler_init()
 {
     current_pid = 0;
     next_pid = 1;
-    process_table = (process_table_entry*)get_free_page_and_allocate();
+
+    paging_map_new_to_virtual(0xc0003000);
+
+    process_table = (process_table_entry*)0xc0003000;
+    
+    program_pointers = paging_get_programs();
+
     process_table[0].flags = 0;
+    process_table[0].esp = 0xbfffffff;
+    process_table[0].ebp = 0xbfffffff;
+    process_table[0].code_size = 2;
+    process_table[0].stack_size = 1;
+
+    paging_map_new_page_table(0x020);
+    paging_map_new_page_table(0x2ff);
+
+    process_table[0].code_physical[0] = paging_map_new_to_virtual(0x08048000);
+    process_table[0].code_physical[1] = paging_map_new_to_virtual(0x08049000);
+    process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
+
+    paging_copy_physical_to_virtual(program_pointers[1], 0x08048000);
+    paging_copy_physical_to_virtual(program_pointers[1] + 0x1000, 0x08049000);
 }
+
+void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp)
+{
+    kernel_esp = esp;
+    kernel_ebp = ebp;
+}
+
 
 uint32_t scheduler_get_pid()
 {

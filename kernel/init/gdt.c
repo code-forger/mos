@@ -1,11 +1,21 @@
 #include "gdt.h"
 #include "../io/terminal.h"
+#include "../paging/paging.h"
 
 static gdt_info_type* gdt_info;
+struct gdt_location gdtp;
+
+static void construct_gdtp()
+{
+    gdtp.limit = gdt_info->gdtp.limit = sizeof(gdt_info->gdt);
+    gdtp.offset = gdt_info->gdtp.offset = (uint32_t)&(gdt_info->gdt);
+    set_gdtp();
+}
 
 void gdt_init()
 {
-    gdt_info = (gdt_info_type*)get_address_of_page(1);
+    gdt_info = ((gdt_info_type*)0xC0001000);
+    construct_gdtp();
 }
 
 void gdt_print_entry(uint32_t i)

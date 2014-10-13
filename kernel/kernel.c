@@ -16,29 +16,28 @@ extern "C" /* Use C linkage for kernel_main. */
 #define R_W_NP 2 //read + write + not present
 #define R_W_P 3 // read + write + present
 
+
 void init_kernel()
 {
     uint32_t* directory = (uint32_t*)0xfffff000;
     directory[0] = 0 | R_W_NP;
     memory_init();
+    terminal_initialize();
     gdt_init();
     idt_init();
     pic_init();
-    terminal_initialize();
-    printf("Hello!!\n");
-    //scheduler_init();
-}
+    scheduler_init();
 
-void kernel_main()
-{
-    //printf("HELLO KERNEL!\n");
-    //asm("sti"); // re-enable interrupts for normal kernel operation.
-    //if (fork() != scheduler_get_pid())
-    //    fork();
-    for (;;)
-    {
-        uint32_t sp;
-        asm("movl %%esp, %0":"=r"(sp)::);
-        printf("I am process: %d my stack pointer is %h\n", scheduler_get_pid(), sp);;
-    }
+    uint32_t esp, ebp;
+
+    asm("movl %%esp, %0":"=r"(esp)::"ebx");
+    asm("movl %%ebp, %0":"=r"(ebp)::"ebx");
+
+    scheduler_register_kernel_stack(esp, ebp);
+
+    asm("movl %0, %%esp"::"r"(0xbfffffff));
+
+    asm("jmp %0"::"r"(0x08048074));
+
+    //scheduler_init();
 }

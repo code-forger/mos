@@ -29,3 +29,5 @@ typedef struct gdt_info_type_type
 void gdt_init();
 void gdt_print_entry(uint32_t i);
 void gdt_encode_entry(uint32_t i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity);
+
+void set_gdtp(void); // from gdt.asm

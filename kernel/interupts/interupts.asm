@@ -23,6 +23,12 @@ extern c_default_irq
 extern c_timer_irq
 extern c_keyboard_irq
 
+extern c_terminal_pushup_syscall
+extern c_terminal_putchar_syscall
+extern c_scheduler_fork_syscall
+extern c_scheduler_pid_syscall
+extern c_scheduler_exec_syscall
+
 global int_zero_division
 global int_debugger
 global int_nmi
@@ -47,6 +53,12 @@ global int_simd_floating_point
 global default_irq
 global timer_irq
 global keyboard_irq
+
+global terminal_pushup_syscall
+global terminal_putchar_syscall
+global scheduler_fork_syscall
+global scheduler_pid_syscall
+global scheduler_exec_syscall
 
 int_zero_division:
     pushad
@@ -170,7 +182,6 @@ int_simd_floating_point:
 
 
 
-
 default_irq:
     pushad
     call c_default_irq
@@ -178,9 +189,11 @@ default_irq:
     iret
 
 timer_irq:
+    cli
     pushad
     call c_timer_irq
     popad
+    sti
     iret
 
 keyboard_irq:
@@ -188,3 +201,37 @@ keyboard_irq:
     call c_keyboard_irq
     popad
     iret
+
+
+
+terminal_pushup_syscall:
+    pushad
+    call c_terminal_pushup_syscall
+    popad
+    iret
+
+terminal_putchar_syscall:
+    pushad
+    call c_terminal_putchar_syscall
+    popad
+    iret
+
+scheduler_fork_syscall:
+    pushad
+    call c_scheduler_fork_syscall
+    popad
+    iret
+
+scheduler_pid_syscall:
+    pushad
+    call c_scheduler_pid_syscall
+    popad
+    iret
+
+scheduler_exec_syscall:
+    cli
+    pushad
+    call c_scheduler_exec_syscall
+    popad
+    mov esp, 0xbfffffff
+    jmp 0x08048074

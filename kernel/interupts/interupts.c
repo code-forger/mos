@@ -1,8 +1,11 @@
 #include "interupts.h"
+#include "../scheduler/scheduler.h"
 
 void  c_int_zero_division(void)
 {
     printf("ZERO_DIVISION_INTERRUPT_HIT!\n");
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -45,6 +48,8 @@ void  c_int_bounds(void)
 void  c_int_invalid_opcode(void)
 {
     printf("INVALID_OPCODE_INTERRUPT_HIT!\n");
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -100,7 +105,12 @@ void  c_int_general_protection(void)
 
 void  c_int_page_fault(void)
 {
-    printf("PAGE_FAULT_INTERRUPT_HIT!\n");
+
+    uint32_t page;
+    asm("mov %%CR2, %0":"=r"(page):);
+    printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -154,5 +164,54 @@ void  c_timer_irq(void)
 void  c_keyboard_irq(void)
 {
     keyboard_interupt();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_terminal_pushup_syscall(void)
+{
+    uint32_t x, y, wx, wy;
+    asm("mov %%esi, %0":"=r"(x):);
+    asm("mov %%edi, %0":"=r"(y):);
+    asm("mov %%edx, %0":"=r"(wx):);
+    asm("mov %%eax, %0":"=r"(wy):);
+
+    push_terminal_up_at(x, y, wx, wy);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_terminal_putchar_syscall(void)
+{
+    uint32_t c32;
+    asm("mov %%esi, %0":"=r"(c32):);
+    char c = (char)c32;
+    uint32_t x=0x1010, y=0x2020;
+    asm("mov %%edi, %0":"=r"(x):);
+    asm("mov %%edx, %0":"=r"(y):);
+
+    terminal_putchar_at(c, x, y);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_scheduler_fork_syscall(void)
+{
+    uint32_t *pid;
+    asm("mov %%esi, %0":"=r"(pid):);
+    *pid = fork();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_scheduler_pid_syscall(void)
+{
+    uint32_t *pid;
+    asm("mov %%esi, %0":"=r"(pid):);
+    *pid = scheduler_get_pid();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_scheduler_exec_syscall(void)
+{
+    uint32_t program_number;
+    asm("mov %%esi, %0":"=r"(program_number):);
+    scheduler_exec(program_number);
     send_byte_to(MASTER_PIC, 0x20);
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include "../declarations.h"
 #include "gdt.h"
 
@@ -49,3 +50,9 @@ void int_math_fault(void);
 void int_alignment_check(void);
 void int_machine_check(void);
 void int_simd_floating_point(void);
+
+void terminal_putchar_syscall(void);
+void terminal_pushup_syscall(void);
+void scheduler_fork_syscall(void);
+void scheduler_pid_syscall(void);
+void scheduler_exec_syscall(void);

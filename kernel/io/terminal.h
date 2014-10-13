@@ -1,5 +1,5 @@
 #pragma once
-#include "../stdlib/string.h"
+#include "../declarations.h"
 typedef enum color
 {
     COLOR_BLACK = 0,
@@ -29,4 +29,6 @@ void terminal_initialize();
 
 void terminal_set_color(uint8_t color);
 void terminal_putchar(char c);
+void terminal_putchar_at(char c, uint32_t x, uint32_t y);
+void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy);
 void printf(const char* string, ...);

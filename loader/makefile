@@ -1,7 +1,7 @@
 all: loader.bin
 
-loader.bin: loader.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o stdlib/string.o stdlib/stdio.o 
-	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o loader.bin -ffreestanding -nostdlib boot.o loader.o loader-asm.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o io/terminal.o stdlib/stdio.o stdlib/string.o -lgcc
+loader.bin: loader.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o
+	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o loader.bin -ffreestanding -nostdlib boot.o loader.o loader-asm.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o io/terminal.o -lgcc
 
 boot.o: boot.s
 	~/OS/buildtools/local/bin/i686-elf-as boot.s -o boot.o
@@ -28,19 +28,12 @@ memory/memory.o: memory/memory.c memory/memory.h memory/memory.asm
 	nasm -f elf32 memory/memory.asm -o memory/memory-asm.o
 	~/OS/buildtools/local/bin/i686-elf-gcc -c memory/memory.c -o memory/memory.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
-stdlib/string.o: stdlib/string.c stdlib/string.h
-	~/OS/buildtools/local/bin/i686-elf-gcc -c stdlib/string.c -o stdlib/string.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
-
-stdlib/stdio.o: stdlib/stdio.c stdlib/stdio.h
-	~/OS/buildtools/local/bin/i686-elf-gcc -c stdlib/stdio.c -o stdlib/stdio.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
-
 clean:
 	rm -r *.o
 	rm -r init/*.o
 	rm -r memory/*.o
 	rm -r interupts/*.o
 	rm -r pic/*.o
-	rm -r stdlib/*.o
 	rm -r io/*.o
 	rm mos.bin
 	rm isodir/boot/mos.bin

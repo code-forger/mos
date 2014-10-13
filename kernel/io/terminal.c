@@ -1,5 +1,6 @@
 #include "terminal.h"
 #include <stdarg.h>
+#include "../paging/paging.h"
  
 uint8_t terminal_make_color(terminal_color text, terminal_color back)
 {
@@ -18,7 +19,7 @@ static uint32_t VGA_HEIGHT = 25;
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
 static uint8_t current_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
-static uint16_t* terminal = (uint16_t*) 0xc0002000;
+static uint16_t* terminal;
 
 static void push_terminal_up()
 {
@@ -28,14 +29,22 @@ static void push_terminal_up()
     current_row--;
 }
  
-static void terminal_putchar_at(char c, uint32_t x, uint32_t y)
+void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
+{
+    asm("cli");
+    for ( uint32_t y = py; y < (py + wy); y++ )
+        for ( uint32_t x = px; x < (px + wx); x++ )
+            terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
+}
+ 
+void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
     terminal[y * VGA_WIDTH + x] = terminal_make_character(c, current_color);
 }
  
 void terminal_initialize()
 {
-    terminal = (uint16_t*) 0xc0002000;
+    terminal = paging_get_terminal_buffer();
     current_row = 0;
     currnet_column = 0;
     current_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
@@ -57,7 +66,10 @@ void terminal_putchar(char c) // for keyboard.c
     {
         currnet_column = 0;
         if ( ++current_row == VGA_HEIGHT )
+        {
             push_terminal_up();
+            current_row--;
+        }
     }
     else
     {
@@ -66,7 +78,10 @@ void terminal_putchar(char c) // for keyboard.c
         {
             currnet_column = 0;
             if ( ++current_row == VGA_HEIGHT )
+            {
                 push_terminal_up();
+                current_row--;
+            }
         }
     }
 }

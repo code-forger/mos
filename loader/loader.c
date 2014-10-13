@@ -24,13 +24,33 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     magic = magic;
     printf("HERE!");
     uint32_t kernel_physical, kernel_num_pages;
+    uint32_t program_physical[info->mods_count - 1], program_num_pages[info->mods_count - 1];
     if (info->flags & 100)
     {
         printf("\n%d Modules Loaded\n", info->mods_count);
-        printf("    at: %h to %h\n", ((module_t*)info->mods_addr)->mod_start, ((module_t*)info->mods_addr)->mod_end);
-        printf("  page: %d for %d pages\n", get_page_of_address(((module_t*)info->mods_addr)->mod_start), (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000);
+        for (uint32_t i = 0; i < info->mods_count; i++)
+        {
+            printf("    at: %h to %h\n", ((module_t*)info->mods_addr)[i].mod_start, ((module_t*)info->mods_addr)[i].mod_end);
+            printf("  page: %d for %d pages\n", get_page_of_address(((module_t*)info->mods_addr)[i].mod_start), (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000);
+        }
         kernel_physical = ((module_t*)info->mods_addr)->mod_start;
         kernel_num_pages =  (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000 + 1;
+
+        for (uint32_t i = 1; i < info->mods_count; i++)
+        {
+            program_physical[i-1] = ((module_t*)info->mods_addr)[i].mod_start;
+            program_num_pages[i-1] =  (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000 + 1;
+        }
+
+    }
+
+
+    uint32_t* program_pointers = (uint32_t*)(get_address_of_page(1) + sizeof(gdt_info_type) + sizeof(idt_info_type));
+    program_pointers[0] = info->mods_count - 1;
+    for (uint32_t i = 0; i < info->mods_count-1; i++)
+    {
+        program_pointers[1 + (i*2)] = program_physical[i];
+        program_pointers[2 + (i*2)] = program_num_pages[i];
     }
 
     uint32_t* directory = (uint32_t*)get_free_page_and_allocate();
@@ -39,9 +59,9 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     uint32_t* page_table = (uint32_t*)get_free_page_and_allocate();
     for (uint32_t i = 0; i < 1024; i++) // identity map lower memory (so the loader doesnt page fault imediately.)
         page_table[i] = ((i * 4096) & 0xfffff000) | R_W_P;
-    uint32_t* kernel_page_table = (uint32_t*)get_free_page_and_allocate();
+    uint32_t* kernel_code_page_table = (uint32_t*)get_free_page_and_allocate();
     for (uint32_t address = kernel_physical, i = 0; i < kernel_num_pages; i++, address += 0x1000) // map the kernel to live at 0xc0000000
-        kernel_page_table[i] = ( (address + 0x1000) & 0xfffff000) | R_W_P;
+        kernel_code_page_table[i] = ( (address + 0x1000) & 0xfffff000) | R_W_P;
 
     uint32_t* kernel_meta_page_table = (uint32_t*)get_free_page_and_allocate(); // memory managemnt, gdt, idt
     kernel_meta_page_table[0] = ( get_address_of_page(0) & 0xfffff000) | R_W_P;
@@ -55,7 +75,7 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
 
     directory[0] = (((uint32_t)page_table & 0xfffff000) | R_W_P);
     directory[0x300] = (((uint32_t)kernel_meta_page_table & 0xfffff000) | R_W_P);
-    directory[0x301] = (((uint32_t)kernel_page_table & 0xfffff000) | R_W_P);
+    directory[0x301] = (((uint32_t)kernel_code_page_table & 0xfffff000) | R_W_P);
     directory[0x3fe] = (((uint32_t)kernel_stack_page_table & 0xfffff000) | R_W_P);
     directory[0x3ff] = (((uint32_t)directory & 0xfffff000) | R_W_P);
     asm("mov %0, %%cr3"::"b"(directory):);

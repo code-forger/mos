@@ -1,5 +1,5 @@
+#include "../declarations.h"
 #pragma once
-#include "../stdlib/string.h"
 typedef enum color
 {
     COLOR_BLACK = 0,

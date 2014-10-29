@@ -50,6 +50,45 @@ void scheduler_time_interupt()
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
     //printf("2. KERNEL ESP IS AT: %h\n", kernel_esp);
+
+    // INIT all processes marked for init
+    for(uint32_t i = 0; i < next_pid; i++)
+    {
+        if (process_table[i].flags & F_INIT)
+        {
+            source_pid = process_table[i].code_physical[0];
+
+            //printf("4. INITING %d from %d\n", i, source_pid);
+            process_table[i].code_physical[0] = paging_copy_virtual_to_new(0x08048000);
+            process_table[i].code_physical[1] = paging_copy_virtual_to_new(0x08049000);
+            process_table[i].stack_physical = paging_copy_virtual_to_new(0xbffff000);
+            process_table[i].heap_physical = paging_copy_virtual_to_new(0x80000000);
+            ////printf("5. COPPIED! %h, %h ,%h\n", process_table[i].code_physical[0], process_table[i].code_physical[1], process_table[i].stack_physical);
+            
+
+            process_table[i].flags = 0;
+            process_table[i].esp = process_table[source_pid].esp;
+            process_table[i].ebp = process_table[source_pid].ebp;
+            process_table[i].code_size = process_table[source_pid].code_size;
+            process_table[i].stack_size = process_table[source_pid].stack_size;
+            process_table[i].heap_size = process_table[source_pid].heap_size;
+            
+            //print_proccess_table();
+            //printf("6. DONE!\n");
+            //current_pid = starting_pid;
+
+            asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
+            asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
+            ////printf("8. PERFORM ESP SWITCH %h, %h\n", process_table[current_pid].esp, process_table[current_pid].ebp);
+            asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):"ebx");
+            asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):"ebx");
+            return;
+        }
+    }
+
+
+
+
     starting_pid = current_pid;
     for (;;)
     {
@@ -67,41 +106,12 @@ void scheduler_time_interupt()
         //printf("3. SWITCHING %d to %d\n", starting_pid, current_pid);
         break;
     }
-    if (process_table[current_pid].flags & F_INIT)
-    {
-        source_pid = process_table[current_pid].code_physical[0];
-
-        //printf("4. INITING %d from %d\n", current_pid, source_pid);
-        process_table[current_pid].code_physical[0] = paging_copy_virtual_to_new(0x08048000);
-        process_table[current_pid].code_physical[1] = paging_copy_virtual_to_new(0x08049000);
-        process_table[current_pid].stack_physical = paging_copy_virtual_to_new(0xbffff000);
-        ////printf("5. COPPIED! %h, %h ,%h\n", process_table[current_pid].code_physical[0], process_table[current_pid].code_physical[1], process_table[current_pid].stack_physical);
-        
-
-        process_table[current_pid].flags = 0;
-        process_table[current_pid].esp = process_table[source_pid].esp;
-        process_table[current_pid].ebp = process_table[source_pid].ebp;
-        process_table[current_pid].code_size = process_table[source_pid].code_size;
-        process_table[current_pid].stack_size = process_table[source_pid].stack_size;
-        
-        //print_proccess_table();
-        //printf("6. DONE!\n");
-        current_pid = starting_pid;
-
-        asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
-        asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
-        ////printf("8. PERFORM ESP SWITCH %h, %h\n", process_table[current_pid].esp, process_table[current_pid].ebp);
-        asm("movl %0, %%esp"::"r"(process_table[current_pid].esp):"ebx");
-        asm("movl %0, %%ebp"::"r"(process_table[current_pid].ebp):"ebx");
-        
-        asm("sti");
-        return;
-    }
     ////printf("7. PERFORM FULL SWITCH %h, %h, %h\n", process_table[current_pid].code_physical[0], process_table[current_pid].code_physical[1], process_table[current_pid].stack_physical);
 
     paging_map_phys_to_virtual(process_table[current_pid].code_physical[0], 0x08048000);
     paging_map_phys_to_virtual(process_table[current_pid].code_physical[1], 0x08049000);
     paging_map_phys_to_virtual(process_table[current_pid].stack_physical, 0xbffff000);
+    paging_map_phys_to_virtual(process_table[current_pid].heap_physical, 0x80000000);
 
     asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
@@ -128,13 +138,16 @@ void scheduler_init()
     process_table[0].ebp = 0xbfffffff;
     process_table[0].code_size = 2;
     process_table[0].stack_size = 1;
+    process_table[0].heap_size = 1;
 
     paging_map_new_page_table(0x020);
     paging_map_new_page_table(0x2ff);
+    paging_map_new_page_table(0x200);
 
     process_table[0].code_physical[0] = paging_map_new_to_virtual(0x08048000);
     process_table[0].code_physical[1] = paging_map_new_to_virtual(0x08049000);
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
+    process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
 
     paging_copy_physical_to_virtual(program_pointers[1], 0x08048000);
     paging_copy_physical_to_virtual(program_pointers[1] + 0x1000, 0x08049000);
@@ -144,6 +157,11 @@ void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp)
 {
     kernel_esp = esp;
     kernel_ebp = ebp;
+}
+
+process_table_entry scheduler_get_process_table_entry(uint32_t pid)
+{
+    return process_table[pid];
 }
 
 

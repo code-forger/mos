@@ -14,7 +14,7 @@ static void construct_gdtp()
 
 void gdt_init()
 {
-    gdt_info = ((gdt_info_type*)0xC0001000);
+    gdt_info = ((gdt_info_type*)paging_get_gdt());
     construct_gdtp();
 }
 

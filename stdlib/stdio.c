@@ -49,3 +49,31 @@ void putchar(char c)
     }
     asm("sti");
 }
+
+void putcharat(char c, uint32_t xin, uint32_t yin)
+{
+    asm("cli");
+    uint32_t uc = (uint32_t)c;
+    uint32_t x = 0, y = 0;
+    if (xin <= termsize_x && yin <= termsize_y)
+    {
+        x = xin + termpos_x;
+        y = yin + termpos_y;
+        asm("int $80"::"S"(uc), "D"(x), "d"(y):);
+    }
+    asm("sti");
+}
+
+void putc(PIPE* stream, char c)
+{
+    uint32_t uc = (uint32_t)c;
+    uint32_t us = (uint32_t)stream;
+    asm("int $82"::"S"(uc), "D"(us):);
+}
+
+int strlen(const char * str)
+{
+    int i = 0;
+    while (str[i++] != '\0');
+    return i-1;
+}

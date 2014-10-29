@@ -56,3 +56,6 @@ void terminal_pushup_syscall(void);
 void scheduler_fork_syscall(void);
 void scheduler_pid_syscall(void);
 void scheduler_exec_syscall(void);
+void pipe_pipe_syscall(void);
+void pipe_write_syscall(void);
+void pipe_read_syscall(void);

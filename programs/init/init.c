@@ -16,7 +16,32 @@ void main(void)
         id = fork();
         if (id==get_pid())
         {
-            exec(2);
+            id = fork();
+            if (id==get_pid())
+            {
+                
+                id = fork();
+                if (id==get_pid())
+                {
+                    exec(6);
+                }
+                else
+                {
+                    id = fork();
+                    if (id==get_pid())
+                    {
+                        exec(7);
+                    }
+                    else
+                    {
+                        exec(4);
+                    }
+                }
+            }
+            else
+            {
+                exec(5);
+            }
         }
         else
         {

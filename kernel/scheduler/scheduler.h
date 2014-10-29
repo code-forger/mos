@@ -25,4 +25,8 @@ typedef struct p_t_entry
     uint32_t code_size;
     uint32_t stack_physical;
     uint32_t stack_size;
+    uint32_t heap_physical;
+    uint32_t heap_size;
 } __attribute__((packed)) process_table_entry;
+
+process_table_entry scheduler_get_process_table_entry(uint32_t pid);

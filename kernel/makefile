@@ -1,7 +1,7 @@
 all: mos.bin
 
-mos.bin: kernel.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o paging/paging.o scheduler/scheduler.o
-	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/scheduler-asm.o -lgcc
+mos.bin: kernel.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o paging/paging.o scheduler/scheduler.o IPC/pipe.o
+	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/scheduler-asm.o IPC/pipe.o -lgcc
 
 kernel.o: kernel.c kernel.asm
 	nasm -f elf32 kernel.asm -o kernel-asm.o
@@ -41,6 +41,10 @@ memory/memory.o: memory/memory.c memory/memory.h memory/memory.asm
 interupts/interupts.o: interupts/interupts.c interupts/interupts.asm
 	nasm -f elf32 interupts/interupts.asm -o interupts/interupts-asm.o
 	~/OS/buildtools/local/bin/i686-elf-gcc -c interupts/interupts.c -o interupts/interupts.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
+
+IPC/pipe.o: IPC/pipe.c IPC/pipe.h
+	~/OS/buildtools/local/bin/i686-elf-gcc -c IPC/pipe.c -o IPC/pipe.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
+
 
 clean:
 	rm -r *.o

@@ -31,12 +31,12 @@ void main(void)
     lines[8] = l9;
     lines[9] = l10;
     lines[0] = l11;
-    setio(0, 0, 26, 15);
+    setio(0, 0, 26, 16);
     for (int line = 0;;line = ++line % 10)
     {
-        for (int colum = 0; colum < 27; colum ++)
-            putchar(lines[line][colum]);
-        for (int i = 0; i < 500000; i++);
+        for (int colum = 0; colum < 27; colum ++);
+            //putchar(lines[line][colum]);
+        for (int i = 0; i < 200000; i++);
     }
     for (;;);
 }

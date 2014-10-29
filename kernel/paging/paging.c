@@ -8,6 +8,11 @@ static void flush_tlb()
 }
 
 
+pipe_descriptor* paging_get_pipe_table()
+{
+    return (pipe_descriptor*)PIPE_TABLE;
+}
+
 idt_info_type* paging_get_idt() 
 {
     return (idt_info_type*)(GDT_IDT_PROGRAMS + sizeof(gdt_info_type));

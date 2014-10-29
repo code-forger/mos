@@ -3,6 +3,7 @@
 #include "pic/pic.h"
 #include "scheduler/scheduler.h"
 #include "io/terminal.h"
+#include "IPC/pipe.h"
 void kerror(const char* data)
 {
     printf(data);
@@ -27,6 +28,7 @@ void init_kernel()
     idt_init();
     pic_init();
     scheduler_init();
+    pipe_init();
 
     uint32_t esp, ebp;
 
@@ -38,6 +40,4 @@ void init_kernel()
     asm("movl %0, %%esp"::"r"(0xbfffffff));
 
     asm("jmp %0"::"r"(0x08048074));
-
-    //scheduler_init();
 }

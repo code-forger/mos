@@ -1,5 +1,6 @@
 #include "interupts.h"
 #include "../scheduler/scheduler.h"
+#include "../IPC/pipe.h"
 
 void  c_int_zero_division(void)
 {
@@ -213,5 +214,40 @@ void  c_scheduler_exec_syscall(void)
     uint32_t program_number;
     asm("mov %%esi, %0":"=r"(program_number):);
     scheduler_exec(program_number);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
+
+void  c_pipe_pipe_syscall(void)
+{
+    uint32_t loc, *pipe_head, *pipe_tail, *ret;
+    asm("mov %%esi, %0":"=r"(loc):);
+    asm("mov %%edi, %0":"=r"(pipe_head):);
+    asm("mov %%edx, %0":"=r"(pipe_tail):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = pipe_create(loc, pipe_head, pipe_tail);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_pipe_write_syscall(void)
+{
+    uint32_t pipe, data, *ret;
+    asm("mov %%esi, %0":"=r"(pipe):);
+    asm("mov %%edi, %0":"=r"(data):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    uint8_t data8 = (uint8_t)data;
+    *ret = pipe_write(pipe, data8);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_pipe_read_syscall(void)
+{
+    uint32_t pipe, *ret;
+    uint8_t *data;
+    asm("mov %%esi, %0":"=r"(pipe):);
+    asm("mov %%edi, %0":"=r"(data):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = pipe_read(pipe, data);
     send_byte_to(MASTER_PIC, 0x20);
 }

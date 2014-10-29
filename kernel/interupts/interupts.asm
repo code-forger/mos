@@ -28,6 +28,9 @@ extern c_terminal_putchar_syscall
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
 extern c_scheduler_exec_syscall
+extern c_pipe_pipe_syscall
+extern c_pipe_write_syscall
+extern c_pipe_read_syscall
 
 global int_zero_division
 global int_debugger
@@ -59,6 +62,9 @@ global terminal_putchar_syscall
 global scheduler_fork_syscall
 global scheduler_pid_syscall
 global scheduler_exec_syscall
+global pipe_pipe_syscall
+global pipe_write_syscall
+global pipe_read_syscall
 
 int_zero_division:
     pushad
@@ -193,7 +199,6 @@ timer_irq:
     pushad
     call c_timer_irq
     popad
-    sti
     iret
 
 keyboard_irq:
@@ -235,3 +240,27 @@ scheduler_exec_syscall:
     popad
     mov esp, 0xbfffffff
     jmp 0x08048074
+
+pipe_pipe_syscall:
+    cli
+    pushad
+    call c_pipe_pipe_syscall
+    popad
+    sti
+    iret
+
+pipe_write_syscall:
+    cli
+    pushad
+    call c_pipe_write_syscall
+    popad
+    sti
+    iret
+
+pipe_read_syscall:
+    cli
+    pushad
+    call c_pipe_read_syscall
+    popad
+    sti
+    iret

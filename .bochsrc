@@ -1,6 +1,0 @@
-ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
-ata0-master: type=cdrom, path="mos.iso", status=inserted
-floppy_bootsig_check: disabled=1
-boot: cdrom
-memory: guest=1024, host=1024
-clock: sync=none, rtc_sync=1, time0=local

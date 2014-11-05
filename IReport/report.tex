@@ -30,7 +30,7 @@
 
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
-We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviors by providing simple high level abstractions over the intricate low level hardware.
+We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviours by providing simple high level abstractions over the intricate low level hardware.
 
 The project goal is to understand the mechanisms and technologies involved in running an x86 computer and allowing for dynamic memory allocation, pseudo concurrent execution of code, and co-operative usage of the screen in user space applications.
 
@@ -77,8 +77,8 @@ As this project falls within the bound of Computer Science, It will comply with 
 
 Each of the four main sections of the Code of Conduct will be discussed in order;
 
-\subsection*{Public Interest.}
-\addcontentsline{toc}{subsection}{Public Interest.}
+\subsection*{Public Interest}
+\addcontentsline{toc}{subsection}{Public Interest}
 
 From the Code of Conduct: \cite{CoC}
 
@@ -95,8 +95,8 @@ The project complies with this section of the Code of Conduct. No user informati
 The project makes use of third party material, however only within the licenses set out by those third parties that have been implicitly agreed to by all project members. Furthermore, it is explicitly marked where third party technologies were used.
 
 
-\subsection*{Professional Competence and Integrity.}
-\addcontentsline{toc}{subsection}{Professional Competence and Integrity.}
+\subsection*{Professional Competence and Integrity}
+\addcontentsline{toc}{subsection}{Professional Competence and Integrity}
 
 From the Code of Conduct: \cite{CoC}
 
@@ -117,8 +117,8 @@ The level of competence of each member of the project was assessed and found fit
 
 During the completion of the project each member will meet with a higher supervisor to ensure that they maintain professional competence and discuss viewpoints and criticisms they may not have considered.
 
-\subsection*{Duty to Relevant Authority.}
-\addcontentsline{toc}{subsection}{Duty to Relevant Authority.}
+\subsection*{Duty to Relevant Authority}
+\addcontentsline{toc}{subsection}{Duty to Relevant Authority}
 
 From the Code of Conduct: \cite{CoC}
 
@@ -135,8 +135,8 @@ The members of this project each comply with this section of the Code of Conduct
 
 A structure of meetings and other feedback channels have been established between the project members and their relevant supervisors to ensure each member is working within the bounds of their relevant authority.
 
-\subsection*{Duty to the Profession.}
-\addcontentsline{toc}{subsection}{Duty to the Profession.}
+\subsection*{Duty to the Profession}
+\addcontentsline{toc}{subsection}{Duty to the Profession}
 
 From the Code of Conduct: \cite{CoC}
 
@@ -154,14 +154,14 @@ The members of this project each comply with this section of the Code of Conduct
 
 
 
-\subsection*{Requirement for ethical review.}
-\addcontentsline{toc}{subsection}{Requirement for ethical review.}
+\subsection*{Requirement for ethical review}
+\addcontentsline{toc}{subsection}{Requirement for ethical review}
 
 This Project is a technical exercise in understanding the low level relationship between hardware and software, due to this, the project does not require human participation, testing, or feedback. As such, The Project does not require an ethical review, and there are no ethical concerns with this project.
 
 \clearpage
-\chapter*{Understanding Operating Systems.}
-\addcontentsline{toc}{chapter}{Understanding Operating Systems.}
+\chapter*{Understanding Operating Systems}
+\addcontentsline{toc}{chapter}{Understanding Operating Systems}
 
 
 Before this project can even begin, an understanding of what a Operating System is and does is required.
@@ -209,8 +209,8 @@ Once the bootloader has passed control to the kernel, the kernel begins to prepa
 Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes are pieces of code that perform some form of task, each having a unique environment. As far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
 
 
-\subsection*{The Built in Programs.}
-\addcontentsline{toc}{subsection}{The Built in Programs.} 
+\subsection*{The Built in Programs}
+\addcontentsline{toc}{subsection}{The Built in Programs} 
 
 \begin{wrapfigure}{r}{250px}
 \centering
@@ -237,23 +237,23 @@ The nature of an Operating Systems is such that there are two `user groups'.
 The `End Users' are the people using the Operating System and its programs to assist in achieving an assortment of tasks. To them, the Operating System provides a few simple mechanisms to interact with the system, E.G. Launching programs, closing programs, and switching between the `focused' program. Most of the inner workings of the Operating System are hidden from the end user, and they mainly interact with the `User space programs', which are not defined by the Operating System Developer.
 
 
-The `Program Developers' use an Operating System as a platform to create the programs the `End User' will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviors like creating new processes, Allocating dynamic memory, and allocating screen space to the programs. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
+The `Program Developers' use an Operating System as a platform to create the programs the `End User' will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviours like creating new processes, Allocating dynamic memory, and allocating screen space to the programs. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
 
 
 \clearpage
-\section*{Modern Operating Systems.}
-\addcontentsline{toc}{section}{Modern Operating Systems.}
+\section*{Modern Operating Systems}
+\addcontentsline{toc}{section}{Modern Operating Systems}
 
-In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analyzed to assist in the designing of the project Operating System. Although It was known in advanced that the project Operating System was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
+In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the project Operating System. Although It was known in advanced that the project Operating System was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
 
-\subsection*{The End User.}
-\addcontentsline{toc}{subsection}{The End User.} 
+\subsection*{The End User}
+\addcontentsline{toc}{subsection}{The End User} 
 The reference systems that were studied with the End Users in mind are: The Linux distribution remix `Gnomebuntu' and the Microsoft Operating System `Windows 8'. These systems were chosen to get a spread in our sample. The systems are both popular desktop systems, however: One, (Linux) is stemmed from an open source mentality, where the source code is freely available and the system is free, and the other (Windows) is produced by a company with the aim to provide paying business, and home customers with a usable system.
 
-The parts of the reference systems that were analyzed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the project Operating System.
+The parts of the reference systems that were analysed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the project Operating System.
 
-\subsubsection*{Launching programs in Linux and Windows.}
-\addcontentsline{toc}{subsubsection}{Launching programs in Linux and Windows.}
+\subsubsection*{Launching programs in Linux and Windows}
+\addcontentsline{toc}{subsubsection}{Launching programs in Linux and Windows}
 
 In both reference systems, the `windows' key is used to expose the program launching interface.
 
@@ -267,7 +267,7 @@ In Linux, the interface is a alphabetized list (with icons) of installed program
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
-  \includegraphics[width=200px]{images/Linux_Program_Launcher_Screenshot}
+  \includegraphics[width=200px]{images/Windows_Program_Launcher_Screenshot}
   \caption{Windows Program Launcher Interface}
   \label{fig:WinLaunchScreen}
 \end{minipage}%
@@ -280,14 +280,14 @@ In Linux, the interface is a alphabetized list (with icons) of installed program
 \end{figure}
 
 
-\subsubsection*{Managing running programs in Linux and Windows.}
-\addcontentsline{toc}{subsubsection}{Managing running programs in Linux and Windows.}
+\subsubsection*{Managing running programs in Linux and Windows}
+\addcontentsline{toc}{subsubsection}{Managing running programs in Linux and Windows}
 
 Both reference systems provide a way of interacting directly with the process manager to give the user power over which programs are running on their system.
 
 In each system, the process manager is very similar, as the tasks they perform are identical. Both systems provide a window that lists processes and some relevant information about each process like PID, cpu usage, memory usage, disk usage, and network usage. It was found that the majority of these fields are concerned with what resources a process is using. This is the case because an Operating System's purpose is to manage the physical resources available to the software.
 
-Each system also provides the ability to change what information is provided for each process, these extra informations include many other physical resource usages (I.E. Nice value, or cpu time) as well as a more in depth view of the default informations (I.E. separating `memory useage' into: Virtual, Resident, Writable, Shared, and Xserver memory.)
+Each system also provides the ability to change what information is provided for each process, these extra informations include many other physical resource usages (I.E. Nice value, or cpu time) as well as a more in depth view of the default informations (I.E. separating `memory usage' into: Virtual, Resident, Writeable, Shared, and Xserver memory.)
 
 In each system this list was scrollable, allowing for many more processes that can fit in the window, furthermore the window becomes horizontally scrollable if the information exceeds the width of the screen.
 
@@ -299,21 +299,21 @@ Figures \ref{fig:WinProcManScreen} and \ref{fig:LinProcManScreen} show the proce
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
-  \includegraphics[width=200px]{images/Linux_Program_Manager_Screenshot}
-  \caption{Windows Program Launcher Interface}
+  \includegraphics[width=200px]{images/Windows_Program_Manager_Screenshot}
+  \caption{Windows Program Manager Interface}
   \label{fig:WinProcManScreen}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Linux_Program_Manager_Screenshot}
-  \caption{Linux Program Launcher Interface}
+  \caption{Linux Program Manager Interface}
   \label{fig:LinProcManScreen}
 \end{minipage} 
 \end{figure}
 
 
-\subsubsection*{Using programs in Linux and Windows.}
-\addcontentsline{toc}{subsubsection}{Using programs in Linux and Windows.}
+\subsubsection*{Using programs in Linux and Windows}
+\addcontentsline{toc}{subsubsection}{Using programs in Linux and Windows}
 
 Interacting with programs is what users spend the majority of their time on a computer doing, because of this, it is a pivotal design aspect in modern Operating Systems. Some systems can be very different in how they allow you to interact with programs. Although the two reference systems were similar in how they present the programs to you, they differed when it came to navigating between programs.
 
@@ -327,7 +327,7 @@ Figures \ref{fig:WinTitleBarScreen} and \ref{fig:LinTitleBarScreen} give example
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=200px]{images/Linux_title_bar_screenshot}
+\includegraphics[width=200px]{images/Windows_title_bar_screenshot}
 \caption{Windows Title Bar Example}
 \label{fig:WinTitleBarScreen}
 \end{figure}
@@ -351,36 +351,36 @@ Figure \ref{fig:WinWinNavScreen} and \ref{fig:LinWinNavScreen} give example of t
 \centering
 \begin{minipage}{.5\textwidth}
   \centering
-  \includegraphics[width=200px]{images/Linux_Window_Navigation_Screenshot}
-  \caption{Windows Program Launcher Interface}
+  \includegraphics[width=200px]{images/Windows_Window_Navigation_Screenshot}
+  \caption{Windows Program Navigation Interface}
   \label{fig:WinWinNavScreen}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Linux_Window_Navigation_Screenshot}
-  \caption{Linux Program Launcher Interface}
+  \caption{Linux Program Navigation Interface}
   \label{fig:LinWinNavScreen}
 \end{minipage} 
 \end{figure}
 
 
 \clearpage
-\subsection*{The Program Developers.}
-\addcontentsline{toc}{subsection}{The Program Developers.}
+\subsection*{The Program Developers}
+\addcontentsline{toc}{subsection}{The Program Developers}
 
 To understand how program developers interact with Operating Systems The Linux distribution remix `Gnomebuntu' was studied. Only one system here was studied as Linux is an open source system. This meant that the system could be looked at in more depth.
 
-The parts of the Linux system that were analyzed are the; Process management system, the memory management system, the windowing system, and Inter Process Communication.
+The parts of the Linux system that were analysed are the; Process management system, the memory management system, the windowing system, and Inter Process Communication.
 
-\subsubsection*{Managing processes in Linux.}
-\addcontentsline{toc}{subsubsection}{Managing processes in Linux.}
+\subsubsection*{Managing processes in Linux}
+\addcontentsline{toc}{subsubsection}{Managing processes in Linux}
 
 Linux exposes a number of system calls to the program developers to allow them to create, destroy, and pause processes, and also change the current `executable' to allow for new programs to be run.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together. 
 
 
-\textbf{Creating a new process.}
+\textbf{Creating a new process}
 
 To create a new process, Linux provide the `fork' system call. 
 
@@ -390,7 +390,7 @@ From the man page:
 
 \textit {On  success,  the PID of the child process is returned in the parent, and 0 is returned in the child.  On failure, -1 is  returned  in  the parent, no child process is created.} \cite{manFork}
 
-This call can be used at any time to duplicate your process. The return value can be used to discriminate between the child and the parent, meaning that you can program different behaviors for each. However, for more complex behavior, the program developer may want the child process to become an entirely different executable.
+This call can be used at any time to duplicate your process. The return value can be used to discriminate between the child and the parent, meaning that you can program different behaviours for each. However, for more complex behavior, the program developer may want the child process to become an entirely different executable.
 
 To change the executable that your process is running Linux provides execve.
 
@@ -401,7 +401,7 @@ From the man page:
 
 This call, as indicated, will completely replace a processes execution environment with one of a target executable, effectively switching to the new executable. It is used heavily with `fork' to allow one program to spawn another.
 
-\textbf{Destroying processes.}
+\textbf{Destroying processes}
 
 To destroy a process, Linux provides the `kill' system call.
 
@@ -415,7 +415,7 @@ However it CAN be used to kill processes, and as it turns out, this is the main 
 The caller provides kill with a PID and a signal. Different signals cause different behavior however the one that is relevant to the project is -9, which kills the process.
 
 
-\textbf{Pausing and Restarting programs in Linux.}
+\textbf{Pausing and Restarting programs in Linux}
 
 To pause and continue programs in Linux, the kill system call is re used, but now with different parameters.
 
@@ -425,8 +425,8 @@ To resume execution, a call to `kill -CONT \textless PID\textgreater' is made.
 
 
 
-\subsubsection*{Managing memory in Linux.}
-\addcontentsline{toc}{subsubsection}{Managing memory in Linux.}
+\subsubsection*{Managing memory in Linux}
+\addcontentsline{toc}{subsubsection}{Managing memory in Linux}
 
 Linux provides two functions for memory management that were looked at together due to their close nit nature.
 
@@ -441,18 +441,18 @@ From the man page:
 These two functions are almost always called in pairs, as it is common to want to explicitly free memory that has been allocated. However, all memory is freed if a program is terminated.
 
 
-\subsubsection*{Managing screen space in Linux.}
-\addcontentsline{toc}{subsubsection}{Managing screen space in Linux.}
+\subsubsection*{Managing screen space in Linux}
+\addcontentsline{toc}{subsubsection}{Managing screen space in Linux}
 
 Managing screen space in Linux is a little different from managing other resources as the screen manager is a user space application, and technically speaking the screen cannot be `consumed'. That is to say, if a program is using on part of the screen, that does not exclude anther program from thinking its occupying the same space. This means that the system can never `run out' of screen space, as all windows can `occupy' the same space.
 
 As this is not how the project Operating System will be structured, there is not much we can take from the way Linux (or any other major modern Operating System) manages its screen.
 
 
-\subsubsection*{Inter Process Comunication in Linux.}
-\addcontentsline{toc}{subsubsection}{Inter Process Comunication in Linux.}
+\subsubsection*{Inter Process Comunication in Linux}
+\addcontentsline{toc}{subsubsection}{Inter Process Comunication in Linux}
 
-Communication between processes is an important part of creating complex behaviors in user space programs. Linux provides some simple calls to create chanels of communication between processes. The main call is `pipe'.
+Communication between processes is an important part of creating complex behaviours in user space programs. Linux provides some simple calls to create chanels of communication between processes. The main call is `pipe'.
 
 From the man page:
 
@@ -468,8 +468,8 @@ From the man pages:
 
 These system calls will read and write using the pipe, allowing process to send data to each other. Note, it is by design that the pipe only transmits bytes, it is down to the user space program to define any communication protocalls for transmitting more complex data.
 
-\subsection*{Analysis conclusion.}
-\addcontentsline{toc}{subsection}{Analysis conclusion.}
+\subsection*{Analysis conclusion}
+\addcontentsline{toc}{subsection}{Analysis conclusion}
 
 It was found that in end user design, many systems share similar design features. The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works.
 
@@ -482,8 +482,8 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 This section discuses the considerations of designing the system from the users perspective.
 
-\subsection*{The End User.}
-\addcontentsline{toc}{subsection}{The End User.}
+\subsection*{The End User}
+\addcontentsline{toc}{subsection}{The End User}
 
 The End Users interaction with The Operating System will be limited, as the majority of their time will be spent interacting with the user space programs running on the system. However the Operating System will provide a number of system level tools to the user.
 
@@ -497,7 +497,7 @@ The following tools will be provided.
 These tools will be provided with three contexts:
 
 \subsubsection*{Process Creation Context}
-\addcontentsline{toc}{subsubsection}{Process Creation Context.}
+\addcontentsline{toc}{subsubsection}{Process Creation Context}
 
 The process creation context will allow the user to view installed programs and run them from a command line interface.
 
@@ -522,11 +522,11 @@ The proposed design for this context is given by the following example screen.
 
 This context will expand as more programs are installed, and may support scrolling or a second column of programs if the number of programs exceeds the size of the screen.
 
-This context was influence by the designs of modern Operating Systems analyzed earlier in this document. As the Operating System does not support pixel graphics or mouse pointers, no icons can be used and pointing and clicking on a program to launch it is impossible. This lead the design to be more refined and text based.
+This context was influence by the designs of modern Operating Systems analysed earlier in this document. As the Operating System does not support pixel graphics or mouse pointers, no icons can be used and pointing and clicking on a program to launch it is impossible. This lead the design to be more refined and text based.
 
 
 \subsubsection*{Process Management Context}
-\addcontentsline{toc}{subsubsection}{Process Management Context.}
+\addcontentsline{toc}{subsubsection}{Process Management Context}
 
 This context will allow the user to view currently running programs and manage them by pausing or stopping execution.
 
@@ -556,10 +556,10 @@ The proposed design for this context is given by the following example screen.
 
 This context will allow the user to modify the state of programs. This can be useful if a program is using two many system resources or is not responding. It will expand into a scrollable area when the cursor gets to the bottom of the screen if there are too many applications.
 
-This context was also influenced heavily by the analyzed systems however once again with out mouse pointer support it was impossible to mimic it direct. The columns of information however were chosen from the analyzed systems.
+This context was also influenced heavily by the analysed systems however once again with out mouse pointer support it was impossible to mimic it direct. The columns of information however were chosen from the analysed systems.
 
-\subsubsection*{Process Interaction Context.}
-\addcontentsline{toc}{subsubsection}{Process Interaction Context.}
+\subsubsection*{Process Interaction Context}
+\addcontentsline{toc}{subsubsection}{Process Interaction Context}
 
 Here the user will use the programs that are running on the system. They can view the output of programs and send input to the programs using the keyboard.
 
@@ -583,23 +583,23 @@ The proposed design for this context is given by the following example screen.
   \end{framed}
 }
 
-Here the context differers the most form the analyzed systems as the project Operating System will not allow the overlapping of program areas.
+Here the context differers the most form the analysed systems as the project Operating System will not allow the overlapping of program areas.
 
 
 
-\subsection*{The Program Developers.}
-\addcontentsline{toc}{subsection}{The Program Developers.}
+\subsection*{The Program Developers}
+\addcontentsline{toc}{subsection}{The Program Developers}
 
-As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very simerlar to that of the Linux kernel that was analyzed.
+As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very simerlar to that of the Linux kernel that was analysed.
 
-\subsubsection*{Managing processes.}
-\addcontentsline{toc}{subsubsection}{Managing processes.}
+\subsubsection*{Managing processes}
+\addcontentsline{toc}{subsubsection}{Managing processes}
 
 The project Operating System will provide a very similar set of system calls to Linux, however their behavior may be simpler.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together. 
 
-\textbf{Creating a new process.}
+\textbf{Creating a new process}
 
 Similar to Linux the process creation pattern the project Operating System was designed to follow the `fork and exec' pattern. Therefore the project Operating System provides two system calls:
 
@@ -607,13 +607,13 @@ Similar to Linux the process creation pattern the project Operating System was d
 
 `exec(pid)' takes the integer value of the target program to be loaded. It does not return. On failure the current process will not continue.
 
-\textbf{Destroying processes.}
+\textbf{Destroying processes}
 
 Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, the project Operating System will use three separate calls.
 
 `kill(pid)' will kill the target process, freeing all its memory and removing it from the scheduler.
 
-\textbf{Pausing and Restarting programs.}
+\textbf{Pausing and Restarting programs}
 
 Pausing programs is important for efficiency, therefore the project Operating System provides the following calls.
 
@@ -621,8 +621,8 @@ Pausing programs is important for efficiency, therefore the project Operating Sy
 
 `wake(pid)' will wake the target process and allow it to be scheduled again. It will NOT cause the target process to be executed next.
 
-\subsubsection*{Managing memory.}
-\addcontentsline{toc}{subsubsection}{Managing memory.}
+\subsubsection*{Managing memory}
+\addcontentsline{toc}{subsubsection}{Managing memory}
 
 The memory managemnt API will be Identical to that of Linux. Therefore the project Operating System will provide two system calls:
 
@@ -630,16 +630,16 @@ The memory managemnt API will be Identical to that of Linux. Therefore the proje
 
 `free(pointer)' will deallocate the memory at a pointer.
 
-\subsubsection*{Managing screen space.}
-\addcontentsline{toc}{subsubsection}{Managing screen space.}
+\subsubsection*{Managing screen space}
+\addcontentsline{toc}{subsubsection}{Managing screen space}
 
 As the Linux screen management system cannot be mimicked in the project Operating System, a new one entirely was invented. This lead to one system call:
 
 `setio(px,py,wx,wy)' will attempt to allocate the portion of the screen using the starting coordinate (px,py) and the size (wx,wy). If this failed (that portion of the screen is already allocated) the call will block. Otherwise it will reserve this portion of the screen for this process.
 
 
-\subsubsection*{Inter Process Communication.}
-\addcontentsline{toc}{subsubsection}{Inter Process Communication.}
+\subsubsection*{Inter Process Communication}
+\addcontentsline{toc}{subsubsection}{Inter Process Communication}
 
 The Interprocess Communication process will be very similar to Linux's system with one key addition.
 
@@ -660,7 +660,7 @@ This project constitutes a significant amount of work, some of which is of undef
 
 Because of this, an FDD (feature driven development) style of project management was chosen.
 
-This style is where a feature that can be completed (all prerequisite features are complete) is selected, analyzed, designed and then implemented. Once it is completed and tested, the process is repeated.
+This style is where a feature that can be completed (all prerequisite features are complete) is selected, analysed, designed and then implemented. Once it is completed and tested, the process is repeated.
 
 This style keeps project engineers focused on similar tasks, and prevents them from bouncing around tasks left, right, and center.
 

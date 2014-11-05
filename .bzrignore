@@ -1,3 +1,11 @@
 mos.bin
 mos.iso
 isodir/boot/mos.bin
+IReport/report.aux
+IReport/report.bbl
+IReport/report.blg
+IReport/report.lof
+IReport/report.log
+IReport/report.pdf
+IReport/report.toc
+.bzr.retired.0

@@ -41,7 +41,7 @@ void main(void)
         putcharat(' ', x, y);
         x+=hspeed; y+=vspeed;
         putcharat(c, x, y);
-        for (int i = 0; i < 150000; i++);
+        sleep(5000);
     }
     for (;;);
 }

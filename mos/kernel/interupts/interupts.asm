@@ -28,6 +28,8 @@ extern c_terminal_putchar_syscall
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
 extern c_scheduler_exec_syscall
+extern c_scheduler_sleep_syscall
+extern c_scheduler_pause_syscall
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
@@ -62,6 +64,8 @@ global terminal_putchar_syscall
 global scheduler_fork_syscall
 global scheduler_pid_syscall
 global scheduler_exec_syscall
+global scheduler_sleep_syscall
+global scheduler_pause_syscall
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
@@ -240,6 +244,18 @@ scheduler_exec_syscall:
     popad
     mov esp, 0xbfffffff
     jmp 0x08048074
+
+scheduler_sleep_syscall:
+    pushad
+    call c_scheduler_sleep_syscall
+    popad
+    iret
+
+scheduler_pause_syscall:
+    pushad
+    call c_scheduler_pause_syscall
+    popad
+    iret
 
 pipe_pipe_syscall:
     cli

@@ -217,6 +217,20 @@ void  c_scheduler_exec_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+void  c_scheduler_sleep_syscall(void)
+{
+    uint32_t milliseconds;
+    asm("mov %%esi, %0":"=r"(milliseconds):);
+    scheduler_sleep(milliseconds);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_scheduler_pause_syscall(void)
+{
+    scheduler_pause();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
 
 
 void  c_pipe_pipe_syscall(void)

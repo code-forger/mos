@@ -43,6 +43,8 @@ void idt_init()
     idt_encode_entry(90, (unsigned)&scheduler_fork_syscall, 0x08, 0x8E);
     idt_encode_entry(91, (unsigned)&scheduler_pid_syscall, 0x08, 0x8E);
     idt_encode_entry(92, (unsigned)&scheduler_exec_syscall, 0x08, 0x8E);
+    idt_encode_entry(93, (unsigned)&scheduler_sleep_syscall, 0x08, 0x8E);
+    idt_encode_entry(94, (unsigned)&scheduler_pause_syscall, 0x08, 0x8E);
 
     idt_encode_entry(100, (unsigned)&pipe_pipe_syscall, 0x08, 0x8E);
     idt_encode_entry(101, (unsigned)&pipe_write_syscall, 0x08, 0x8E);

@@ -10,32 +10,44 @@ void main(void)
 {
     char c = 'a';
     uint32_t id = fork();
-    if (id==get_pid())
+    if (id != get_pid())
     {
-
+        pause();
+        for (;;)
+        asm("hlt");
+    }
+    else
+    {
         id = fork();
         if (id==get_pid())
         {
             id = fork();
             if (id==get_pid())
             {
-                
                 id = fork();
                 if (id==get_pid())
-                {
-                    exec(6);
-                }
-                else
                 {
                     id = fork();
                     if (id==get_pid())
                     {
-                        exec(7);
+                        id = fork();
+                        if (id==get_pid())
+                        {
+                            exec(7);
+                        }
+                        else
+                        {
+                            exec(1);
+                        }
                     }
                     else
                     {
                         exec(4);
                     }
+                }
+                else
+                {
+                    exec(6);
                 }
             }
             else
@@ -48,10 +60,4 @@ void main(void)
             exec(3);
         }
     }
-    else
-    {
-        exec(1);
-    }
-    asm("cli");
-    asm("hlt");
 }

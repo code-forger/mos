@@ -27,7 +27,7 @@ void main(void)
         {
             putchar((char)c);
             write(pipes[0], c++);
-            for(uint32_t i = 0;i < 500000; i++);
+            sleep(10000);
             if (c == 'z')
                 c = 'a';
         }
@@ -39,7 +39,7 @@ void main(void)
         while (1)
         {
             while ((out = read(pipes[1])) < 0);
-            for(uint32_t i = 0;i < 500000; i++);
+            sleep(10000);
             uint8_t c = (uint8_t)out;
             putchar((char)c);
         }

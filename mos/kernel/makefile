@@ -1,7 +1,7 @@
 all: mos.bin
 
-mos.bin: kernel.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o paging/paging.o scheduler/scheduler.o IPC/pipe.o
-	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/scheduler-asm.o IPC/pipe.o -lgcc
+mos.bin: kernel.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o drivers/keyboard.o interupts/interupts.o pic/pic.o paging/paging.o scheduler/scheduler.o scheduler/events.o IPC/pipe.o
+	~/OS/buildtools/local/bin/i686-elf-gcc -T linker.ld -o mos.bin -ffreestanding -nostdlib kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o -lgcc
 
 kernel.o: kernel.c kernel.asm
 	nasm -f elf32 kernel.asm -o kernel-asm.o
@@ -34,6 +34,9 @@ scheduler/scheduler.o: scheduler/scheduler.c scheduler/scheduler.h scheduler/sch
 	nasm -f elf32 scheduler/scheduler.asm -o scheduler/scheduler-asm.o
 	~/OS/buildtools/local/bin/i686-elf-gcc -c scheduler/scheduler.c -o scheduler/scheduler.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
+scheduler/events.o: scheduler/events.c scheduler/events.h
+	~/OS/buildtools/local/bin/i686-elf-gcc -c scheduler/events.c -o scheduler/events.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
+
 memory/memory.o: memory/memory.c memory/memory.h memory/memory.asm
 	nasm -f elf32 memory/memory.asm -o memory/memory-asm.o
 	~/OS/buildtools/local/bin/i686-elf-gcc -c memory/memory.c -o memory/memory.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
@@ -44,6 +47,9 @@ interupts/interupts.o: interupts/interupts.c interupts/interupts.asm
 
 IPC/pipe.o: IPC/pipe.c IPC/pipe.h
 	~/OS/buildtools/local/bin/i686-elf-gcc -c IPC/pipe.c -o IPC/pipe.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
+
+DS/list.o: DS/list.c DS/list.h
+	~/OS/buildtools/local/bin/i686-elf-gcc -c DS/list.c -o DS/list.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
 
 clean:

@@ -44,7 +44,7 @@ void main(void)
     {
         for (int colum = 0; colum < 27; colum ++)
             putchar(lines[line][colum]);
-        for (int i = 0; i < 200000; i++);
+        sleep(10000);
     }
     for (;;);
 }

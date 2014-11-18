@@ -19,7 +19,7 @@ void main(void)
         writepos--;
         if(writepos<0) writepos=79;
 
-        for (int i = 0; i < 150000; i++);
+        sleep(10000);
     }
     for(;;);
 }

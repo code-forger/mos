@@ -30,3 +30,19 @@ void exec(uint32_t programnumber)
     asm("int $92"::"S"(programnumber):);
     asm("sti");
 }
+
+void sleep(uint32_t millseconds)
+{
+    asm("cli");
+    asm("int $93"::"S"(millseconds):);
+    asm("int $32");
+    asm("sti");
+}
+
+void pause()
+{
+    asm("cli");
+    asm("int $94");
+    asm("int $32");
+    asm("sti");
+}

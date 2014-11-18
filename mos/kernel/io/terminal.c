@@ -32,9 +32,11 @@ static void push_terminal_up()
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 {
     asm("cli");
-    for ( uint32_t y = py; y < (py + wy); y++ )
-        for ( uint32_t x = px; x < (px + wx); x++ )
+    for (uint32_t y = py; y < (py + wy); y++ )
+        for (uint32_t x = px; x <= (px + wx); x++ )
             terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
+    for (uint32_t x = px; x <= (px + wx); x++)
+        terminal[(py + wy) * VGA_WIDTH + x] = ' ';
 }
  
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)

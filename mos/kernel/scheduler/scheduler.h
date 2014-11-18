@@ -9,11 +9,14 @@ void scheduler_init();
 uint32_t scheduler_get_pid();
 void scheduler_exec(uint32_t program_number);
 void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp);
+void scheduler_sleep(uint32_t milliseconds);
+void scheduler_pause();
 
-#define F_INIT   (uint32_t)0b0001
-#define F_DEAD   (uint32_t)0b0010
-#define F_SKIP   (uint32_t)0b0100
-#define F_PAUSED (uint32_t)0b1000
+#define F_INIT   (uint32_t)0b00001
+#define F_DEAD   (uint32_t)0b00010
+#define F_SKIP   (uint32_t)0b00100
+#define F_PAUSED (uint32_t)0b01000
+#define F_WAKE   (uint32_t)0b10000
 
 
 typedef struct p_t_entry

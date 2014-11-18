@@ -28,6 +28,11 @@ memory_map_entry* paging_get_memory_map()
     return (memory_map_entry*)MEMORY_MAP;
 }
 
+Node* paging_get_event_map() 
+{
+    return (Node*)EVENT_TABLE;
+}
+
 uint8_t* paging_get_memory_free_map() 
 {
     return (uint8_t*)(uint32_t)(MEMORY_MAP + sizeof(memory_map_entry));

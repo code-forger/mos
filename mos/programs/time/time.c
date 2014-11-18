@@ -50,7 +50,7 @@ int cmos_ready() {
 
 void main(void)
 {
-    setio(36, 0, 8,0);
+    setio(36, 0, 10,0);
     for(;;)
     {
 
@@ -90,8 +90,8 @@ void main(void)
         if(time[0] < 10)
             putchar('0');
         putint(time[0]);
+        sleep(10000);
         putchar('\n');
-        for(int i = 0; i < 100000; i++);
 
     }
 }

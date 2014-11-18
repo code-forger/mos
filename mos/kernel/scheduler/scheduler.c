@@ -2,6 +2,7 @@
 #include "../init/idt.h"
 #include "../init/gdt.h"
 #include "../paging/paging.h"
+#include "events.h"
 
 static uint32_t current_pid;
 static uint32_t starting_pid;
@@ -10,6 +11,8 @@ static uint32_t source_pid;
 static process_table_entry* process_table;
 static uint32_t* program_pointers;
 static uint32_t kernel_esp, kernel_ebp;
+
+static uint64_t global_ms;
 
 uint32_t fork()
 {
@@ -27,6 +30,18 @@ void scheduler_exec(uint32_t program_number)
     paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000, 0x08049000);
 }
 
+void scheduler_sleep(uint32_t milliseconds)
+{
+    process_table[current_pid].flags |= F_PAUSED;
+    uint64_t time = global_ms + milliseconds;
+    events_new_event((scheduler_get_pid()&0xFFFF) + (F_WAKE << 16), time);
+}
+
+void scheduler_pause()
+{
+    process_table[current_pid].flags |= F_PAUSED;
+}
+
 /*void kill(uint32_t PiD)
 {
     //process_table[PiD].flags += F_DEAD;
@@ -40,6 +55,19 @@ void scheduler_exec(uint32_t program_number)
     }
 }*/
 
+static void events()
+{
+    global_ms += 52;
+    int64_t event = 0;
+    while ((event = events_get_event(global_ms)) >= 0)
+    {
+        if ((event >> 16) == F_WAKE)
+        {
+            process_table[(event&0xFFFF)].flags = 0;
+        }
+    }
+}
+
 void scheduler_time_interupt()
 {
     asm("cli");
@@ -50,8 +78,10 @@ void scheduler_time_interupt()
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
     //printf("2. KERNEL ESP IS AT: %h\n", kernel_esp);
+    events();
 
     // INIT all processes marked for init
+    starting_pid = current_pid;
     for(uint32_t i = 0; i < next_pid; i++)
     {
         if (process_table[i].flags & F_INIT)
@@ -75,7 +105,7 @@ void scheduler_time_interupt()
             
             //print_proccess_table();
             //printf("6. DONE!\n");
-            //current_pid = starting_pid;
+            current_pid = starting_pid;
 
             asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
             asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
@@ -89,11 +119,19 @@ void scheduler_time_interupt()
 
 
 
-    starting_pid = current_pid;
+    uint32_t pass_count = 0;
     for (;;)
     {
         ++current_pid;
         current_pid = (current_pid % next_pid);
+        if (current_pid == starting_pid)
+        {
+            if (++pass_count >=2)
+            {
+                current_pid = 0;
+                break;
+            }
+        }
         if (process_table[current_pid].flags & F_SKIP)
         {
             process_table[current_pid].flags -= F_SKIP;
@@ -124,6 +162,7 @@ void scheduler_time_interupt()
 
 void scheduler_init()
 {
+    global_ms = 0;
     current_pid = 0;
     next_pid = 1;
 
@@ -151,6 +190,7 @@ void scheduler_init()
 
     paging_copy_physical_to_virtual(program_pointers[1], 0x08048000);
     paging_copy_physical_to_virtual(program_pointers[1] + 0x1000, 0x08049000);
+    events_init();
 }
 
 void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp)

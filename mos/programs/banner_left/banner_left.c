@@ -34,9 +34,8 @@ void main(void)
     setio(0, 0, 26, 16);
     for (int line = 0;;line = ++line % 10)
     {
-        for (int colum = 0; colum < 27; colum ++)
-            putchar(lines[line][colum]);
-        sleep(5000);
+        printf(lines[line]);
+        sleep(1000);
     }
     for (;;);
 }

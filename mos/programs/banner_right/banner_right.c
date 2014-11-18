@@ -42,8 +42,7 @@ void main(void)
     setio(80-27, 9, 26, 15);
     for (int line = 0;;line = ++line % 10)
     {
-        for (int colum = 0; colum < 27; colum ++)
-            putchar(lines[line][colum]);
+        printf(lines[line]);
         sleep(10000);
     }
     for (;;);

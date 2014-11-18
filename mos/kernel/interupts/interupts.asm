@@ -23,8 +23,8 @@ extern c_default_irq
 extern c_timer_irq
 extern c_keyboard_irq
 
-extern c_terminal_pushup_syscall
 extern c_terminal_putchar_syscall
+extern c_terminal_init_syscall
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
 extern c_scheduler_exec_syscall
@@ -59,8 +59,8 @@ global default_irq
 global timer_irq
 global keyboard_irq
 
-global terminal_pushup_syscall
 global terminal_putchar_syscall
+global terminal_init_syscall
 global scheduler_fork_syscall
 global scheduler_pid_syscall
 global scheduler_exec_syscall
@@ -213,15 +213,15 @@ keyboard_irq:
 
 
 
-terminal_pushup_syscall:
-    pushad
-    call c_terminal_pushup_syscall
-    popad
-    iret
-
 terminal_putchar_syscall:
     pushad
     call c_terminal_putchar_syscall
+    popad
+    iret
+
+terminal_init_syscall:
+    pushad
+    call c_terminal_init_syscall
     popad
     iret
 

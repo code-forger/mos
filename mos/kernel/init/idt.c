@@ -38,7 +38,7 @@ void idt_init()
     idt_encode_entry(19, (unsigned)&int_simd_floating_point, 0x08, 0x8E);
 
     idt_encode_entry(80, (unsigned)&terminal_putchar_syscall, 0x08, 0x8E);
-    idt_encode_entry(81, (unsigned)&terminal_pushup_syscall, 0x08, 0x8E);
+    idt_encode_entry(81, (unsigned)&terminal_init_syscall, 0x08, 0x8E);
 
     idt_encode_entry(90, (unsigned)&scheduler_fork_syscall, 0x08, 0x8E);
     idt_encode_entry(91, (unsigned)&scheduler_pid_syscall, 0x08, 0x8E);

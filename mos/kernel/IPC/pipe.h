@@ -4,6 +4,8 @@
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
+typedef uint32_t PIPE;
+
 typedef struct pd
 {
     uint32_t pid;

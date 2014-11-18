@@ -1,5 +1,8 @@
 #pragma once
 #include "../declarations.h"
+#include "../IPC/pipe.h"
+#include "../scheduler/scheduler.h"
+
 typedef enum color
 {
     COLOR_BLACK = 0,
@@ -30,5 +33,8 @@ void terminal_initialize();
 void terminal_set_color(uint8_t color);
 void terminal_putchar(char c);
 void terminal_putchar_at(char c, uint32_t x, uint32_t y);
+void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y);
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy);
 void printf(const char* string, ...);
+void terminal_setio(PIPE pipes[2]);
+void terminal_string_for_process(io_part* io);

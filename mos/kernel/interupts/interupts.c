@@ -168,18 +168,6 @@ void  c_keyboard_irq(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
-void  c_terminal_pushup_syscall(void)
-{
-    uint32_t x, y, wx, wy;
-    asm("mov %%esi, %0":"=r"(x):);
-    asm("mov %%edi, %0":"=r"(y):);
-    asm("mov %%edx, %0":"=r"(wx):);
-    asm("mov %%eax, %0":"=r"(wy):);
-
-    push_terminal_up_at(x, y, wx, wy);
-    send_byte_to(MASTER_PIC, 0x20);
-}
-
 void  c_terminal_putchar_syscall(void)
 {
     uint32_t c32;
@@ -189,7 +177,15 @@ void  c_terminal_putchar_syscall(void)
     asm("mov %%edi, %0":"=r"(x):);
     asm("mov %%edx, %0":"=r"(y):);
 
-    terminal_putchar_at(c, x, y);
+    terminal_putchar_at_for_process(c, x, y);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_terminal_init_syscall(void)
+{
+    PIPE* pipes;
+    asm("mov %%esi, %0":"=r"(pipes):);
+    terminal_setio(pipes);
     send_byte_to(MASTER_PIC, 0x20);
 }
 

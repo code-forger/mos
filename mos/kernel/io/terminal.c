@@ -1,7 +1,7 @@
 #include "terminal.h"
 #include <stdarg.h>
 #include "../paging/paging.h"
- 
+
 uint8_t terminal_make_color(terminal_color text, terminal_color back)
 {
     return text | back << 4;
@@ -31,7 +31,6 @@ static void push_terminal_up()
  
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 {
-    asm("cli");
     for (uint32_t y = py; y < (py + wy); y++ )
         for (uint32_t x = px; x <= (px + wx); x++ )
             terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
@@ -42,6 +41,13 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
     terminal[y * VGA_WIDTH + x] = terminal_make_character(c, current_color);
+}
+ 
+void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y)
+{
+    process_table_entry ptb = scheduler_get_process_table_entry(scheduler_get_pid());
+    if (x <= ptb.io.wx && y <= ptb.io.wy)
+        terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, current_color);
 }
  
 void terminal_initialize()
@@ -83,6 +89,50 @@ void terminal_putchar(char c) // for keyboard.c
             {
                 push_terminal_up();
                 current_row--;
+            }
+        }
+    }
+}
+ 
+void terminal_string_for_process(io_part* io) // for keyboard.c
+{
+    /*printf("PRINTING P=%d,%d p=%d,%d w=%d,%d, c=%d, r=%d\n",
+        io->pipes[0],
+        io->pipes[1],
+        io->px,
+        io->py,
+        io->wx,
+        io->wy,
+        io->column,
+        io->row);*/
+    uint8_t uc = 0;
+    char c = '\0';
+    while(pipe_read(io->pipes[1], &uc) == 0)
+    {
+        c = (char)uc;        
+        //printf("putting char %c at %d %d   \n", c, io->column + io->py, io->row + io->px);
+
+        if (c == '\n')
+        {
+            io->column = 0;
+            if ( ++io->row == io->wy  + 1)
+            {
+                push_terminal_up_at(io->px, io->py, io->wx, io->wy);
+                io->row--;
+            }
+        }
+        else
+        {
+            //printf("NOW\n");
+            terminal_putchar_at(c, io->column + io->px, io->row + io->py);
+            if ( ++io->column == io->wx + 1)
+            {
+                io->column = 0;
+                if ( ++io->row == io->wy + 1)
+                {
+                    push_terminal_up_at(io->px, io->py, io->wx, io->wy);
+                    io->row--;
+                }
             }
         }
     }
@@ -178,6 +228,8 @@ void printf(const char* string, ...)
                 terminal_putchar('%');
             if(string[i+1] == 'd')
                 terminal_putint(va_arg(valist, int));
+            if(string[i+1] == 'c')
+                terminal_putchar(va_arg(valist, int));
             if(string[i+1] == 'h')
                 terminal_putinthex(va_arg(valist, int));
             if(string[i+1] == 'b')
@@ -192,4 +244,16 @@ void printf(const char* string, ...)
     /* clean memory reserved for valist */
     va_end(valist);
     //asm("sti");
+}
+
+void terminal_setio(PIPE* pipes)
+{
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
+    pipe_read(pipes[1], &ptb->io.px);
+    pipe_read(pipes[1], &ptb->io.py);
+    pipe_read(pipes[1], &ptb->io.wx);
+    pipe_read(pipes[1], &ptb->io.wy);
+    ptb->io.pipes = pipes;
+    ptb->io.column = 0;
+    ptb->io.row = 0;
 }

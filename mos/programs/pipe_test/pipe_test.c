@@ -19,13 +19,13 @@ void main(void)
     PIPE pipes[2];
     pipe(pipes);
     uint32_t id = fork();
-    if (id==get_pid())
+    /*if (id==get_pid())
     {
         setio(35, 1, 5, 5);
         char c = 'a';
         while(1)
         {
-            putchar((char)c);
+            printf("%c", (char)c);
             write(pipes[0], c++);
             sleep(10000);
             if (c == 'z')
@@ -41,8 +41,8 @@ void main(void)
             while ((out = read(pipes[1])) < 0);
             sleep(10000);
             uint8_t c = (uint8_t)out;
-            putchar((char)c);
+            printf("%c", (char)c);
         }
-    }
+    }*/
     for (;;);
 }

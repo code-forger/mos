@@ -28,6 +28,14 @@ void scheduler_exec(uint32_t program_number)
     //printf("exec from %d to %d\n",current_pid,program_number);
     paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)], 0x08048000);
     paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000, 0x08049000);
+
+    process_table[current_pid].io.pipes = 0;
+    process_table[current_pid].io.px = 0;
+    process_table[current_pid].io.py = 0;
+    process_table[current_pid].io.wx = 0;
+    process_table[current_pid].io.wy = 0;
+    process_table[current_pid].io.column = 0;
+    process_table[current_pid].io.row = 0;
 }
 
 void scheduler_sleep(uint32_t milliseconds)
@@ -71,6 +79,9 @@ static void events()
 void scheduler_time_interupt()
 {
     asm("cli");
+
+    if (process_table[current_pid].io.pipes != 0)
+        terminal_string_for_process(&process_table[current_pid].io);
     //save esp and ebp into process table
     asm("movl %%esp, %0":"=r"(process_table[current_pid].esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(process_table[current_pid].ebp)::"ebx");
@@ -102,6 +113,13 @@ void scheduler_time_interupt()
             process_table[i].code_size = process_table[source_pid].code_size;
             process_table[i].stack_size = process_table[source_pid].stack_size;
             process_table[i].heap_size = process_table[source_pid].heap_size;
+            process_table[i].io.pipes = 0;
+            process_table[i].io.px = 0;
+            process_table[i].io.py = 0;
+            process_table[i].io.wx = 0;
+            process_table[i].io.wy = 0;
+            process_table[i].io.column = 0;
+            process_table[i].io.row = 0;
             
             //print_proccess_table();
             //printf("6. DONE!\n");
@@ -202,6 +220,11 @@ void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp)
 process_table_entry scheduler_get_process_table_entry(uint32_t pid)
 {
     return process_table[pid];
+}
+
+process_table_entry* scheduler_get_process_table_entry_for_editing(uint32_t pid)
+{
+    return &(process_table[pid]);
 }
 
 

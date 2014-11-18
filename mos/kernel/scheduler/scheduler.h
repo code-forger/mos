@@ -1,7 +1,7 @@
 #pragma once
 #include "../declarations.h"
-#include "../io/terminal.h"
 #include "../memory/memory.h"
+#include "../IPC/pipe.h"
 
 uint32_t fork();
 void scheduler_time_interupt();
@@ -18,6 +18,18 @@ void scheduler_pause();
 #define F_PAUSED (uint32_t)0b01000
 #define F_WAKE   (uint32_t)0b10000
 
+typedef struct io_part
+{
+    PIPE* pipes;
+    uint8_t px;
+    uint8_t py;
+    uint8_t wx;
+    uint8_t wy;
+    uint8_t column;
+    uint8_t row;
+} __attribute__((packed)) io_part;
+
+#include "../io/terminal.h"
 
 typedef struct p_t_entry
 {
@@ -30,6 +42,8 @@ typedef struct p_t_entry
     uint32_t stack_size;
     uint32_t heap_physical;
     uint32_t heap_size;
+    io_part io;
 } __attribute__((packed)) process_table_entry;
 
 process_table_entry scheduler_get_process_table_entry(uint32_t pid);
+process_table_entry* scheduler_get_process_table_entry_for_editing(uint32_t pid);

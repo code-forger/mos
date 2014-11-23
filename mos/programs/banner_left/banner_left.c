@@ -35,7 +35,7 @@ void main(void)
     for (int line = 0;;line = ++line % 10)
     {
         printf(lines[line]);
-        sleep(1000);
+        sleep(5000);
     }
     for (;;);
 }

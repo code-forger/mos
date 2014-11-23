@@ -8,13 +8,14 @@ asm("    call main");
 
 void main(void)
 {
+    const char* a = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     char c = 'a';
     uint32_t id = fork();
-    if (id != get_pid())
+    if (get_pid() == 0)
     {
         pause();
         for (;;)
-        asm("hlt");
+            asm("hlt");
     }
     else
     {
@@ -37,27 +38,28 @@ void main(void)
                         }
                         else
                         {
-                            exec(1);
+                            exec(6);
                         }
                     }
                     else
                     {
-                        exec(4);
+                        exec(5);
                     }
                 }
                 else
                 {
-                    exec(6);
+                    exec(4);
                 }
             }
             else
             {
-                exec(5);
+                exec(3);
             }
         }
         else
         {
-            exec(3);
+            exec(1);
         }
     }
+    for(;;);
 }

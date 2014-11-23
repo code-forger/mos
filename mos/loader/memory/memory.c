@@ -55,10 +55,10 @@ void memory_init(multiboot_info_t *info, uint32_t magic)
             if (start_address + length < 0x100000)
                 continue; // This memory block is over the lower memory!
 
-            if (start_address < 0x120000)
+            if (start_address < 0x130000)
             {
-                start_address += 0x20000; //compensate for kernel stack
-                length -= 0x120000; //compensate for kernel stack  
+                start_address = 0x130000; //compensate for kernel stack
+                length -= 0x130000; //compensate for kernel stack  
             }
 
             p_memory_map = (memory_map_entry*)(uint32_t)start_address;

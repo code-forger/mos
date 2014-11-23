@@ -22,7 +22,6 @@ void pre_init()
 void loader_main(multiboot_info_t *info, uint32_t magic)
 {
     magic = magic;
-    printf("HERE!");
     uint32_t kernel_physical, kernel_num_pages;
     uint32_t program_physical[info->mods_count - 1], program_num_pages[info->mods_count - 1];
     if (info->flags & 100)
@@ -31,7 +30,7 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
         for (uint32_t i = 0; i < info->mods_count; i++)
         {
             printf("    at: %h to %h\n", ((module_t*)info->mods_addr)[i].mod_start, ((module_t*)info->mods_addr)[i].mod_end);
-            printf("  page: %d for %d pages\n", get_page_of_address(((module_t*)info->mods_addr)[i].mod_start), (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000);
+            printf("  page: %h for %d pages\n", ((module_t*)info->mods_addr)[i].mod_start, (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000 + 1);
         }
         kernel_physical = ((module_t*)info->mods_addr)->mod_start;
         kernel_num_pages =  (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000 + 1;
@@ -92,6 +91,7 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
 
     printf("Loader Done!");
     asm("cli");
+    //asm("hlt");
     asm("mov %0, %%esp"::"r"(0xffbfffff));
     asm("jmp %0"::"r"(0xc0400080));
     for (;;);

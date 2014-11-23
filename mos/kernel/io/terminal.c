@@ -107,7 +107,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
         io->row);*/
     uint8_t uc = 0;
     char c = '\0';
-    while(pipe_read(io->pipes[1], &uc) == 0)
+    while(pipe_read(io->outpipes[1], &uc) == 0)
     {
         c = (char)uc;        
         //printf("putting char %c at %d %d   \n", c, io->column + io->py, io->row + io->px);
@@ -253,7 +253,7 @@ void terminal_setio(PIPE* pipes)
     pipe_read(pipes[1], &ptb->io.py);
     pipe_read(pipes[1], &ptb->io.wx);
     pipe_read(pipes[1], &ptb->io.wy);
-    ptb->io.pipes = pipes;
+    ptb->io.outpipes = pipes;
     ptb->io.column = 0;
     ptb->io.row = 0;
 }
@@ -262,7 +262,5 @@ void terminal_setin(PIPE* pipes)
 {
     printf("DEATH");
     process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
-    ptb = ptb;
-    pipes = pipes;
-    //ptb->io.inpipes = pipes;
+    ptb->io.inpipes = pipes;
 }

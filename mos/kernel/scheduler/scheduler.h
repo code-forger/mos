@@ -20,7 +20,8 @@ void scheduler_pause();
 
 typedef struct io_part
 {
-    PIPE* pipes;
+    PIPE* outpipes;
+    PIPE* inpipes;
     uint8_t px;
     uint8_t py;
     uint8_t wx;
@@ -43,6 +44,7 @@ typedef struct p_t_entry
     uint32_t heap_physical;
     uint32_t heap_size;
     io_part io;
+    uint16_t padding;
 } __attribute__((packed)) process_table_entry;
 
 process_table_entry scheduler_get_process_table_entry(uint32_t pid);

@@ -26,10 +26,10 @@ void setio(int px, int py, int wx, int wy)
 
 void stdin_init()
 {
-    /*asm("cli");
+    asm("cli");
     pipe(i_pipes);
     asm("int $82"::"S"(i_pipes));
-    asm("sti");*/
+    asm("sti");
 }
 
 void putchar(char c)
@@ -147,6 +147,5 @@ void printf(const char* string, ...)
             putchar(string[i]);
         }
     }
-    /* clean memory reserved for valist */
     va_end(valist);
 }

@@ -37,4 +37,5 @@ void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y);
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy);
 void printf(const char* string, ...);
 void terminal_setio(PIPE pipes[2]);
+void terminal_setin(PIPE pipes[2]);
 void terminal_string_for_process(io_part* io);

@@ -53,6 +53,7 @@ void int_simd_floating_point(void);
 
 void terminal_putchar_syscall(void);
 void terminal_init_syscall(void);
+void stdin_init_syscall(void);
 void scheduler_fork_syscall(void);
 void scheduler_pid_syscall(void);
 void scheduler_exec_syscall(void);

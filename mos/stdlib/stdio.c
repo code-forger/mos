@@ -3,26 +3,38 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-static PIPE io_pipes[2];
+static PIPE o_pipes[2];
+static PIPE i_pipes[2];
+
+#define WRITE 0
+#define READ 1
 
 
 void setio(int px, int py, int wx, int wy)
 {
     asm("cli");
-    pipe(io_pipes);
-    write(io_pipes[0], px);
-    read(io_pipes[1]);
-    write(io_pipes[0], px);
-    write(io_pipes[0], py);
-    write(io_pipes[0], wx);
-    write(io_pipes[0], wy);
-    asm("int $81"::"S"(io_pipes));
+    pipe(o_pipes);
+    write(o_pipes[WRITE], px);
+    read(o_pipes[READ]);
+    write(o_pipes[WRITE], px);
+    write(o_pipes[WRITE], py);
+    write(o_pipes[WRITE], wx);
+    write(o_pipes[WRITE], wy);
+    asm("int $81"::"S"(o_pipes));
     asm("sti");
+}
+
+void stdin_init()
+{
+    /*asm("cli");
+    pipe(i_pipes);
+    asm("int $82"::"S"(i_pipes));
+    asm("sti");*/
 }
 
 void putchar(char c)
 {
-    write(io_pipes[0], c);
+    write(o_pipes[WRITE], c);
 }
 
 void putcharat(char c, uint32_t x, uint32_t y)

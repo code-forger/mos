@@ -257,3 +257,12 @@ void terminal_setio(PIPE* pipes)
     ptb->io.column = 0;
     ptb->io.row = 0;
 }
+
+void terminal_setin(PIPE* pipes)
+{
+    printf("DEATH");
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
+    ptb = ptb;
+    pipes = pipes;
+    //ptb->io.inpipes = pipes;
+}

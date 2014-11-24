@@ -21,6 +21,8 @@ static uint32_t currnet_column = 0;
 static uint8_t current_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
 static uint16_t* terminal;
 
+static uint32_t active_process = 0;
+
 static void push_terminal_up()
 {
     for ( uint32_t y = 0; y < VGA_HEIGHT -1; y++ )
@@ -107,7 +109,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
         io->row);*/
     uint8_t uc = 0;
     char c = '\0';
-    while(pipe_read(io->outpipes[1], &uc) == 0)
+    while(pipe_read(io->outpipe, &uc) == 0)
     {
         c = (char)uc;        
         //printf("putting char %c at %d %d   \n", c, io->column + io->py, io->row + io->px);
@@ -253,14 +255,21 @@ void terminal_setio(PIPE* pipes)
     pipe_read(pipes[1], &ptb->io.py);
     pipe_read(pipes[1], &ptb->io.wx);
     pipe_read(pipes[1], &ptb->io.wy);
-    ptb->io.outpipes = pipes;
+    ptb->io.outpipe = pipes[1];
     ptb->io.column = 0;
     ptb->io.row = 0;
 }
 
 void terminal_setin(PIPE* pipes)
 {
-    printf("DEATH");
     process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
-    ptb->io.inpipes = pipes;
+    ptb->io.inpipe = pipes[0];
+    active_process = scheduler_get_pid();
+}
+
+
+void terminal_send_to_process(char data)
+{
+    process_table_entry ptb = scheduler_get_process_table_entry(active_process);
+    pipe_write(ptb.io.inpipe, data);
 }

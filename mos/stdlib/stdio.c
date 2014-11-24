@@ -32,6 +32,13 @@ void stdin_init()
     asm("sti");
 }
 
+char getchar()
+{
+    char out;
+    while ((out = read(i_pipes[READ])) < 0);
+    return out;
+}
+
 void putchar(char c)
 {
     write(o_pipes[WRITE], c);

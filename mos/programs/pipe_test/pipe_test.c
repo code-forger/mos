@@ -36,21 +36,18 @@ void main(void)
     const char* l18  = "**********************************************************";
     const char* l19  = "**********************************************************";
     const char* l20  = "**********************************************************";
-    
     PIPE pipes[2];
     pipe(pipes);
     uint32_t id = fork();
     if (id==get_pid())
     {
+        stdin_init();
         setio(35, 1, 5, 5);
         char c = 'a';
-        while(1)
+        while(c = getchar())
         {
             printf("%c", (char)c);
-            write(pipes[0], c++);
-            sleep(10000);
-            if (c == 'z')
-                c = 'a';
+            write(pipes[0], c);
         }
     }
     else
@@ -60,7 +57,6 @@ void main(void)
         while (1)
         {
             while ((out = read(pipes[1])) < 0);
-            sleep(10000);
             uint8_t c = (uint8_t)out;
             printf("%c", (char)c);
         }

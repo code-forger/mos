@@ -39,3 +39,4 @@ void printf(const char* string, ...);
 void terminal_setio(PIPE pipes[2]);
 void terminal_setin(PIPE pipes[2]);
 void terminal_string_for_process(io_part* io);
+void terminal_send_to_process(char data);

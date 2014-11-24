@@ -36,7 +36,9 @@ uint32_t pipe_create(uint32_t loc, uint32_t* pipe_head_out, uint32_t* pipe_tail_
 }
 
 uint32_t pipe_write(uint32_t pipe, uint8_t data_in)
-{if (pipe_table[pipe].mode != PIPE_WRITE)
+{
+    asm("cli");
+    if (pipe_table[pipe].mode != PIPE_WRITE)
     {
         return 1;
     }
@@ -73,7 +75,6 @@ uint32_t pipe_write(uint32_t pipe, uint8_t data_in)
         }
         paging_unmap_virtual(SCRATCH);
     }
-            
     return 0;
 }
 

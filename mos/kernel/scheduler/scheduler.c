@@ -27,8 +27,8 @@ void scheduler_exec(uint32_t program_number)
     for (uint32_t i = 0; i < program_pointers[2+(program_number * 2)]; i++)
         paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000 * i, 0x08048000 + 0x1000 * i);
 
-    process_table[current_pid].io.outpipes = 0;
-    process_table[current_pid].io.inpipes = 0;
+    process_table[current_pid].io.outpipe = 0;
+    process_table[current_pid].io.inpipe = 0;
     process_table[current_pid].io.px = 0;
     process_table[current_pid].io.py = 0;
     process_table[current_pid].io.wx = 0;
@@ -71,7 +71,7 @@ void scheduler_time_interupt()
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
 
-    if (process_table[current_pid].io.outpipes != 0)
+    if (process_table[current_pid].io.outpipe != 0)
         terminal_string_for_process(&process_table[current_pid].io);
 
     events();
@@ -89,8 +89,8 @@ void scheduler_time_interupt()
             process_table[i].code_size = process_table[source_pid].code_size;
             process_table[i].stack_size = process_table[source_pid].stack_size;
             process_table[i].heap_size = process_table[source_pid].heap_size;
-            process_table[i].io.outpipes = 0;
-            process_table[i].io.inpipes = 0;
+            process_table[i].io.outpipe = 0;
+            process_table[i].io.inpipe = 0;
             process_table[i].io.px = 0;
             process_table[i].io.py = 0;
             process_table[i].io.wx = 0;

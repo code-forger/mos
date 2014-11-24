@@ -20,8 +20,8 @@ void scheduler_pause();
 
 typedef struct io_part
 {
-    PIPE* outpipes;
-    PIPE* inpipes;
+    PIPE outpipe;
+    PIPE inpipe;
     uint8_t px;
     uint8_t py;
     uint8_t wx;

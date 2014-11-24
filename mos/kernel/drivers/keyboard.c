@@ -15,5 +15,5 @@ void keyboard_interupt(void)
 {
     uint8_t code = get_byte_from(0x60);
     if (code > 0 && code < 0x54 && alpha_map[code] != -1)
-        terminal_putchar(alpha_map[code]);
+        terminal_send_to_process(alpha_map[code]);
 }

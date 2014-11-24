@@ -32,11 +32,9 @@ void stdin_init()
     asm("sti");
 }
 
-char getchar()
+int64_t getchar()
 {
-    char out;
-    while ((out = read(i_pipes[READ])) < 0);
-    return out;
+    return read(i_pipes[READ]);
 }
 
 void putchar(char c)

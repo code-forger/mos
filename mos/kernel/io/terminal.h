@@ -24,7 +24,7 @@ typedef enum color
 } terminal_color;
 
 
- 
+
 uint8_t terminal_make_color(terminal_color text, terminal_color bg);
 uint16_t terminal_make_character(char c, uint8_t color);
 
@@ -39,4 +39,6 @@ void printf(const char* string, ...);
 void terminal_setio(PIPE pipes[2]);
 void terminal_setin(PIPE pipes[2]);
 void terminal_string_for_process(io_part* io);
+void terminal_set_active_input(uint32_t pid);
+uint32_t terminal_get_active_input();
 void terminal_send_to_process(char data);

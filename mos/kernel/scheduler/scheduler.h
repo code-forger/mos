@@ -11,12 +11,14 @@ void scheduler_exec(uint32_t program_number);
 void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp);
 void scheduler_sleep(uint32_t milliseconds);
 void scheduler_pause();
+uint32_t scheduler_get_next_input(uint32_t current);
 
-#define F_INIT   (uint32_t)0b00001
-#define F_DEAD   (uint32_t)0b00010
-#define F_SKIP   (uint32_t)0b00100
-#define F_PAUSED (uint32_t)0b01000
-#define F_WAKE   (uint32_t)0b10000
+#define F_INIT      (uint32_t)0b000001
+#define F_DEAD      (uint32_t)0b000010
+#define F_SKIP      (uint32_t)0b000100
+#define F_PAUSED    (uint32_t)0b001000
+#define F_WAKE      (uint32_t)0b010000
+#define F_HAS_INPUT (uint32_t)0b100000
 
 typedef struct io_part
 {
@@ -34,7 +36,7 @@ typedef struct io_part
 
 typedef struct p_t_entry
 {
-    uint32_t flags; //[..., paused, skip, dead, init]
+    uint32_t flags; //[...has_input, paused, skip, dead, init]
     uint32_t esp;
     uint32_t ebp;
     uint32_t code_physical[8];

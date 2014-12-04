@@ -34,7 +34,15 @@ void main(void)
                         id = fork();
                         if (id==get_pid())
                         {
-                            exec(7);
+                            id = fork();
+                            if (id==get_pid())
+                            {
+                                exec(8);
+                            }
+                            else
+                            {
+                                exec(7);
+                            }
                         }
                         else
                         {
@@ -58,7 +66,7 @@ void main(void)
         }
         else
         {
-            exec(1);
+            for (;;);exec(1);
         }
     }
     for(;;);

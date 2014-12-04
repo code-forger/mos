@@ -57,9 +57,27 @@ static void events()
     {
         if ((event >> 16) == F_WAKE)\
         {
-            process_table[(event&0xFFFF)].flags = 0;
+            process_table[(event&0xFFFF)].flags &= ~(F_PAUSED | F_SKIP);
         }
     }
+}
+
+uint32_t scheduler_get_next_input(uint32_t current_input)
+{
+    uint32_t starting_input = current_input;
+    for (;;)
+    {
+        ++current_input;
+        current_input = (current_input % next_pid);
+        if (current_input == starting_input)
+            break;
+        if (process_table[current_input].flags & F_DEAD)
+            continue;
+        if (!(process_table[current_input].flags & F_HAS_INPUT))
+            continue;
+        break;
+    }
+    return current_input;
 }
 
 void scheduler_time_interupt()
@@ -154,7 +172,7 @@ void scheduler_init()
     paging_map_new_to_virtual(0xc0003000);
 
     process_table = (process_table_entry*)0xc0003000;
-    
+
     program_pointers = paging_get_programs();
 
     process_table[0].flags = 0;

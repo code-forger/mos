@@ -24,16 +24,43 @@ int upper_alpha_map[] = {-1,  -1, '!', '"', '!', '$', '%', '^', '&', '*', '(', '
 #define RSHIFT_DOWN 0x36
 #define LSHIFT_UP 0xAA
 #define RSHIFT_UP 0xB6
+#define LCTRL_DOWN 0x1D
+#define RCTRL_DOWN 0x00
+#define LCTRL_UP 0x9D
+#define RCTRL_UP 0x00
 
 static bool shift = false;
+static bool ctrl = false;
+static bool command = false;
 
 void keyboard_interupt(void)
 {
     uint8_t code = get_byte_from(0x60);
-    if (code > 0 && code < 0x54 && alpha_map[code] != -1)
-        terminal_send_to_process((!shift)?alpha_map[code]:upper_alpha_map[code]);
+    if (command)
+    {
+        command = false;
+        terminal_send_to_process(code);
+    }
+    else if (code > 0 && code < 0x54 && alpha_map[code] != -1)
+        if (ctrl && alpha_map[code] == '\t')
+        {
+            terminal_set_active_input(scheduler_get_next_input(terminal_get_active_input()));
+        }
+        else
+        {
+            terminal_send_to_process((!shift)?alpha_map[code]:upper_alpha_map[code]);
+        }
+    else if (code == 0xE0)
+    {
+        command = true;
+        terminal_send_to_process(code);
+    }
     else if (code == LSHIFT_DOWN || code == RSHIFT_DOWN)
-      shift = true;
+        shift = true;
     else if  (code == LSHIFT_UP || code == RSHIFT_UP)
-      shift = false;
+        shift = false;
+    else if (code == LCTRL_DOWN || code == RCTRL_DOWN)
+        ctrl = true;
+    else if  (code == LCTRL_UP || code == RCTRL_UP)
+        ctrl = false;
 }

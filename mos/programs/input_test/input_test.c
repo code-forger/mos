@@ -76,6 +76,8 @@ void main(void)
     }
     char caret = '%';
     int caret_counter = 0;
+
+    uint32_t state = 0;
     while(1)
     {
         putcharat(caret, cx, cy);
@@ -86,38 +88,81 @@ void main(void)
             if (get > 0)
             {
                 char c = (char)get;
-                if (c == '\b')
+                if (state)
                 {
-                    putcharat(' ', cx, cy);
-                    lines[cy][cx] = ' ';
+                    state = 0;
+                    if (c == (char)0x48)
+                    {
+                        putcharat(lines[cy][cx], cx, cy);
+                        if (--cy == 0)
+                            cy = 1;
+                    }
+                    else if (c == (char)0x50)
+                    {
+                        putcharat(lines[cy][cx], cx, cy);
+                        if (++cy == 22)
+                            cy = 21;
+                    }
+                    else if (c == (char)0x4D)
+                    {
+                        putcharat(lines[cy][cx], cx, cy);
+                        if (++cx == 25)
+                        {
+                            cx = 1;
+                            if (++cy == 22)
+                            {
+                                cy = 21;
+                                cx = 24;
+                            }
+                        }
+                    }
+                    else if (c == (char)0x4B)
+                    {
+                        putcharat(lines[cy][cx], cx, cy);
+                        if (--cx == 0)
+                        {
+                            cx = 24;
+                            if (--cy == 0)
+                                cy = cx = 1;
+                        }
+                    }
+                }
+                else if (c == '\b')
+                {
+                    putcharat(lines[cy][cx] = ' ', cx, cy);
                     if (--cx == 0)
                     {
                         cx = 24;
                         if (--cy == 0)
-                        {
                             cy = cx = 1;
-                        }
                     }
                 }
                 else if (c == '\n')
                 {
-                    putcharat(lines[cy][cx], cx, cy);
+                    cx = 1;
                     if (++cy == 22)
-                    {
                         cy = 21;
-                    }
                 }
                 else if (c == '\t')
                 {
-                    putcharat(lines[cy][cx], cx, cy);
-                    if (--cy == 0)
+                    cx += 4;
+                    if (cx <= 25)
                     {
-                        cy = 1;
+                        cx = 1;
+                        if (++cy == 22)
+                        {
+                            cy = 21;
+                            cx = 24;
+                        }
                     }
                 }
-                else{
-                    putcharat(c, cx, cy);
-                    lines[cy][cx] = c;
+                else if (c == (char)0xE0)
+                {
+                    state = 1;
+                }
+                else
+                {
+                    putcharat(lines[cy][cx] = c, cx, cy);
                     if (++cx == 25)
                     {
                         cx = 1;

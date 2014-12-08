@@ -18,8 +18,8 @@ static uint32_t VGA_HEIGHT = 25;
 
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
-static uint8_t inactive_color = COLOR_DARK_GREY | COLOR_BLACK << 4;
-static uint8_t active_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
+static uint8_t inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
+static uint8_t active_color = COLOR_WHITE | COLOR_BLACK << 4;
 static uint16_t* terminal;
 
 static int32_t active_process = -1;
@@ -58,8 +58,8 @@ void terminal_initialize()
     terminal = paging_get_terminal_buffer();
     current_row = 0;
     currnet_column = 0;
-    inactive_color = COLOR_DARK_GREY | COLOR_BLACK << 4;
-    active_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
+    inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
+    active_color = COLOR_WHITE | COLOR_BLACK << 4;
     VGA_WIDTH = 80;
     VGA_HEIGHT = 25;
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
@@ -238,6 +238,8 @@ void printf(const char* string, ...)
                 terminal_putinthex(va_arg(valist, int));
             if(string[i+1] == 'b')
                 terminal_putintbin(va_arg(valist, int));
+            if(string[i+1] == 's')
+                printf((const char*)va_arg(valist, int));
             i++;
         }
         else

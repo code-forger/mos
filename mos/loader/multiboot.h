@@ -95,7 +95,9 @@ typedef struct multiboot_info
     } u;
     unsigned long mmap_length;
     unsigned long mmap_addr;
-} multiboot_info_t;
+    unsigned long drives_length;
+    unsigned long drives_addr;
+} __attribute__((packed)) multiboot_info_t ;
 
 /* The module structure. */
 typedef struct module
@@ -105,6 +107,17 @@ typedef struct module
     unsigned long string;
     unsigned long reserved;
 } module_t;
+
+typedef struct drive
+{
+    uint32_t size;
+    uint8_t drive_number;
+    uint8_t drive_mode;
+    uint16_t drive_cylinders;
+    uint8_t drive_heads;
+    uint8_t drive_sectors;
+    uint16_t* drive_ports;
+} drive_t;
 
 /* The memory map. Be careful that the offset 0 is base_addr_low
 but no size. */

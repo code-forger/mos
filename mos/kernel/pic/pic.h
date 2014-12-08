@@ -1,3 +1,4 @@
+#pragma once
 #include "../declarations.h"
 
 #define MASTER_PIC 0x20
@@ -6,7 +7,7 @@
 #define MASTER_PIC_1 0x21
 #define SLAVE_PIC_1 0xA1
 
-#define ICW_1 0x11 
+#define ICW_1 0x11
 
 #define ICW_2_M 0x20
 #define ICW_2_S 0x28

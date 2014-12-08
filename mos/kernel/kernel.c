@@ -4,6 +4,9 @@
 #include "scheduler/scheduler.h"
 #include "io/terminal.h"
 #include "IPC/pipe.h"
+#include "io/pci.h"
+#include "io/hdd.h"
+
 void kerror(const char* data)
 {
     printf(data);
@@ -29,6 +32,8 @@ void init_kernel()
     pic_init();
     scheduler_init();
     pipe_init();
+    pci_init();
+    hdd_init();
 
     uint32_t esp, ebp;
 

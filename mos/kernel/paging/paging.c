@@ -13,37 +13,40 @@ pipe_descriptor* paging_get_pipe_table()
     return (pipe_descriptor*)PIPE_TABLE;
 }
 
-idt_info_type* paging_get_idt() 
+idt_info_type* paging_get_idt()
 {
     return (idt_info_type*)(GDT_IDT_PROGRAMS + sizeof(gdt_info_type));
 }
 
-gdt_info_type* paging_get_gdt() 
+gdt_info_type* paging_get_gdt()
 {
     return ((gdt_info_type*)GDT_IDT_PROGRAMS);
 }
 
-memory_map_entry* paging_get_memory_map() 
+memory_map_entry* paging_get_memory_map()
 {
     return (memory_map_entry*)MEMORY_MAP;
 }
 
-Node* paging_get_event_map() 
+Node* paging_get_event_map()
 {
     return (Node*)EVENT_TABLE;
 }
-
-uint8_t* paging_get_memory_free_map() 
+PCI* paging_get_pci_map()
+{
+    return (PCI*)PCI_TABLE;
+}
+uint8_t* paging_get_memory_free_map()
 {
     return (uint8_t*)(uint32_t)(MEMORY_MAP + sizeof(memory_map_entry));
 }
 
-uint16_t* paging_get_terminal_buffer() 
+uint16_t* paging_get_terminal_buffer()
 {
     return(uint16_t*) VGA_BUFFER;
 }
 
-uint32_t* paging_get_programs() 
+uint32_t* paging_get_programs()
 {
     return (uint32_t*)(GDT_IDT_PROGRAMS + sizeof(gdt_info_type) + sizeof(idt_info_type));
 }
@@ -58,7 +61,7 @@ uint32_t* paging_get_program_stack()
     return 0;
 }
 
-uint32_t* paging_get_directory() 
+uint32_t* paging_get_directory()
 {
     return (uint32_t*)DIRECTORY;
 }

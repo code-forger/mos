@@ -7,7 +7,9 @@ union Inode getInodeByName(char* path, char * name);
 union Inode getDirInodeByPath(char* path);
 union Inode getDirChildrenByPath(union Inode inode, char* path);
 
-
+int strcmp(const char* s1, const char* s2);
+int strlen(const char * str);
+char *strcpy(char *dest, const char *src);
 
 int mrfsFormatHdd(int _blockSize, int rootDirSize);
 

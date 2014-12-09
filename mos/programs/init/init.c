@@ -66,7 +66,7 @@ void main(void)
         }
         else
         {
-            for (;;);exec(1);
+            exec(1);
         }
     }
     for(;;);

@@ -1,4 +1,4 @@
-#include "stdio.h"
+ #include "stdio.h"
 #include "pipe.h"
 #include <stdint.h>
 #include <stdarg.h>
@@ -78,7 +78,7 @@ static void putint(uint32_t in)
     for (i--;i >= 0;i--)
         putchar(buff[(length-1)-i]);
 }
- 
+
 static void putinthex(uint32_t in)
 {
     int i, length;
@@ -100,7 +100,7 @@ static void putinthex(uint32_t in)
     for (i--;i >= 0;i--)
         putchar(buff[(length-1)-i]);
 }
- 
+
 static void putintbin(uint32_t in)
 {
     int i, length;
@@ -145,6 +145,8 @@ void printf(const char* string, ...)
                 putinthex(va_arg(valist, int));
             if(string[i+1] == 'b')
                 putintbin(va_arg(valist, int));
+            if(string[i+1] == 's')
+                printf((const char*)va_arg(valist, int));
             i++;
         }
         else

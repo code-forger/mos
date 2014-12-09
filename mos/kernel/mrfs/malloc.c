@@ -47,6 +47,35 @@ void *malloc(size_t bytes) {
     return 0;
 }
 
+void *malloc_for_process(size_t bytes, uint32_t address) {
+    unsigned long tempsize, retaddr;
+    alloc_curr = (alloc_t*)address;
+
+    do { // loop as long as there is a next entry
+        if (bytes + BIALLOC < alloc_curr->size && alloc_curr->used == false) {  // is this free and enough space?
+            tempsize = alloc_curr->size;                      // save the size of the free block in a temporary variable
+
+            alloc_curr->next = (alloc_t *) alloc_curr->address;      // point next to the next list
+            alloc_curr->address = retaddr = alloc_curr->address + BIALLOC;   // before it there comes a new entry for the linked list
+            alloc_curr->size = bytes;                            // put the size in size
+            alloc_curr->used = true;                           // raise the used flag
+
+            alloc_curr = alloc_curr->next;                 // create free space block
+            alloc_curr->address = retaddr + bytes + BIALLOC;                    // and put the space for the linked list before it again..
+            alloc_curr->size = tempsize - bytes - BIALLOC;
+            alloc_curr->used = false;
+
+            heap -= bytes + BIALLOC;                      // substract the used bytes from the heap
+            return (void *) retaddr;                          // return the address
+        }
+
+        alloc_curr = alloc_curr->next;
+    } while (alloc_curr != 0);
+
+    // if we didn't succeed, ask for extra money and try it again
+    return 0;
+}
+
 void init_mem() {
     int realaddr;
 

@@ -1,6 +1,8 @@
 #include "interupts.h"
 #include "../scheduler/scheduler.h"
 #include "../IPC/pipe.h"
+#include "../mrfs/malloc.h"
+#include "../mrfs/mrfs.h"
 
 void  c_int_zero_division(void)
 {
@@ -267,5 +269,19 @@ void  c_pipe_read_syscall(void)
     asm("mov %%edi, %0":"=r"(data):);
     asm("mov %%eax, %0":"=r"(ret):);
     *ret = pipe_read(pipe, data);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_open_syscall(void)
+{
+    char **ret;
+    char *fname;
+    asm("mov %%esi, %0":"=r"(fname):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    char* buff = mrfsReadFile("/", fname);
+    uint32_t len = strlen(buff);
+    *ret =  malloc_for_process(len, 0x80000000);
+    strcpy(*ret, buff);
+    free(buff);
     send_byte_to(MASTER_PIC, 0x20);
 }

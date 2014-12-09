@@ -32,10 +32,12 @@ void main(void)
     lines[9] = l10;
     lines[0] = l11;
     setio(0, 0, 26, 16);
-    for (int line = 0;;line = ++line % 10)
+    printf(file_read("TITLE"));
+
+    /*for (int line = 0;;line = ++line % 10)
     {
         printf(lines[line]);
         sleep(5000);
-    }
+    }*/
     for (;;);
 }

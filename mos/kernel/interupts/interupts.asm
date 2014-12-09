@@ -34,6 +34,7 @@ extern c_scheduler_pause_syscall
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
+extern c_file_open_syscall
 
 global int_zero_division
 global int_debugger
@@ -71,121 +72,122 @@ global scheduler_pause_syscall
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
+global file_open_syscall
 
 int_zero_division:
     pushad
     call c_int_zero_division
     popad
     iret
- 
+
 int_debugger:
     pushad
     call c_int_debugger
     popad
     iret
- 
+
 int_nmi:
     pushad
     call c_int_nmi
     popad
     iret
- 
+
 int_breakpoint:
     pushad
     call c_int_breakpoint
     popad
     iret
- 
+
 int_overflow:
     pushad
     call c_int_overflow
     popad
     iret
- 
+
 int_bounds:
     pushad
     call c_int_bounds
     popad
     iret
- 
+
 int_invalid_opcode:
     pushad
     call c_int_invalid_opcode
     popad
     iret
- 
+
 int_coprocessor_not_available:
     pushad
     call c_int_coprocessor_not_available
     popad
     iret
- 
+
 int_double_fault:
     pushad
     call c_int_double_fault
     popad
     iret
- 
+
 int_coprocessor_segment_overrun:
     pushad
     call c_int_coprocessor_segment_overrun
     popad
     iret
- 
+
 int_invalid_tss:
     pushad
     call c_int_invalid_tss
     popad
     iret
- 
+
 int_segment_not_present:
     pushad
     call c_int_segment_not_present
     popad
     iret
- 
+
 int_stack_fault:
     pushad
     call c_int_stack_fault
     popad
     iret
- 
+
 int_general_protection:
     pushad
     call c_int_general_protection
     popad
     iret
- 
+
 int_page_fault:
     pushad
     call c_int_page_fault
     popad
     iret
- 
+
 int_reserved:
     pushad
     call c_int_reserved
     popad
     iret
- 
+
 int_math_fault:
     pushad
     call c_int_math_fault
     popad
     iret
- 
+
 int_alignment_check:
     pushad
     call c_int_alignment_check
     popad
     iret
- 
+
 int_machine_check:
     pushad
     call c_int_machine_check
     popad
     iret
- 
+
 int_simd_floating_point:
     pushad
     call c_int_simd_floating_point
@@ -285,6 +287,14 @@ pipe_read_syscall:
     cli
     pushad
     call c_pipe_read_syscall
+    popad
+    sti
+    iret
+
+file_open_syscall:
+    cli
+    pushad
+    call c_file_open_syscall
     popad
     sti
     iret

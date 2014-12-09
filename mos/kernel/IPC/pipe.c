@@ -24,6 +24,13 @@ uint32_t pipe_create(uint32_t loc, uint32_t* pipe_head_out, uint32_t* pipe_tail_
     pipe_table[*pipe_head_out].location = loc;
     pipe_table[*pipe_tail_out].location = loc;
 
+    pipe_table[*pipe_head_out].pad = 0xDE;
+    pipe_table[*pipe_tail_out].pad = 0xDE;
+    pipe_table[*pipe_head_out].pad1 = 0xDE;
+    pipe_table[*pipe_tail_out].pad1 = 0xDE;
+    pipe_table[*pipe_head_out].pad2 = 0xDE;
+    pipe_table[*pipe_tail_out].pad2 = 0xDE;
+
 
     pipe_table[*pipe_head_out].mode = PIPE_WRITE;
     pipe_table[*pipe_tail_out].mode = PIPE_READ;

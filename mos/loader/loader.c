@@ -32,8 +32,8 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
         printf(" at %h\n", &info->mods_addr);
         for (uint32_t i = 0; i < info->mods_count; i++)
         {
-            //printf("    at: %h to %h\n", ((module_t*)info->mods_addr)[i].mod_start, ((module_t*)info->mods_addr)[i].mod_end);
-            //printf("  page: %h for %d pages\n", ((module_t*)info->mods_addr)[i].mod_start, (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000 + 1);
+            printf("    at: %h to %h\n", ((module_t*)info->mods_addr)[i].mod_start, ((module_t*)info->mods_addr)[i].mod_end);
+            printf("  page: %h for %d pages\n", ((module_t*)info->mods_addr)[i].mod_start, (((module_t*)info->mods_addr)[i].mod_end - ((module_t*)info->mods_addr)[i].mod_start)/0x1000 + 1);
         }
         kernel_physical = ((module_t*)info->mods_addr)->mod_start;
         kernel_num_pages =  (((module_t*)info->mods_addr)->mod_end - ((module_t*)info->mods_addr)->mod_start)/0x1000 + 1;

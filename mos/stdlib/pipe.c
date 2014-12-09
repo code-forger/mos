@@ -3,7 +3,8 @@
 
 uint32_t pipe(PIPE pipe[2])
 {
-    uint32_t *ppipe = malloc(128);
+    create_heap();
+    uint32_t *ppipe = malloc(256);
     uint32_t pipes[2];
     uint32_t ret;
     asm("int $100"::"S"((uint32_t)ppipe), "D"(&pipes[0]), "d"(&pipes[1]), "a"(&ret):);
@@ -30,4 +31,11 @@ int64_t read(PIPE pipe)
     if(ret != 0)
         return -ret;
     return udata;
+}
+
+char* file_read(char* name)
+{
+    char* ret;
+    asm("int $110"::"S"(name), "a"(&ret):);
+    return ret;
 }

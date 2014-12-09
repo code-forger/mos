@@ -100,7 +100,7 @@ void pci_init()
         }
     }
     return;
-    pci_print_all();
+    //pci_print_all();
 }
 
 void pci_print_all()

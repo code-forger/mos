@@ -100,3 +100,12 @@ struct hdd {
 };
 
 void hdd_init();
+
+
+void hdd_write(uint8_t b);
+uint8_t hdd_read();
+uint32_t hdd_remaining();
+void hdd_reset();
+void hdd_seek(uint32_t index);
+uint32_t hdd_current();
+uint32_t hdd_capacity();

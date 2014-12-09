@@ -6,6 +6,8 @@
 #include "IPC/pipe.h"
 #include "io/pci.h"
 #include "io/hdd.h"
+#include "mrfs/malloc.h"
+#include "mrfs/mrfs.h"
 
 void kerror(const char* data)
 {
@@ -34,6 +36,9 @@ void init_kernel()
     pipe_init();
     pci_init();
     hdd_init();
+    init_mem();
+
+    mrfsFormatHdd(4*1024, 0);
 
     uint32_t esp, ebp;
 
@@ -46,3 +51,4 @@ void init_kernel()
 
     asm("jmp %0"::"r"(0x08048074));
 }
+// 448145

@@ -152,7 +152,7 @@ void  c_int_simd_floating_point(void)
 
 void  c_default_irq(void)
 {
-    printf("DEFAULT_IRQ_HIT!\n");
+    //printf("DEFAULT_IRQ_HIT!\n");
     send_byte_to(MASTER_PIC, 0x20);
 }
 

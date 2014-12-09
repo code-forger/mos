@@ -26,10 +26,11 @@ static int32_t active_process = -1;
 
 static void push_terminal_up()
 {
-    for ( uint32_t y = 0; y < VGA_HEIGHT -1; y++ )
-        for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
+    for ( uint32_t y = 0; y <= VGA_HEIGHT -1; y++ )
+        for ( uint32_t x = 0; x <= VGA_WIDTH; x++ )
             terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
-    current_row--;
+    for (uint32_t x = 0; x <= VGA_WIDTH; x++)
+        terminal[VGA_HEIGHT * VGA_WIDTH + x] = ' ';
 }
 
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
@@ -72,7 +73,7 @@ void terminal_set_color(uint8_t color)
     inactive_color = color;
 }
 
-void terminal_putchar(char c) // for keyboard.c
+void terminal_putchar(char c)
 {
     if (c == '\n')
     {

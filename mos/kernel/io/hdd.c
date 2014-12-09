@@ -7,9 +7,9 @@ static struct hdd drives[4];
 
 static uint8_t ide_buffer[2048] = {0};
 
-static void hdd_write(uint8_t channel, uint8_t reg, uint8_t data) {
+static void hdd_ident_write(uint8_t channel, uint8_t reg, uint8_t data) {
     if (reg > 0x07 && reg < 0x0C)
-        hdd_write(channel, 0x0C, 0x80 | channels[channel].noint);
+        hdd_ident_write(channel, 0x0C, 0x80 | channels[channel].noint);
     if (reg < 0x08)
         send_byte_to(channels[channel].addr  + reg - 0x00, data);
     else if (reg < 0x0C)
@@ -19,14 +19,14 @@ static void hdd_write(uint8_t channel, uint8_t reg, uint8_t data) {
     else if (reg < 0x16)
         send_byte_to(channels[channel].master + reg - 0x0E, data);
     if (reg > 0x07 && reg < 0x0C)
-        hdd_write(channel, 0x0C, channels[channel].noint);
+        hdd_ident_write(channel, 0x0C, channels[channel].noint);
 }
 
-uint8_t hdd_read(uint8_t channel, uint8_t reg)
+uint8_t hdd_ident_read(uint8_t channel, uint8_t reg)
 {
     uint8_t result;
     if (reg > 0x07 && reg < 0x0C)
-        hdd_write(channel, 0x0C, 0x80 | channels[channel].noint);
+        hdd_ident_write(channel, 0x0C, 0x80 | channels[channel].noint);
     if (reg < 0x08)
         result = get_byte_from(channels[channel].addr + reg - 0x00);
     else if (reg < 0x0C)
@@ -36,15 +36,15 @@ uint8_t hdd_read(uint8_t channel, uint8_t reg)
     else if (reg < 0x16)
         result = get_byte_from(channels[channel].master + reg - 0x0E);
     if (reg > 0x07 && reg < 0x0C)
-        hdd_write(channel, 0x0C, channels[channel].noint);
+        hdd_ident_write(channel, 0x0C, channels[channel].noint);
     return result;
 }
 
-void hdd_read_buffer(uint8_t channel, uint8_t reg, uint32_t buffer,
+void hdd_ident_read_buffer(uint8_t channel, uint8_t reg, uint32_t buffer,
                      uint32_t quads) {
    if (reg > 0x07 && reg < 0x0C)
-      hdd_write(channel, 0x0C, 0x80 | channels[channel].noint);
-   asm("pushw %es; movw %ds, %ax; movw %ax, %es");
+      hdd_ident_write(channel, 0x0C, 0x80 | channels[channel].noint);
+   //asm("pushw %es; movw %ds, %ax; movw %ax, %es");
    if (reg < 0x08)
       insl(channels[channel].addr  + reg - 0x00, buffer, quads);
    else if (reg < 0x0C)
@@ -53,19 +53,19 @@ void hdd_read_buffer(uint8_t channel, uint8_t reg, uint32_t buffer,
       insl(channels[channel].ctrl  + reg - 0x0A, buffer, quads);
    else if (reg < 0x16)
       insl(channels[channel].master + reg - 0x0E, buffer, quads);
-   asm("popw %es;");
+   //asm("popw %es;");
    if (reg > 0x07 && reg < 0x0C)
-      hdd_write(channel, 0x0C, channels[channel].noint);
+      hdd_ident_write(channel, 0x0C, channels[channel].noint);
 }
 
 unsigned char hdd_wait(unsigned char channel, unsigned int advanced_check)
 {
     for(int i = 0; i < 4; i++)
-        hdd_read(channel, HDD_REG_ALTSTATUS);
-    while (hdd_read(channel, HDD_REG_STATUS) & HDD_CS_BSY);
+        hdd_ident_read(channel, HDD_REG_ALTSTATUS);
+    while (hdd_ident_read(channel, HDD_REG_STATUS) & HDD_CS_BSY);
     if (advanced_check)
     {
-        unsigned char state = hdd_read(channel, HDD_REG_STATUS);
+        unsigned char state = hdd_ident_read(channel, HDD_REG_STATUS);
         if (state & HDD_CS_ERR)
             return 2;
         if (state & HDD_CS_DF)
@@ -91,9 +91,7 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
     uint16_t cyl, i;
     uint8_t head, sect, err;
 
-    hdd_write(channel, 0x0C, channels[channel].noint = 0x02);
-
-    printf("&\n");
+    hdd_ident_write(channel, 0x0C, channels[channel].noint = 0x02);
 
     if (lba >= 0x10000000)
     {
@@ -131,23 +129,21 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
         head = (lba + 1  - sect) % (16 * 63) / (63);
     }
 
-    printf("%%\n");
-
     if (lba_mode == 0)
-        hdd_write(channel, HDD_REG_HDDEVSEL, 0xA0 | (slavebit << 4) | head);
+        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xA0 | (slavebit << 4) | head);
     else
-        hdd_write(channel, HDD_REG_HDDEVSEL, 0xE0 | (slavebit << 4) | head);
+        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xE0 | (slavebit << 4) | head);
 
     if (lba_mode == 2) {
-        hdd_write(channel, HDD_REG_SECCOUNT1,   0);
-        hdd_write(channel, HDD_REG_LBA3,   lba_io[3]);
-        hdd_write(channel, HDD_REG_LBA4,   lba_io[4]);
-        hdd_write(channel, HDD_REG_LBA5,   lba_io[5]);
+        hdd_ident_write(channel, HDD_REG_SECCOUNT1,   0);
+        hdd_ident_write(channel, HDD_REG_LBA3,   lba_io[3]);
+        hdd_ident_write(channel, HDD_REG_LBA4,   lba_io[4]);
+        hdd_ident_write(channel, HDD_REG_LBA5,   lba_io[5]);
     }
-    hdd_write(channel, HDD_REG_SECCOUNT0,   numsects);
-    hdd_write(channel, HDD_REG_LBA0,   lba_io[0]);
-    hdd_write(channel, HDD_REG_LBA1,   lba_io[1]);
-    hdd_write(channel, HDD_REG_LBA2,   lba_io[2]);
+    hdd_ident_write(channel, HDD_REG_SECCOUNT0,   numsects);
+    hdd_ident_write(channel, HDD_REG_LBA0,   lba_io[0]);
+    hdd_ident_write(channel, HDD_REG_LBA1,   lba_io[1]);
+    hdd_ident_write(channel, HDD_REG_LBA2,   lba_io[2]);
 
     if (lba_mode == 0 && direction == 0) cmd = HDD_CMD_READ_PIO;
     if (lba_mode == 1 && direction == 0) cmd = HDD_CMD_READ_PIO;
@@ -155,9 +151,8 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
     if (lba_mode == 0 && direction == 1) cmd = HDD_CMD_WRITE_PIO;
     if (lba_mode == 1 && direction == 1) cmd = HDD_CMD_WRITE_PIO;
     if (lba_mode == 2 && direction == 1) cmd = HDD_CMD_WRITE_PIO_EXT;
-    hdd_write(channel, HDD_REG_COMMAND, cmd);
+    hdd_ident_write(channel, HDD_REG_COMMAND, cmd);
 
-    printf("!\n");
     if (direction == 0)
     {
         for (i = 0; i < numsects; i++)
@@ -175,39 +170,26 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
     {
         for (i = 0; i < numsects; i++)
         {
-            printf("A\n");
             hdd_wait(channel, 0); // Polling.
-            printf("B\n");
             //asm("pushw %ds");
             //asm("mov %%ax, %%ds"::"a"(selector));
             asm("rep outsw"::"c"(words), "d"(bus), "S"(edi)); // Send Data
             //asm("popw %ds");
-            printf("C\n");
             edi += (words*2);
         }
-        hdd_write(channel, HDD_REG_COMMAND, (char []) {   HDD_CMD_CACHE_FLUSH,
+        hdd_ident_write(channel, HDD_REG_COMMAND, (char []) {   HDD_CMD_CACHE_FLUSH,
         HDD_CMD_CACHE_FLUSH,
         HDD_CMD_CACHE_FLUSH_EXT}[lba_mode]);
         hdd_wait(channel, 0); // Polling.
     }
 
-    printf("*\n");
-
     return 0; // Easy, isn't it?
 }
 
-void hdd_write_byte(uint8_t data, uint32_t loc)
-{
-    uint8_t buffer[512];
+//hdd_ident_read();
 
-    ide_ata_access(0, 1, loc >> 6, 1, 0, (uint32_t)buffer);
-
-    buffer[loc & 0x9FF] = data;
-
-    ide_ata_access(1, 1, loc >> 6, 1, 0, (uint32_t)buffer);
-}
-
-//hdd_read();
+static uint32_t hdd_index;
+static uint32_t hdd_size;
 
 void hdd_init()
 {
@@ -221,8 +203,8 @@ void hdd_init()
     channels[0].master = 0;
     channels[1].master = 8;
 
-    hdd_write(0, 0x0C, 2);
-    hdd_write(1, 0x0C, 2);
+    hdd_ident_write(0, 0x0C, 2);
+    hdd_ident_write(1, 0x0C, 2);
 
     for (uint32_t i = 0; i < 2; i++)
     {
@@ -232,20 +214,20 @@ void hdd_init()
             drives[count].reserved = 0; // Assuming that no drive here.
 
             // (I) Select Drive:
-            hdd_write(i, HDD_REG_HDDEVSEL, 0xA0 | (j << 4)); // Select Drive.
+            hdd_ident_write(i, HDD_REG_HDDEVSEL, 0xA0 | (j << 4)); // Select Drive.
             for(uint32_t sleep; sleep < 1000000; sleep++); // Wait 1ms for drive select to work.
 
             // (II) Send ATA Identify Command:
-            hdd_write(i, HDD_REG_COMMAND, HDD_CMD_IDENTIFY);
+            hdd_ident_write(i, HDD_REG_COMMAND, HDD_CMD_IDENTIFY);
             for(uint32_t sleep; sleep < 1000000; sleep++); // This function should be implemented in your OS. which waits for 1 ms.
             // it is based on System Timer Device Driver.
 
             // (III) Polling:
-            if (hdd_read(i, HDD_REG_STATUS) == 0) continue; // If Status = 0, No Device.
+            if (hdd_ident_read(i, HDD_REG_STATUS) == 0) continue; // If Status = 0, No Device.
 
             while(1)
             {
-                status = hdd_read(i, HDD_REG_STATUS);
+                status = hdd_ident_read(i, HDD_REG_STATUS);
                 if ((status & HDD_CS_ERR)) {err = 1; break;} // If Err, Device is not ATA.
                 if (!(status & HDD_CS_BSY) && (status & HDD_CS_DRQ)) break; // Everything is right.
             }
@@ -254,8 +236,8 @@ void hdd_init()
 
             if (err != 0)
             {
-                uint8_t cl = hdd_read(i, HDD_REG_LBA1);
-                uint8_t ch = hdd_read(i, HDD_REG_LBA2);
+                uint8_t cl = hdd_ident_read(i, HDD_REG_LBA1);
+                uint8_t ch = hdd_ident_read(i, HDD_REG_LBA2);
 
                 if (cl == 0x14 && ch ==0xEB)
                     type = IDE_ATAPI;
@@ -264,12 +246,12 @@ void hdd_init()
                 else
                     continue; // Unknown Type (may not be a device).
 
-                hdd_write(i, HDD_REG_COMMAND, HDD_CMD_IDENTIFY_PACKET);
+                hdd_ident_write(i, HDD_REG_COMMAND, HDD_CMD_IDENTIFY_PACKET);
                 for(uint32_t sleep; sleep < 1000000; sleep++);
             }
 
             // (V) Read Identification Space of the Device:
-            hdd_read_buffer(i, HDD_REG_DATA, (uint32_t) ide_buffer, 128);
+            hdd_ident_read_buffer(i, HDD_REG_DATA, (uint32_t) ide_buffer, 128);
 
             // (VI) Read Device Parameters:
             drives[count].reserved     = 1;
@@ -297,24 +279,65 @@ void hdd_init()
         }
     }
 
-    for (uint32_t i = 0; i < 4; i++)
+    /*for (uint32_t i = 0; i < 4; i++)
     {
         if (drives[i].reserved == 1)
         {
             printf("%d Found %s Drive %dMB - %s\n",
             i ,
-            (const char *[]){"ATA", "ATAPI"}[drives[i].type],         /* Type */
-            drives[i].size / 1024 / 2,               /* Size */
+            (const char *[]){"ATA", "ATAPI"}[drives[i].type],
+            drives[i].size / 1024 / 2,
             drives[i].model);
         }
-    }
+    }*/
 
     //const char * data = "qwerty";
 
-    hdd_write_byte(1, 0);
-    hdd_write_byte(2, 1);
-    hdd_write_byte(3, 2);
-    hdd_write_byte(4, 3);
-    asm("cli");
-    asm("hlt");
+    //printf("DRIVESIZE: %h %d\n", drives[1].size* 512, drives[1].size* 512);
+    hdd_size = drives[1].size * 512;
+    hdd_index = 0;
+}
+
+void hdd_write(uint8_t data)
+{
+    //printf("Writing %d to %d\n", data, hdd_index);
+    uint8_t buffer[512];
+    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
+    //printf("buffer %h read %h indexmask %h index %d rawloc %h\n", buffer, &buffer[hdd_index & 0x1FF], hdd_index & 0x1FF, hdd_index, hdd_index >> 9);
+    buffer[hdd_index & 0x1FF] = data;
+    ide_ata_access(1, 1, hdd_index++ >> 9, 1, 0, (uint32_t)buffer);
+}
+
+uint8_t hdd_read()
+{
+    uint8_t buffer[512];
+    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
+
+    //printf("Reading %d from %d\n", buffer[hdd_index & 0x1FF], hdd_index);
+    return buffer[hdd_index++ & 0x1FF];
+}
+
+uint32_t hdd_remaining()
+{
+    return hdd_size - hdd_index;
+}
+
+void hdd_reset()
+{
+    hdd_index = 0;
+}
+
+void hdd_seek(uint32_t index)
+{
+    hdd_index = index;
+}
+
+uint32_t hdd_current()
+{
+    return hdd_index;
+}
+
+uint32_t hdd_capacity()
+{
+    return hdd_size;
 }

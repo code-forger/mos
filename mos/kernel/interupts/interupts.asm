@@ -34,7 +34,8 @@ extern c_scheduler_pause_syscall
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
-extern c_file_open_syscall
+extern c_file_read_syscall
+extern c_file_write_syscall
 
 global int_zero_division
 global int_debugger
@@ -72,7 +73,8 @@ global scheduler_pause_syscall
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
-global file_open_syscall
+global file_read_syscall
+global file_write_syscall
 
 int_zero_division:
     pushad
@@ -291,10 +293,18 @@ pipe_read_syscall:
     sti
     iret
 
-file_open_syscall:
+file_read_syscall:
     cli
     pushad
-    call c_file_open_syscall
+    call c_file_read_syscall
+    popad
+    sti
+    iret
+
+file_write_syscall:
+    cli
+    pushad
+    call c_file_write_syscall
     popad
     sti
     iret

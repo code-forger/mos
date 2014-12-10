@@ -4,6 +4,7 @@
 asm(".global _start");
 asm("_start:");
 asm("    sti");
+asm("    call create_heap");
 asm("    call main");
 
 uint8_t get_byte_from(uint32_t port_num)

@@ -62,4 +62,5 @@ void scheduler_pause_syscall(void);
 void pipe_pipe_syscall(void);
 void pipe_write_syscall(void);
 void pipe_read_syscall(void);
-void file_open_syscall(void);
+void file_read_syscall(void);
+void file_write_syscall(void);

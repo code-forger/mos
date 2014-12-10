@@ -4,6 +4,7 @@
 asm(".global _start");
 asm("_start:");
 asm("    sti");
+asm("    call create_heap");
 asm("    call main");
 
 void main(void)
@@ -24,7 +25,7 @@ void main(void)
     for(int i=1; i<fieldH; i++) {
         putcharat('#', 0, i);
         putcharat('#', fieldW, i);
-    }    
+    }
 
     for (;;)
     {

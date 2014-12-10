@@ -272,7 +272,7 @@ void  c_pipe_read_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
-void  c_file_open_syscall(void)
+void  c_file_read_syscall(void)
 {
     char **ret;
     char *fname;
@@ -283,5 +283,20 @@ void  c_file_open_syscall(void)
     *ret =  malloc_for_process(len, 0x80000000);
     strcpy(*ret, buff);
     free(buff);
+    init_mem();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_write_syscall(void)
+{
+    uint32_t *ret;
+    char *fname, *data;
+    asm("mov %%esi, %0":"=r"(fname):);
+    asm("mov %%edi, %0":"=r"(data):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    mrfsDeleteFile("/", fname);
+    strlen(data);
+    *ret = mrfsNewFile("/", fname, data, strlen(data));
+    init_mem();
     send_byte_to(MASTER_PIC, 0x20);
 }

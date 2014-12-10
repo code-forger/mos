@@ -6,6 +6,7 @@
 asm(".global _start");
 asm("_start:");
 asm("    sti");
+asm("    call create_heap");
 asm("    call main");
 
 
@@ -16,15 +17,18 @@ int64_t read(PIPE pipe);*/
 
 void main(void)
 {
+    setio(27, 1, 25, 23);
+    stdin_init();
+
     char* l1  = "*----------Notes---------*";
     char* l2  = "|                        |";
-    char* l3  = "| TODO: file systems     |";
-    char* l4  = "|     : process manage.. |";
-    char* l5  = "|     : port python      |";
+    char* l3  = "|                        |";
+    char* l4  = "|                        |";
+    char* l5  = "|                        |";
     char* l6  = "|                        |";
     char* l7  = "|                        |";
     char* l8  = "|                        |";
-    char* l9  = "| Shopping:              |";
+    char* l9  = "|                        |";
     char* l10 = "|                        |";
     char* l11 = "|                        |";
     char* l12 = "|                        |";
@@ -64,24 +68,52 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
-    setio(27, 1, 25, 23);
-    stdin_init();
-
-    int cx=12, cy=8;
 
     for (int i = 0; i < 23; i++)
     {
         printf(lines[i]);
         sleep(1);
     }
+
+    char *file = file_read("Notes");
+    if (file[0] == '\0')
+    {
+        free(file);
+        file = malloc(23*21 + 2);
+        for(int i = 0; i < 23*21; i++)
+        {
+            file[i] = ' ';
+        }
+        file[23*21+1] = '\0';
+        file[23*21+1] = '!';
+
+    }
+    else
+    {
+        char *fold = file;
+        file = malloc(23*21 + 2);
+        for(int i = 0; i < 23*21; i++)
+        {
+            file[i] = fold[i];
+        }
+        file[23*21+1] = '\0';
+        file[23*21+1] = '!';
+        free(fold);
+    }
+    for(int i = 0; i < strlen(file); i++)
+    {
+        putcharat(file[i], i%24+1, i/24+1);
+    }
+
+    int caret_loc = 24;
     char caret = '%';
     int caret_counter = 0;
 
     uint32_t state = 0;
     while(1)
     {
-        putcharat(caret, cx, cy);
-        if ((caret_counter = (caret_counter + 1) % 15) == 0) { if (caret == '%') caret = lines[cy][cx]; else caret = '%'; }
+        putcharat(caret, caret_loc%24+1, caret_loc/24+1);
+        if ((caret_counter = (caret_counter + 1) % 15) == 0) { if (caret == '%') caret = file[caret_loc]; else caret = '%'; }
         for (int i = 0; i < 100; i++)
         {
             int64_t get = getchar();
@@ -93,68 +125,40 @@ void main(void)
                     state = 0;
                     if (c == (char)0x48)
                     {
-                        putcharat(lines[cy][cx], cx, cy);
-                        if (--cy == 0)
-                            cy = 1;
+                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                        if ((caret_loc -= 24) < 0)
+                            caret_loc = 0;
                     }
                     else if (c == (char)0x50)
                     {
-                        putcharat(lines[cy][cx], cx, cy);
-                        if (++cy == 22)
-                            cy = 21;
+                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                        if ((caret_loc += 24) >= 21*24-1)
+                            caret_loc = 21*24-1;
                     }
                     else if (c == (char)0x4D)
                     {
-                        putcharat(lines[cy][cx], cx, cy);
-                        if (++cx == 25)
-                        {
-                            cx = 1;
-                            if (++cy == 22)
-                            {
-                                cy = 21;
-                                cx = 24;
-                            }
-                        }
+                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                        if ((caret_loc++) >= 21*24-1)
+                            caret_loc = 21*24-1;
                     }
                     else if (c == (char)0x4B)
                     {
-                        putcharat(lines[cy][cx], cx, cy);
-                        if (--cx == 0)
-                        {
-                            cx = 24;
-                            if (--cy == 0)
-                                cy = cx = 1;
-                        }
+                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                        if ((caret_loc--) <= 0)
+                            caret_loc = 0;
                     }
                 }
                 else if (c == '\b')
                 {
-                    putcharat(lines[cy][cx] = ' ', cx, cy);
-                    if (--cx == 0)
-                    {
-                        cx = 24;
-                        if (--cy == 0)
-                            cy = cx = 1;
-                    }
+                    putcharat(file[caret_loc] = ' ', caret_loc%24+1, caret_loc/24+1);
+                    file_write("Notes", file);
+                    if ((caret_loc--) <= 0)
+                        caret_loc = 0;
                 }
                 else if (c == '\n')
                 {
-                    cx = 1;
-                    if (++cy == 22)
-                        cy = 21;
-                }
-                else if (c == '\t')
-                {
-                    cx += 4;
-                    if (cx <= 25)
-                    {
-                        cx = 1;
-                        if (++cy == 22)
-                        {
-                            cy = 21;
-                            cx = 24;
-                        }
-                    }
+                    if ((caret_loc = (caret_loc + 24) - (caret_loc + 24) % 24) > 21*24-1)
+                        caret_loc = 21*24-1;
                 }
                 else if (c == (char)0xE0)
                 {
@@ -162,16 +166,10 @@ void main(void)
                 }
                 else
                 {
-                    putcharat(lines[cy][cx] = c, cx, cy);
-                    if (++cx == 25)
-                    {
-                        cx = 1;
-                        if (++cy == 22)
-                        {
-                            cy = 21;
-                            cx = 24;
-                        }
-                    }
+                    putcharat(file[caret_loc] = c, caret_loc%24+1, caret_loc/24+1);
+                    file_write("Notes", file);
+                    if ((caret_loc++) >= 21*24-1)
+                        caret_loc = 21*24-1;
                 }
             }
         }

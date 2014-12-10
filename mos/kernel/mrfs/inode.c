@@ -61,7 +61,9 @@ void inodeRemoveEntry(union Inode* nodeOut, int entryIn)
 
 char* inodeGetName(union Inode nodeIn)
 {
+
     char* block = blockRead(nodeIn.node.nameblock);
+
     union int_char length;
 
     for (int i = 0; i < 4; i++)

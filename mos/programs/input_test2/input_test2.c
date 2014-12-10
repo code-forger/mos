@@ -6,6 +6,7 @@
 asm(".global _start");
 asm("_start:");
 asm("    sti");
+asm("    call create_heap");
 asm("    call main");
 
 
@@ -64,10 +65,10 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
-    setio(60, 0, 5, 1);
+    setio(55, 0, 20, 5);
     stdin_init();
 
-    putchar('!');
+    printf("Multi input demo\n");
 
     while(1)
     {

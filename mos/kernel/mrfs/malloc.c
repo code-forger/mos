@@ -43,7 +43,9 @@ void *malloc(size_t bytes) {
         alloc_curr = alloc_curr->next;
     } while (alloc_curr != 0);
 
-    // if we didn't succeed, ask for extra money and try it again
+    printf("CRITICAL ERROR\n");
+    printf("CRITICAL ERROR\n");
+    printf("CRITICAL ERROR\n");
     return 0;
 }
 
@@ -92,6 +94,7 @@ void init_mem() {
 
 
 void free(void *address) {
+    return;
     alloc_curr = alloc_top;
     unsigned long addr_deep, bAddr_deep2;
     alloc_t *alloc_curr2;

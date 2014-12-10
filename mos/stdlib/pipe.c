@@ -3,7 +3,6 @@
 
 uint32_t pipe(PIPE pipe[2])
 {
-    create_heap();
     uint32_t *ppipe = malloc(256);
     uint32_t pipes[2];
     uint32_t ret;
@@ -37,5 +36,12 @@ char* file_read(char* name)
 {
     char* ret;
     asm("int $110"::"S"(name), "a"(&ret):);
+    return ret;
+}
+
+uint32_t file_write(char* name, char* data)
+{
+    uint32_t ret;
+    asm("int $111"::"S"(name), "D"(data), "a"(&ret):);
     return ret;
 }

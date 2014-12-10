@@ -93,9 +93,7 @@ union Inode getInodeByName(char* path, char * namein)
 
     for (int i = 0; i < dirinode.node.size; i++)
     {
-
         union Inode inode = inodeRead(pointers[i]);
-
 
         char* name = inodeGetName(inode);
 
@@ -108,6 +106,7 @@ union Inode getInodeByName(char* path, char * namein)
         free(name);
     }
     free(pointers);
+
 
     union Inode retnode;
     retnode.node.info.exists = 0;
@@ -164,6 +163,14 @@ int mrfsFormatHdd(int _blockSize, int rootDirSize)
         if(inodeWrite(&inode))
             return DISKSIZETOOSMALL;
     }
+
+    /*printf("SuperBlock: %d %d %d %d %d %d %d\n", sb.data.magic_number,
+                                                 sb.data.freelistreserverd,
+                                                 sb.data.inodefreereserverd,
+                                                 sb.data.inodereserverd,
+                                                 sb.data.blockSize,
+                                                 sb.data.rootReserverd,
+                                                 sb.data.disksize);*/
     return 0;
 }
 

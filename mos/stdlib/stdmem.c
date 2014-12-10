@@ -15,8 +15,8 @@ typedef struct _alloc_t alloc_t;
 alloc_t *alloc_curr;
 alloc_t *alloc_top;
 
-int heap = 0;
-int guard = 0;
+int heap;
+int guard;
 
 
 void *malloc(uint32_t bytes) {
@@ -49,19 +49,15 @@ void *malloc(uint32_t bytes) {
 }
 
 void create_heap() {
-    if (guard == 0)
-    {
-        guard++;
-        int realaddr;
+    int realaddr;
 
-        realaddr = 0x80000000;               // convert the page address to bytes
-        alloc_curr = alloc_top = (alloc_t *) realaddr;
-        alloc_curr->address = realaddr + BIALLOC;        // put the address of the new free block in address
-        alloc_curr->size = 0x1000;        // put the size of it in size
-        alloc_curr->used = false;                        // it is free space, so make used false
+    realaddr = 0x80000000;               // convert the page address to bytes
+    alloc_curr = alloc_top = (alloc_t *) realaddr;
+    alloc_curr->address = realaddr + BIALLOC;        // put the address of the new free block in address
+    alloc_curr->size = 0x1000;        // put the size of it in size
+    alloc_curr->used = false;                        // it is free space, so make used false
 
-        heap += alloc_curr->size;                        // add the new space to heap
-    }
+    heap += alloc_curr->size;                        // add the new space to heap
 }
 
 

@@ -100,6 +100,7 @@ void main(void)
         file[23*21+1] = '!';
         free(fold);
     }
+
     for(int i = 0; i < strlen(file); i++)
     {
         putcharat(file[i], i%24+1, i/24+1);

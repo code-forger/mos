@@ -21,6 +21,12 @@ static uint32_t currnet_column = 0;
 static uint8_t inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
 static uint8_t active_color = COLOR_WHITE | COLOR_BLACK << 4;
 static uint16_t* terminal;
+static uint16_t* process_terminal;
+static uint16_t* kernel_terminal;
+static uint32_t context;
+
+#define KERNEL_CONTEXT 1
+#define PROCESS_CONTEXT 0
 
 static int32_t active_process = -1;
 
@@ -28,35 +34,37 @@ static void push_terminal_up()
 {
     for ( uint32_t y = 0; y <= VGA_HEIGHT -1; y++ )
         for ( uint32_t x = 0; x <= VGA_WIDTH; x++ )
-            terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
+            kernel_terminal[y * VGA_WIDTH + x] = kernel_terminal[(y + 1) * VGA_WIDTH + x];
     for (uint32_t x = 0; x <= VGA_WIDTH; x++)
-        terminal[VGA_HEIGHT * VGA_WIDTH + x] = ' ';
+        kernel_terminal[VGA_HEIGHT * VGA_WIDTH + x] = ' ';
 }
 
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 {
     for (uint32_t y = py; y < (py + wy); y++ )
         for (uint32_t x = px; x <= (px + wx); x++ )
-            terminal[y * VGA_WIDTH + x] = terminal[(y + 1) * VGA_WIDTH + x];
+            process_terminal[y * VGA_WIDTH + x] = process_terminal[(y + 1) * VGA_WIDTH + x];
     for (uint32_t x = px; x <= (px + wx); x++)
-        terminal[(py + wy) * VGA_WIDTH + x] = ' ';
+        process_terminal[(py + wy) * VGA_WIDTH + x] = ' ';
 }
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
-    terminal[y * VGA_WIDTH + x] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+    kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
 void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(scheduler_get_pid());
-    if (x <= ptb.io.wx && y <= ptb.io.wy)
-        terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+    //if (x <= ptb.io.wx && y <= ptb.io.wy)
+        process_terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
 void terminal_initialize()
 {
-    terminal = paging_get_terminal_buffer();
+    process_terminal = terminal = paging_get_terminal_buffer();
+    kernel_terminal = paging_get_kernel_terminal_buffer();
+    context = PROCESS_CONTEXT;
     current_row = 0;
     currnet_column = 0;
     inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
@@ -66,6 +74,31 @@ void terminal_initialize()
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
+}
+
+void terminal_switch_context(uint32_t target)
+{
+    switch(target)
+    {
+    case PROCESS_CONTEXT:
+        if (context == PROCESS_CONTEXT)
+            break;
+        kernel_terminal = paging_get_kernel_terminal_buffer();
+        paging_copy_virtual_to_virtual((uint32_t)terminal, (uint32_t)kernel_terminal);
+        paging_copy_virtual_to_virtual((uint32_t)process_terminal, (uint32_t)terminal);
+        process_terminal = terminal;
+        context = PROCESS_CONTEXT;
+        break;
+    default:
+        if (context == KERNEL_CONTEXT)
+            break;
+
+        process_terminal = paging_get_process_terminal_buffer();
+        paging_copy_virtual_to_virtual((uint32_t)terminal, (uint32_t)process_terminal);
+        paging_copy_virtual_to_virtual((uint32_t)kernel_terminal, (uint32_t)terminal);
+        kernel_terminal = terminal;
+        context = KERNEL_CONTEXT;
+    }
 }
 
 void terminal_set_color(uint8_t color)
@@ -115,7 +148,6 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
     while(pipe_read(io->outpipe, &uc) == 0)
     {
         c = (char)uc;
-        //printf("putting char %c at %d %d   \n", c, io->column + io->py, io->row + io->px);
 
         if (c == '\n')
         {
@@ -128,8 +160,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
         }
         else
         {
-            //printf("NOW\n");
-            terminal_putchar_at(c, io->column + io->px, io->row + io->py);
+            terminal_putchar_at_for_process(c, io->column, io->row);
             if ( ++io->column == io->wx + 1)
             {
                 io->column = 0;
@@ -281,8 +312,8 @@ void terminal_set_active_input(uint32_t pid)
     {
         for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
         {
-            char c = terminal[y* VGA_WIDTH + x];
-            terminal[y * VGA_WIDTH + x] = terminal_make_character(c, inactive_color);
+            char c = process_terminal[y* VGA_WIDTH + x];
+            process_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, inactive_color);
         }
     }
     active_process = pid;
@@ -292,8 +323,8 @@ void terminal_set_active_input(uint32_t pid)
     {
         for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
         {
-            char c = terminal[y * VGA_WIDTH + x];
-            terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
+            char c = process_terminal[y * VGA_WIDTH + x];
+            process_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
         }
     }
 }

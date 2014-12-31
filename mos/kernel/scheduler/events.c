@@ -49,7 +49,6 @@ void events_init()
 {
     events = NULL;
 
-    paging_map_new_to_virtual(0xc0006000);
     free_list = paging_get_event_map();
 
     for(uint32_t i = 0; i < 0x1000/sizeof(Node); i++)

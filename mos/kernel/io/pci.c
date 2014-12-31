@@ -70,8 +70,6 @@ void pci_print_pci(PCI pci)
 
 void pci_init()
 {
-
-    paging_map_new_to_virtual(0xc0007000);
     devices = paging_get_pci_map();
 
     device_count = 0;

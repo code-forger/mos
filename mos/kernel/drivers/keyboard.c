@@ -28,6 +28,8 @@ int upper_alpha_map[] = {-1,  -1, '!', '"', '!', '$', '%', '^', '&', '*', '(', '
 #define RCTRL_DOWN 0x00
 #define LCTRL_UP 0x9D
 #define RCTRL_UP 0x00
+#define F1_DOWN 0x3B
+#define F2_DOWN 0x3C
 
 static bool shift = false;
 static bool ctrl = false;
@@ -63,4 +65,8 @@ void keyboard_interupt(void)
         ctrl = true;
     else if  (code == LCTRL_UP || code == RCTRL_UP)
         ctrl = false;
+    else if (code == F1_DOWN)
+        terminal_switch_context(0);
+    else if (code == F2_DOWN)
+        terminal_switch_context(1);
 }

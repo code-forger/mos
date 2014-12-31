@@ -42,3 +42,4 @@ void terminal_string_for_process(io_part* io);
 void terminal_set_active_input(uint32_t pid);
 uint32_t terminal_get_active_input();
 void terminal_send_to_process(char data);
+void terminal_switch_context(uint32_t target);

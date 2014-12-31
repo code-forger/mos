@@ -9,7 +9,6 @@ static pipe_descriptor *pipe_table;
 void pipe_init()
 {
     next_pipe = 0;
-    paging_map_new_to_virtual(PIPE_TABLE);
     pipe_table = paging_get_pipe_table();
 }
 

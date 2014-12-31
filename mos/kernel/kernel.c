@@ -8,6 +8,7 @@
 #include "io/hdd.h"
 #include "mrfs/malloc.h"
 #include "mrfs/mrfs.h"
+#include "paging/paging.h"
 
 void kerror(const char* data)
 {
@@ -28,6 +29,7 @@ void init_kernel()
     uint32_t* directory = (uint32_t*)0xfffff000;
     directory[0] = 0 | R_W_NP;
     memory_init();
+    paging_init();
     terminal_initialize();
     gdt_init();
     idt_init();

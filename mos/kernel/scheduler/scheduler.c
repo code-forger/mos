@@ -169,9 +169,8 @@ void scheduler_init()
     current_pid = 0;
     next_pid = 1;
 
-    paging_map_new_to_virtual(0xc0003000);
-
-    process_table = (process_table_entry*)0xc0003000;
+    process_table = paging_get_process_table();
+    printf("process table is %h\n", process_table);
 
     program_pointers = paging_get_programs();
 

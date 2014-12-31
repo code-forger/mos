@@ -81,9 +81,7 @@ void *malloc_for_process(size_t bytes, uint32_t address) {
 void init_mem() {
     int realaddr;
 
-    paging_map_new_to_virtual(0xc0008000);
-
-    realaddr = 0xC0008000;               // convert the page address to bytes
+    realaddr = KERNEL_HEAP;               // convert the page address to bytes
     alloc_curr = alloc_top = (alloc_t *) realaddr;
     alloc_curr->address = realaddr + BIALLOC;        // put the address of the new free block in address
     alloc_curr->size = 0x1000;        // put the size of it in size

@@ -13,6 +13,11 @@ pipe_descriptor* paging_get_pipe_table()
     return (pipe_descriptor*)PIPE_TABLE;
 }
 
+process_table_entry* paging_get_process_table()
+{
+    return (process_table_entry*)PROCESS_TABLE;
+}
+
 idt_info_type* paging_get_idt()
 {
     return (idt_info_type*)(GDT_IDT_PROGRAMS + sizeof(gdt_info_type));
@@ -36,6 +41,7 @@ PCI* paging_get_pci_map()
 {
     return (PCI*)PCI_TABLE;
 }
+
 uint8_t* paging_get_memory_free_map()
 {
     return (uint8_t*)(uint32_t)(MEMORY_MAP + sizeof(memory_map_entry));
@@ -46,19 +52,19 @@ uint16_t* paging_get_terminal_buffer()
     return(uint16_t*) VGA_BUFFER;
 }
 
+uint16_t* paging_get_process_terminal_buffer()
+{
+    return(uint16_t*) VGA_PROCESS_BUFFER;
+}
+
+uint16_t* paging_get_kernel_terminal_buffer()
+{
+    return(uint16_t*) VGA_KERNEL_BUFFER;
+}
+
 uint32_t* paging_get_programs()
 {
     return (uint32_t*)(GDT_IDT_PROGRAMS + sizeof(gdt_info_type) + sizeof(idt_info_type));
-}
-
-uint32_t* paging_get_program_base()
-{
-    return 0;
-}
-
-uint32_t* paging_get_program_stack()
-{
-    return 0;
 }
 
 uint32_t* paging_get_directory()
@@ -129,4 +135,15 @@ void paging_copy_virtual_to_virtual(uint32_t source, uint32_t target)
     {
         ((uint32_t*)target)[i] = ((uint32_t*)source)[i];
     }
+}
+
+void paging_init()
+{
+    paging_map_new_to_virtual(KERNEL_HEAP);
+    paging_map_new_to_virtual(PCI_TABLE);
+    paging_map_new_to_virtual(EVENT_TABLE);
+    paging_map_new_to_virtual(PIPE_TABLE);
+    paging_map_new_to_virtual(PROCESS_TABLE);
+    paging_map_new_to_virtual(VGA_PROCESS_BUFFER);
+    paging_map_new_to_virtual(VGA_KERNEL_BUFFER);
 }

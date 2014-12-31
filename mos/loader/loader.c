@@ -85,7 +85,7 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     for (uint32_t i = 0; i < 1024; i++) // identity map lower memory (so the loader doesnt page fault imediately.)
         page_table[i] = ((i * 4096) & 0xfffff000) | R_W_P;
     uint32_t* kernel_code_page_table = (uint32_t*)get_free_page_and_allocate();
-    for (uint32_t address = kernel_physical, i = 0; i < kernel_num_pages; i++, address += 0x1000) // map the kernel to live at 0xc0000000
+    for (uint32_t address = kernel_physical, i = 0; i < kernel_num_pages; i++, address += 0x1000) // map the kernel to live at 0xc0400000
         kernel_code_page_table[i] = ( (address + 0x1000) & 0xfffff000) | R_W_P;
 
     uint32_t* kernel_meta_page_table = (uint32_t*)get_free_page_and_allocate(); // memory managemnt, gdt, idt

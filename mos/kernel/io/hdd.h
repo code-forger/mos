@@ -1,5 +1,6 @@
 #pragma once
 #include "../declarations.h"
+#include "../paging/paging.h"
 
 #define HDD_CS_ERR     0x01
 #define HDD_CS_IDX     0x02
@@ -87,6 +88,24 @@ struct channel {
    uint8_t  noint;
 };
 
+struct block_meta
+{
+   uint32_t cache;
+   uint32_t dirty;
+};
+
+struct block
+{
+   uint8_t data[512];
+};
+
+typedef struct block_table_type
+{
+    struct block_meta blocks[31];
+    struct block_meta padding[33];
+    struct block      block[31];
+} block_table_type;
+
 struct hdd {
    uint8_t  reserved;    // 0 (Empty) or 1 (This Drive really exists).
    uint8_t  channel;     // 0 (Primary Channel) or 1 (Secondary Channel).
@@ -109,3 +128,4 @@ void hdd_reset();
 void hdd_seek(uint32_t index);
 uint32_t hdd_current();
 uint32_t hdd_capacity();
+void hdd_write_cache();

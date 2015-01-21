@@ -2,9 +2,6 @@
 #include "stdmem.h"
 #include <stdint.h>
 
-
-//static process_table_entry* process_table = (process_table_entry*)0c0003000;
-
 uint32_t get_pid()
 {
     asm("cli");

@@ -9,6 +9,7 @@
 #include "mrfs/malloc.h"
 #include "mrfs/mrfs.h"
 #include "paging/paging.h"
+#include "io/hdd.h"
 
 void kerror(const char* data)
 {
@@ -41,6 +42,7 @@ void init_kernel()
     init_mem();
 
     mrfsFormatHdd(4*1024, 0);
+    hdd_write_cache();
 
     uint32_t esp, ebp;
 

@@ -190,9 +190,27 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
 
 static uint32_t hdd_index;
 static uint32_t hdd_size;
+static block_table_type* block_table;
 
 void hdd_init()
 {
+    /*printf("ATTEMPTING TO MAP TABLE\n");
+    paging_map_new_page_table(302);
+    printf("MAPPED TABLE\n");*/
+    for(uint32_t i = 0; i < 4; i++)
+    {
+        //printf("ATTEMPTING TO MAP PAGE %h\n", 0xC0800000 + 0x1000*i);
+        paging_map_new_to_virtual(0xC00C0000 + 0x1000*i);
+        //printf("MAPPED PAGE\n");
+    }
+
+    block_table = (block_table_type*)0xC00C0000;
+
+    for(uint32_t i = 0; i < 31; i++)
+    {
+        block_table->blocks[i].cache = 256;
+        block_table->blocks[i].dirty = 256;
+    }
 
     int count = 0;
 
@@ -298,23 +316,104 @@ void hdd_init()
     hdd_index = 0;
 }
 
+static uint8_t* find_cached_block(uint32_t dirty)
+{
+    for (uint32_t i = 0; i < 31; i++)
+    {
+        if ((hdd_index >> 9) == block_table->blocks[i].cache)
+        {
+            if (block_table->blocks[i].dirty == 0)
+                block_table->blocks[i].dirty = dirty;
+            return block_table->block[i].data;
+        }
+    }
+    return (uint8_t*)0;
+}
+
+void purge_cache()
+{
+    printf("[HDD] - Purging Cache\n");
+    for(uint32_t i = 0; i < 31; i++)
+    {
+        block_table->blocks[i].cache = 256;
+        block_table->blocks[i].dirty = 256;
+    }
+}
+
+void hdd_write_cache()
+{
+    //printf("[HDD] - Writing Cache\n");
+    for(uint32_t i = 0; i < 31; i++)
+    {
+        if (block_table->blocks[i].dirty == 1)
+        {
+            printf("[HDD] - Writing Cache: %h to %h from %h\n", i, block_table->blocks[i].cache, (uint32_t)block_table->block[i].data);
+            ide_ata_access(1, 1, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
+            block_table->blocks[i].dirty = 0;
+        }
+    }
+}
+
+static uint8_t* find_free_block(uint32_t dirty)
+{
+    for (uint32_t i = 0; i < 31; i++)
+    {
+        if (256 == block_table->blocks[i].cache)
+        {
+            block_table->blocks[i].cache = (hdd_index >> 9);
+            block_table->blocks[i].dirty = dirty;
+
+            return block_table->block[i].data;
+        }
+    }
+
+    hdd_write_cache();
+
+    purge_cache();
+
+    return find_free_block(dirty);
+}
+
+static uint8_t* request_write()
+{
+    uint8_t* buffer;
+
+    if ((buffer = find_cached_block(1)))
+    {
+        return buffer;
+    }
+
+    buffer = find_free_block(1);
+
+    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
+
+    return buffer;
+}
+
 void hdd_write(uint8_t data)
 {
-    //printf("Writing %d to %d\n", data, hdd_index);
-    uint8_t buffer[512];
+    request_write()[hdd_index++ & 0x1FF] = data;
+}
+
+static uint8_t* request_read()
+{
+    uint8_t* buffer;
+
+    if ((buffer = find_cached_block(0)))
+    {
+        return buffer;
+    }
+
+    buffer = find_free_block(0);
+
     ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
-    //printf("buffer %h read %h indexmask %h index %d rawloc %h\n", buffer, &buffer[hdd_index & 0x1FF], hdd_index & 0x1FF, hdd_index, hdd_index >> 9);
-    buffer[hdd_index & 0x1FF] = data;
-    ide_ata_access(1, 1, hdd_index++ >> 9, 1, 0, (uint32_t)buffer);
+
+    return buffer;
 }
 
 uint8_t hdd_read()
 {
-    uint8_t buffer[512];
-    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
-
-    //printf("Reading %d from %d\n", buffer[hdd_index & 0x1FF], hdd_index);
-    return buffer[hdd_index++ & 0x1FF];
+    return request_read()[hdd_index++ & 0x1FF];
 }
 
 uint32_t hdd_remaining()

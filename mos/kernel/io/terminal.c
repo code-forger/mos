@@ -74,6 +74,7 @@ void terminal_initialize()
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
+    //terminal_switch_context(KERNEL_CONTEXT);
 }
 
 void terminal_switch_context(uint32_t target)

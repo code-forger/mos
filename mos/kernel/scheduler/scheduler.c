@@ -3,6 +3,7 @@
 #include "../init/gdt.h"
 #include "../paging/paging.h"
 #include "events.h"
+#include "../io/hdd.h"
 
 static uint32_t current_pid;
 static uint32_t starting_pid;
@@ -91,6 +92,7 @@ void scheduler_time_interupt()
 
     if (process_table[current_pid].io.outpipe != 0)
         terminal_string_for_process(&process_table[current_pid].io);
+    hdd_write_cache();
 
     events();
 
@@ -170,7 +172,6 @@ void scheduler_init()
     next_pid = 1;
 
     process_table = paging_get_process_table();
-    printf("process table is %h\n", process_table);
 
     program_pointers = paging_get_programs();
 

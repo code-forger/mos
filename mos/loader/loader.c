@@ -97,7 +97,6 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     kernel_stack_page_table[0x3ff] = ( get_free_page_and_allocate() & 0xfffff000) | R_W_P;
 
 
-
     directory[0] = (((uint32_t)page_table & 0xfffff000) | R_W_P);
     directory[0x300] = (((uint32_t)kernel_meta_page_table & 0xfffff000) | R_W_P);
     directory[0x301] = (((uint32_t)kernel_code_page_table & 0xfffff000) | R_W_P);

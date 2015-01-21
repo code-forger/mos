@@ -9,3 +9,5 @@ void setio(int px, int py, int wx, int wy);
 void putchar(char c);
 void putcharat(char c, uint32_t xin, uint32_t yin);
 int strlen(const char * str);
+
+int atoi(const char* s);

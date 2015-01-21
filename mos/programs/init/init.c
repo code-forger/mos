@@ -9,7 +9,45 @@ asm("    call main");
 
 void main(void)
 {
-    const char* a = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    char *file = file_read("init-files");
+    int entries = 0;
+
+    for (int i = 0;;i++)
+    {
+        if (file[i] == '\n')
+            entries++;
+        if(file[i] == '\0')
+            break;
+    }
+    //setio(1,1,20,20);
+
+    int* programs = malloc(sizeof(int)*entries);
+    int program_tracker = 0;
+
+    char num_buffer[1000];
+    int buff_pos = 0;
+
+    for (int i = 0;;i++)
+    {
+        if (file[i] == '\n')
+        {
+            num_buffer[buff_pos] = '\0';
+            programs[program_tracker] = atoi(num_buffer);
+            //printf("made new entry %d for %s at %d\n", programs[int program_tracker], num_buffer, int program_tracker);
+            num_buffer[0] = '\0';
+            buff_pos = 0;
+            program_tracker++;
+            continue;
+        }
+        if(file[i] == '\0')
+        {
+            programs[program_tracker] = atoi(num_buffer);
+            break;
+        }
+        num_buffer[buff_pos++] = file[i];
+    }
+
+
     char c = 'a';
     uint32_t id = fork();
     if (get_pid() == 0)
@@ -20,55 +58,15 @@ void main(void)
     }
     else
     {
-        id = fork();
-        if (id==get_pid())
+        for (int i = 0 ; i < entries; i++)
         {
             id = fork();
             if (id==get_pid())
             {
-                id = fork();
-                if (id==get_pid())
-                {
-                    id = fork();
-                    if (id==get_pid())
-                    {
-                        id = fork();
-                        if (id==get_pid())
-                        {
-                            id = fork();
-                            if (id==get_pid())
-                            {
-                                exec(8);
-                            }
-                            else
-                            {
-                                exec(7);
-                            }
-                        }
-                        else
-                        {
-                            exec(6);
-                        }
-                    }
-                    else
-                    {
-                        exec(5);
-                    }
-                }
-                else
-                {
-                    exec(4);
-                }
-            }
-            else
-            {
-                exec(3);
+                exec(programs[i]);
             }
         }
-        else
-        {
-            exec(1);
-        }
+        exec(programs[entries]);
     }
     for(;;);
 }

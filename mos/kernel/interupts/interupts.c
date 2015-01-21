@@ -278,12 +278,15 @@ void  c_file_read_syscall(void)
     char *fname;
     asm("mov %%esi, %0":"=r"(fname):);
     asm("mov %%eax, %0":"=r"(ret):);
+    printf("Reading file %s\n", fname);
     char* buff = mrfsReadFile("/", fname);
+    printf("Read file %s\n", buff);
     uint32_t len = strlen(buff);
     *ret =  malloc_for_process(len, 0x80000000);
     strcpy(*ret, buff);
-    free(buff);
+    //free(buff);
     init_mem();
+    printf("RETURNING TO USER SPACE\n");
     send_byte_to(MASTER_PIC, 0x20);
 }
 

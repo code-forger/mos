@@ -156,3 +156,15 @@ void printf(const char* string, ...)
     }
     va_end(valist);
 }
+
+
+int atoi(const char* s)
+{
+    int ret = 0;
+    for (int i = 0; s[i] != '\0'; i++)
+    {
+        ret *= 10;
+        ret += s[i] - '0';
+    }
+    return ret;
+}

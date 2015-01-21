@@ -3,6 +3,9 @@ all: kernel-code loader-code stdlib-code programs-code
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
 
+Tools:
+	$(MAKE) -C tools
+
 .PHONY kernel-code:
 	$(MAKE) -C kernel
 

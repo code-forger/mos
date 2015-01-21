@@ -332,7 +332,6 @@ static uint8_t* find_cached_block(uint32_t dirty)
 
 void purge_cache()
 {
-    printf("[HDD] - Purging Cache\n");
     for(uint32_t i = 0; i < 31; i++)
     {
         block_table->blocks[i].cache = 256;
@@ -347,7 +346,6 @@ void hdd_write_cache()
     {
         if (block_table->blocks[i].dirty == 1)
         {
-            printf("[HDD] - Writing Cache: %h to %h from %h\n", i, block_table->blocks[i].cache, (uint32_t)block_table->block[i].data);
             ide_ata_access(1, 1, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
             block_table->blocks[i].dirty = 0;
         }

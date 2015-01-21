@@ -17,7 +17,10 @@ void main(void)
         if (file[i] == '\n')
             entries++;
         if(file[i] == '\0')
+        {
+            entries++;
             break;
+        }
     }
     //setio(1,1,20,20);
 
@@ -58,7 +61,7 @@ void main(void)
     }
     else
     {
-        for (int i = 0 ; i < entries; i++)
+        for (int i = 0 ; i < entries-1; i++)
         {
             id = fork();
             if (id==get_pid())
@@ -66,7 +69,7 @@ void main(void)
                 exec(programs[i]);
             }
         }
-        exec(programs[entries]);
+        exec(programs[entries-1]);
     }
     for(;;);
 }

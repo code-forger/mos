@@ -1,6 +1,6 @@
-all: init-code banner_right-code banner_left-code time-code joeprogram-code joeprogram2-code joeprogram3-code input_test-code input_test2-code
+all: init-code name-code banner_left-code time-code joeprogram-code joeprogram2-code joeprogram3-code input_test-code input_test2-code
 	cp init/init ../isodir/boot
-	cp banner_right/banner_right ../isodir/boot
+	cp name/name ../isodir/boot
 	cp banner_left/banner_left ../isodir/boot
 	cp time/time ../isodir/boot
 	cp joeprogram/joeprogram ../isodir/boot
@@ -12,8 +12,8 @@ all: init-code banner_right-code banner_left-code time-code joeprogram-code joep
 .PHONY init-code:
 	$(MAKE) -C init
 
-.PHONY banner_right-code:
-	$(MAKE) -C banner_right
+.PHONY name-code:
+	$(MAKE) -C name
 
 .PHONY banner_left-code:
 	$(MAKE) -C banner_left

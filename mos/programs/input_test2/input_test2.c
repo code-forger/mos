@@ -65,7 +65,7 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
-    setio(55, 0, 20, 5);
+    setio(55, 1, 20, 5);
     stdin_init();
 
     printf("Multi input demo\n");

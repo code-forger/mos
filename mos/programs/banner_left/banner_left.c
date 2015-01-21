@@ -32,7 +32,7 @@ void main(void)
     lines[8] = l9;
     lines[9] = l10;
     lines[0] = l11;
-    setio(0, 0, 26, 16);
+    setio(0, 1, 26, 15);
 
     for (int line = 0;;line = ++line % 10)
     {

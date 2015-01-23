@@ -22,34 +22,46 @@ void main(void)
             break;
         }
     }
-    //setio(1,1,20,20);
+    setio(1,1,20,20);
 
-    int* programs = malloc(sizeof(int)*entries);
+    char** programs = malloc(sizeof(char*)*entries);
     int program_tracker = 0;
 
-    char num_buffer[1000];
+    char name_buffer[1000];
     int buff_pos = 0;
 
     for (int i = 0;;i++)
     {
         if (file[i] == '\n')
         {
-            num_buffer[buff_pos] = '\0';
-            programs[program_tracker] = atoi(num_buffer);
-            //printf("made new entry %d for %s at %d\n", programs[int program_tracker], num_buffer, int program_tracker);
-            num_buffer[0] = '\0';
+            name_buffer[buff_pos] = '\0';
+            char* temp = malloc(sizeof(char)*(strlen(name_buffer)+1));
+            strcpy(temp, name_buffer);
+            programs[program_tracker] = temp;
+            //printf("made new entry %d for %s at %d\n", programs[program_tracker], name_buffer, program_tracker);
+            name_buffer[0] = '\0';
             buff_pos = 0;
             program_tracker++;
             continue;
         }
         if(file[i] == '\0')
         {
-            programs[program_tracker] = atoi(num_buffer);
+            name_buffer[buff_pos] = '\0';
+            char* temp = malloc(sizeof(char)*strlen(name_buffer));
+            strcpy(temp, name_buffer);
+            programs[program_tracker] = temp;
             break;
         }
-        num_buffer[buff_pos++] = file[i];
+        name_buffer[buff_pos++] = file[i];
     }
 
+    for(int i = 0; i < entries; i++)
+    {
+        //printf("Found program %s\n", programs[i]);
+    }
+
+    //for (;;)
+    //    asm("hlt");
 
     char c = 'a';
     uint32_t id = fork();
@@ -66,10 +78,11 @@ void main(void)
             id = fork();
             if (id==get_pid())
             {
-                exec(programs[i]);
+                //printf("exec(%d)\n", i);
+                exec_by_name(programs[i]);
             }
         }
-        exec(programs[entries-1]);
+        exec_by_name(programs[entries-1]);
     }
     for(;;);
 }

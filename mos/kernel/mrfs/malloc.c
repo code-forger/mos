@@ -1,126 +1,150 @@
 #include "malloc.h"
 #include "../paging/paging.h"
 #include "../io/terminal.h"
-struct _alloc_t {
-    unsigned long address;
-    unsigned long size;        // bytes
-    bool used;
-    struct _alloc_t *next;             // next struct
-};
 
+typedef struct header_t {
+    uint32_t size;
+    uint8_t free;
+} __attribute__ ((packed)) header;
 
-typedef struct _alloc_t alloc_t;
-#define BIALLOC sizeof(alloc_t)
+#define HEAD_SIZE sizeof(header)
 
-alloc_t *alloc_curr;
-alloc_t *alloc_top;
+header *top;
+int next_heap = 0;
 
-int heap = 0;
+static void clean_memory()
+{
+    header *current = top;
 
-
-void *malloc(size_t bytes) {
-    unsigned long tempsize, retaddr;
-    alloc_curr = alloc_top;
-
-    do { // loop as long as there is a next entry
-        if (bytes + BIALLOC < alloc_curr->size && alloc_curr->used == false) {  // is this free and enough space?
-            tempsize = alloc_curr->size;                      // save the size of the free block in a temporary variable
-
-            alloc_curr->next = (alloc_t *) alloc_curr->address;      // point next to the next list
-            alloc_curr->address = retaddr = alloc_curr->address + BIALLOC;   // before it there comes a new entry for the linked list
-            alloc_curr->size = bytes;                            // put the size in size
-            alloc_curr->used = true;                           // raise the used flag
-
-            alloc_curr = alloc_curr->next;                 // create free space block
-            alloc_curr->address = retaddr + bytes + BIALLOC;                    // and put the space for the linked list before it again..
-            alloc_curr->size = tempsize - bytes - BIALLOC;
-            alloc_curr->used = false;
-
-            heap -= bytes + BIALLOC;                      // substract the used bytes from the heap
-            return (void *) retaddr;                          // return the address
-        }
-
-        alloc_curr = alloc_curr->next;
-    } while (alloc_curr != 0);
-
-    printf("CRITICAL ERROR\n");
-    printf("CRITICAL ERROR\n");
-    printf("CRITICAL ERROR\n");
-    return 0;
-}
-
-void *malloc_for_process(size_t bytes, uint32_t address) {
-    unsigned long tempsize, retaddr;
-    alloc_curr = (alloc_t*)address;
-
-    do { // loop as long as there is a next entry
-        if (bytes + BIALLOC < alloc_curr->size && alloc_curr->used == false) {  // is this free and enough space?
-            tempsize = alloc_curr->size;                      // save the size of the free block in a temporary variable
-
-            alloc_curr->next = (alloc_t *) alloc_curr->address;      // point next to the next list
-            alloc_curr->address = retaddr = alloc_curr->address + BIALLOC;   // before it there comes a new entry for the linked list
-            alloc_curr->size = bytes;                            // put the size in size
-            alloc_curr->used = true;                           // raise the used flag
-
-            alloc_curr = alloc_curr->next;                 // create free space block
-            alloc_curr->address = retaddr + bytes + BIALLOC;                    // and put the space for the linked list before it again..
-            alloc_curr->size = tempsize - bytes - BIALLOC;
-            alloc_curr->used = false;
-
-            heap -= bytes + BIALLOC;                      // substract the used bytes from the heap
-            return (void *) retaddr;                          // return the address
-        }
-
-        alloc_curr = alloc_curr->next;
-    } while (alloc_curr != 0);
-
-    // if we didn't succeed, ask for extra money and try it again
-    return 0;
-}
-
-void init_mem() {
-    int realaddr;
-
-    realaddr = KERNEL_HEAP;               // convert the page address to bytes
-    alloc_curr = alloc_top = (alloc_t *) realaddr;
-    alloc_curr->address = realaddr + BIALLOC;        // put the address of the new free block in address
-    alloc_curr->size = 0x1000;        // put the size of it in size
-    alloc_curr->used = false;                        // it is free space, so make used false
-
-    heap += alloc_curr->size;                        // add the new space to heap
-}
-
-
-void free(void *address) {
-    return;
-    alloc_curr = alloc_top;
-    unsigned long addr_deep, bAddr_deep2;
-    alloc_t *alloc_curr2;
-
-    do { // loop through the linked list
-        if (alloc_curr->address == (unsigned long) address) { // the address is found
-            addr_deep = alloc_curr->address + alloc_curr->size + BIALLOC; // what should the next address be (for joining them together)
-            alloc_curr2 = alloc_top; // alloc_curr2 points to alloc_top
-            /* try to find an address which begins at the end of the last one */
-            do {    // loop through the linked list again
-                if (alloc_curr2->address == addr_deep && alloc_curr2->used == false) { // does the next address come exactly after the one to free and has used = false?
-                    bAddr_deep2 = true; // set the flag true
-                    break; // leave the loop
-                }
-
-                alloc_curr2 = alloc_curr2->next;
-            } while (alloc_curr2 != 0);
-
-            if (bAddr_deep2 == true) { // next piece of memory comes exactly after the one to free
-                alloc_curr->size = alloc_curr->next->size;
-                alloc_curr->next = alloc_curr->next->next; // skip one of them, the second will get lost anyway
-                alloc_curr->used = false; // set the used flag false
-                // :o that's all! Was just thinking about what next.. lol..
-            } else {
-                alloc_curr->used = false; // just set the flag used on false...
+    do
+    {
+        if (current->free)
+        {
+            header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+            if (next_node->free && next_node->free != 3)
+            {
+                current->size = current->size + next_node->size + HEAD_SIZE;
+                current = top;
+                continue;
             }
         }
 
-        alloc_curr = alloc_curr->next;
-    } while (alloc_curr != 0);
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+    } while (current->free != 3);
+}
+
+static void get_more_memory()
+{
+    paging_map_new_to_virtual(next_heap);
+
+    header* current = (header*)(next_heap - HEAD_SIZE);
+
+    current->free = true;
+    current->size = 0x1000 - HEAD_SIZE;
+
+    current = (header*)(((uint32_t)current) + current->size + HEAD_SIZE);
+    current->size = 0;
+    current->free = 3;
+
+    next_heap = next_heap + 0x1000;
+
+    clean_memory();
+}
+
+void *malloc(uint32_t size) {
+    //printf("[malloc.c] CALL : malloc(%d)\n", size);
+    header* current = top;
+
+    do {
+        if (size + HEAD_SIZE < current->size && current->free)
+        {
+            uint32_t node_size = current->size;
+            uint32_t ret = (uint32_t)current + HEAD_SIZE;
+
+            current->size = size;
+            current->free = false;
+
+            current = (header*)((uint32_t)current + HEAD_SIZE + size);
+            current->size = node_size - size - HEAD_SIZE;
+            current->free = true;
+
+            return (void *) ret;
+        }
+
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+    } while (current->free != 3);
+
+    get_more_memory();
+    return malloc(size);
+}
+
+void *malloc_for_process(uint32_t size, uint32_t memory) {
+    header* current = (header*)memory;
+    do
+    {
+        if (size + HEAD_SIZE < current->size && current->free)
+        {
+            uint32_t node_size = current->size;
+            uint32_t ret = (uint32_t)current + HEAD_SIZE;
+
+            current->size = size;
+            current->free = false;
+
+            current = (header*)((uint32_t)current + HEAD_SIZE + size);
+
+            current->size = node_size - size - HEAD_SIZE;
+            current->free = true;
+
+            return (void *) ret;
+        }
+
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+    } while (current->free != 3);
+
+    printf("Memory Manager our of memory!\n");
+    asm("cli");
+    asm("hlt");
+    return 0;
+}
+
+void init_mem()
+{
+    top = (header*) KERNEL_HEAP;
+    top->size = 0x1000 - HEAD_SIZE - HEAD_SIZE;
+    top->free = true;
+
+    top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
+    top->size = 0;
+    top->free = 3;
+
+    top = (header*) KERNEL_HEAP;
+
+    next_heap = KERNEL_HEAP + 0x1000;
+}
+
+
+void free(void *memory)
+{
+    //printf("[malloc.c] CALL : free(%h)\n", memory);
+    header *current = top;
+
+    do
+    {
+        if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
+        {
+            header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+            if (next_node->free)
+            {
+                current->size = current->size + next_node->size + HEAD_SIZE;
+                current->free = true;
+            }
+            else
+            {
+                current->free = true;
+            }
+            return;
+        }
+
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+    } while (current->free != 3);
 }

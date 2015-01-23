@@ -9,7 +9,7 @@
 #include "../io/pci.h"
 
 static const uint32_t DIRECTORY            = 0xFFFFF000;
-static const uint32_t KERNEL_HEAP          = 0xC000A000;
+static const uint32_t KERNEL_HEAP          = 0xC0010000;
 static const uint32_t PCI_TABLE            = 0xC0009000;
 static const uint32_t EVENT_TABLE          = 0xC0008000;
 static const uint32_t PIPE_TABLE           = 0xC0007000;

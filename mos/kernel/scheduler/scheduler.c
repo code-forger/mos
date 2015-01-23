@@ -4,6 +4,8 @@
 #include "../paging/paging.h"
 #include "events.h"
 #include "../io/hdd.h"
+#include "../ELF/elf.h"
+#include "../mrfs/mrfs.h"
 
 static uint32_t current_pid;
 static uint32_t starting_pid;
@@ -17,14 +19,32 @@ static uint64_t global_ms;
 
 uint32_t fork()
 {
+    //printf("[scheduler.c] CALL : fork()\n");
     process_table[next_pid].flags = F_INIT;
     uint32_t pid = next_pid;
-    process_table[next_pid++].code_physical[0] = current_pid;
+    process_table[next_pid].code_physical[0] = current_pid;
+
+    char proc[10] = {next_pid + '0'};
+    char procdir[10] = {'/', 'p', 'r', 'o', 'c', '/', next_pid + '0', '/'};
+    char parentprocdir[10] = {'/', 'p', 'r', 'o', 'c', '/', current_pid + '0', '/'};
+
+    //printf("[scheduler.c] INFO : Got names:\n");
+    //printf("                   : %s:\n", proc);
+    //printf("                   : %s:\n", procdir);
+    //printf("                   : %s:\n", parentprocdir);
+
+    mrfsNewFolder("/proc/", proc);
+    mrfsNewFile(procdir, "name", mrfsReadFile(parentprocdir, "name"), 5);
+
+    next_pid++;
+
+    //printf("[scheduler.c] RETE : fork = %d\n", pid);
     return pid;
 }
 
 void scheduler_exec(uint32_t program_number)
 {
+
     for (uint32_t i = 0; i < program_pointers[2+(program_number * 2)]; i++)
         paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000 * i, 0x08048000 + 0x1000 * i);
 
@@ -36,6 +56,30 @@ void scheduler_exec(uint32_t program_number)
     process_table[current_pid].io.wy = 0;
     process_table[current_pid].io.column = 0;
     process_table[current_pid].io.row = 0;
+}
+
+void scheduler_exec_string(char *program_name)
+{
+    //printf("[scheduler.c] CALL : scheduler_exec(%s)\n", program_name);
+
+    //char proc[10] = {current_pid + '0'};
+    char procdir[10] = {'/', 'p', 'r', 'o', 'c', '/', current_pid + '0', '/'};
+
+    //printf("[scheduler.c] INFO : Got names:\n");
+    //printf("                   : %s:\n", proc);
+    //printf("                   : %s:\n", procdir);
+
+    mrfsWriteFile(procdir, "name", program_name, strlen(program_name));
+
+    uint32_t jump_target = elf_load(program_name, &(process_table[current_pid]));
+
+
+
+    printf("LEAVING SCHEDULER to %h\n", jump_target);
+
+    asm("movl %0, %%esp"::"r"(0xbfffffff));
+
+    asm("jmp %0"::"r"(jump_target));
 }
 
 void scheduler_sleep(uint32_t milliseconds)
@@ -165,8 +209,11 @@ void scheduler_time_interupt()
     asm("sti");
 }
 
-void scheduler_init()
+void scheduler_init(uint32_t esp, uint32_t ebp)
 {
+    kernel_esp = esp;
+    kernel_ebp = ebp;
+
     global_ms = 0;
     current_pid = 0;
     next_pid = 1;
@@ -175,33 +222,25 @@ void scheduler_init()
 
     program_pointers = paging_get_programs();
 
-    process_table[0].flags = 0;
-    process_table[0].esp = 0xbfffffff;
-    process_table[0].ebp = 0xbfffffff;
-    process_table[0].code_size = program_pointers[2];
-    process_table[0].stack_size = 1;
-    process_table[0].heap_size = 1;
-    process_table[0].padding = 0xBEEF;
+    events_init();
 
     paging_map_new_page_table(0x020);
     paging_map_new_page_table(0x2ff);
     paging_map_new_page_table(0x200);
 
-    for (uint32_t i = 0; i < process_table[0].code_size; i++)
-    {
-        process_table[0].code_physical[i] = paging_map_new_to_virtual(0x08048000 + 0x1000 * i);
-        paging_copy_physical_to_virtual(program_pointers[1] + 0x1000 * i, 0x08048000 + 0x1000 * i);
-    }
+    uint32_t jump_target = elf_load("/init", process_table);
+
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
     process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
 
-    events_init();
-}
+    mrfsNewFolder("/proc/", "0");
+    mrfsNewFile("/proc/0/", "name", "/init", 5);
 
-void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp)
-{
-    kernel_esp = esp;
-    kernel_ebp = ebp;
+    printf("LEAVING SCHEDULER to %h\n", jump_target);
+
+    asm("movl %0, %%esp"::"r"(0xbfffffff));
+
+    asm("jmp %0"::"r"(jump_target));
 }
 
 process_table_entry scheduler_get_process_table_entry(uint32_t pid)

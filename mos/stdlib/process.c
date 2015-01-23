@@ -21,10 +21,17 @@ uint32_t fork()
     return pid;
 }
 
-void exec(uint32_t programnumber)
+void exec(uint32_t program_number)
 {
     asm("cli");
-    asm("int $92"::"S"(programnumber):);
+    asm("int $92"::"S"(program_number):);
+    asm("sti");
+}
+
+void exec_by_name(char* program_name)
+{
+    asm("cli");
+    asm("int $95"::"S"(program_name):);
     asm("sti");
 }
 

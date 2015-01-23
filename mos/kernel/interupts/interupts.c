@@ -223,6 +223,14 @@ void  c_scheduler_exec_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+void  c_scheduler_exec_string_syscall(void)
+{
+    char *program_name;
+    asm("mov %%esi, %0":"=r"(program_name):);
+    scheduler_exec_string(program_name);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
 void  c_scheduler_sleep_syscall(void)
 {
     uint32_t milliseconds;
@@ -236,8 +244,6 @@ void  c_scheduler_pause_syscall(void)
     scheduler_pause();
     send_byte_to(MASTER_PIC, 0x20);
 }
-
-
 
 void  c_pipe_pipe_syscall(void)
 {
@@ -278,15 +284,16 @@ void  c_file_read_syscall(void)
     char *fname;
     asm("mov %%esi, %0":"=r"(fname):);
     asm("mov %%eax, %0":"=r"(ret):);
-    printf("Reading file %s\n", fname);
+    //printf("Reading file %s\n", fname);
     char* buff = mrfsReadFile("/", fname);
-    printf("Read file %s\n", buff);
+    //printf("[interupts.c] INFO : Read file \n", buff);
     uint32_t len = strlen(buff);
     *ret =  malloc_for_process(len, 0x80000000);
     strcpy(*ret, buff);
     //free(buff);
-    init_mem();
-    printf("RETURNING TO USER SPACE\n");
+    //asm("hlt");
+    //init_mem();
+    //printf("RETURNING TO USER SPACE\n");
     send_byte_to(MASTER_PIC, 0x20);
 }
 

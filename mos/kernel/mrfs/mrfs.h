@@ -14,6 +14,7 @@ char *strcpy(char *dest, const char *src);
 int mrfsFormatHdd(int _blockSize, int rootDirSize);
 
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
+void mrfsWriteFile(char* path, char* filename, char* contents,int length);
 int mrfsNewFolder(char* path,char* foldername);
 char** mrfsGetFolderChildren(char* path);
 char* mrfsReadFile(char* path,char* filename);

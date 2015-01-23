@@ -10,6 +10,7 @@
 #include "mrfs/mrfs.h"
 #include "paging/paging.h"
 #include "io/hdd.h"
+#include "ELF/elf.h"
 
 void kerror(const char* data)
 {
@@ -35,7 +36,6 @@ void init_kernel()
     gdt_init();
     idt_init();
     pic_init();
-    scheduler_init();
     pipe_init();
     pci_init();
     hdd_init();
@@ -44,15 +44,15 @@ void init_kernel()
     mrfsFormatHdd(4*1024, 0);
     hdd_write_cache();
 
+    mrfsDeleteFolderRecursive("/proc/");
+
+    mrfsNewFolder("/", "proc");
+
     uint32_t esp, ebp;
 
     asm("movl %%esp, %0":"=r"(esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(ebp)::"ebx");
 
-    scheduler_register_kernel_stack(esp, ebp);
-
-    asm("movl %0, %%esp"::"r"(0xbfffffff));
-
-    asm("jmp %0"::"r"(0x08048074));
+    scheduler_init(esp, ebp);
 }
 // 448145

@@ -71,12 +71,19 @@ char* inodeGetName(union Inode nodeIn)
         length.c[i] = block[i];
     }
 
+    //printf("[inode.c] INFO : found size %d for name\n", length.i);
+
+    //printf("[inode.c] INFO : BLOCK = %s\n", block+8);
+
     char* nameNew = malloc(sizeof(char)*(length.i+1));
+    //printf("[inode.c] INFO : BLOCK = %s\n", block+8);
+
     for (int i = 0; i < length.i; i++)
     {
         nameNew[i] = block[i+8];
     }
     nameNew[length.i] = '\0';
+    //printf("[inode.c] INFO : found name %s for size %d\n", nameNew, length.i);
     free(block);
     return nameNew;
 }

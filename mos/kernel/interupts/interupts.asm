@@ -29,6 +29,7 @@ extern c_stdin_init_syscall
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
 extern c_scheduler_exec_syscall
+extern c_scheduler_exec_string_syscall
 extern c_scheduler_sleep_syscall
 extern c_scheduler_pause_syscall
 extern c_pipe_pipe_syscall
@@ -68,6 +69,7 @@ global stdin_init_syscall
 global scheduler_fork_syscall
 global scheduler_pid_syscall
 global scheduler_exec_syscall
+global scheduler_exec_string_syscall
 global scheduler_sleep_syscall
 global scheduler_pause_syscall
 global pipe_pipe_syscall
@@ -253,6 +255,14 @@ scheduler_exec_syscall:
     cli
     pushad
     call c_scheduler_exec_syscall
+    popad
+    mov esp, 0xbfffffff
+    jmp 0x08048074
+
+scheduler_exec_string_syscall:
+    cli
+    pushad
+    call c_scheduler_exec_string_syscall
     popad
     mov esp, 0xbfffffff
     jmp 0x08048074

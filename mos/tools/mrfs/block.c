@@ -17,7 +17,7 @@ char* blockRead(int blockNumber)
         inodePointer.c[i] = hdd_read();
     }
 
-    char* block = malloc(sizeof(char)*(length.i+4));
+    char* block = malloc(sizeof(char)*(length.i+8));
     for (int i = 0; i < 4; i++)
     {
         block[i] = length.c[i];

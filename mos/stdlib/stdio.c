@@ -57,6 +57,13 @@ int strlen(const char * str)
     return i-1;
 }
 
+char *strcpy(char *dest, const char *src)
+{
+   char *save = dest;
+   while((*dest++ = *src++));
+   return save;
+}
+
 static void putint(uint32_t in)
 {
     int i, length;

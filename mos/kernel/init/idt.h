@@ -57,6 +57,7 @@ void stdin_init_syscall(void);
 void scheduler_fork_syscall(void);
 void scheduler_pid_syscall(void);
 void scheduler_exec_syscall(void);
+void scheduler_exec_string_syscall(void);
 void scheduler_sleep_syscall(void);
 void scheduler_pause_syscall(void);
 void pipe_pipe_syscall(void);

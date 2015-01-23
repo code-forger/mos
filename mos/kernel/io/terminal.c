@@ -50,7 +50,7 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
-    kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+    kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
 }
 
 void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y)
@@ -250,6 +250,7 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
+    terminal_switch_context(KERNEL_CONTEXT);
     //asm("cli");
     va_list valist;
 

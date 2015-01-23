@@ -8,7 +8,7 @@ void scheduler_time_interupt();
 void scheduler_init();
 uint32_t scheduler_get_pid();
 void scheduler_exec(uint32_t program_number);
-void scheduler_register_kernel_stack(uint32_t esp, uint32_t ebp);
+void scheduler_exec_string(char *program_name);
 void scheduler_sleep(uint32_t milliseconds);
 void scheduler_pause();
 uint32_t scheduler_get_next_input(uint32_t current);

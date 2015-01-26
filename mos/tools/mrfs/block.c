@@ -205,7 +205,7 @@ int blockSwap(int source, int target)
         inodeWriteBlocks(&inode, pointers, inode.node.info.directory? inode.node.size:(inode.node.size/(sb.data.blockSize-8)+1)+1);
         inodeRewrite(inode);
         blockRewrite(block, 8, blockfilllevel.i, inodePointer.i, target);
-        //free(pointers);
+        free(pointers);
     }
     else
     {
@@ -241,7 +241,7 @@ int blockSwap(int source, int target)
             inodePointer.c[i] = swapblock[i+4];
         }
         inode = inodeRead(inodePointer.i);
-        //free(pointers);
+        free(pointers);
         pointers = inodeGetBlocks(inode);
         for (int i = 0;;i++)
         {
@@ -265,9 +265,9 @@ int blockSwap(int source, int target)
         inodeRewrite(inode);
         blockRewrite(swapblock, 8, blockfilllevel.i, inodePointer.i, source);
 
-        //free(pointers);
-        //free(swapblock);
+        free(pointers);
+        free(swapblock);
     }
-    //free(block);
+    free(block);
     return colision;
 }

@@ -75,7 +75,7 @@ void scheduler_exec_string(char *program_name)
 
 
 
-    printf("LEAVING SCHEDULER to %h\n", jump_target);
+    //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
     asm("movl %0, %%esp"::"r"(0xbfffffff));
 
@@ -236,7 +236,7 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     mrfsNewFolder("/proc/", "0");
     mrfsNewFile("/proc/0/", "name", "/init", 5);
 
-    printf("LEAVING SCHEDULER to %h\n", jump_target);
+    //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
     asm("movl %0, %%esp"::"r"(0xbfffffff));
 

@@ -36,14 +36,14 @@ union Inode getDirChildrenByPath(union Inode inode, char* path)
             char* name = inodeGetName(folderinode);
             if (strcmp(foldername,name) == 0)
             {
-                //free(pointers);
-                //free(name);
+                free(pointers);
+                free(name);
                 return getDirChildrenByPath(folderinode, (path + foldernamelen + 1));
             }
-            //free(name);
+            free(name);
         }
     }
-   // free(pointers);
+    free(pointers);
 
 
     union Inode retnode;
@@ -73,13 +73,13 @@ union Inode getInodeByName(char* path, char * namein)
 
         if (strcmp(name,namein) == 0)
         {
-            //free(pointers);
-            //free(name);
+            free(pointers);
+            free(name);
             return inode;
         }
-        //free(name);
+        free(name);
     }
-    //free(pointers);
+    free(pointers);
 
 
     union Inode retnode;
@@ -183,7 +183,18 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
 
     inode.node.info.exists = 1;
     inodeRewrite(inode);
-    dirinode.node.pointers[dirinode.node.size++] = inode.node.nodenumber;
+    int* oldpointers = inodeGetPointers(dirinode);
+
+    int* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
+
+    for (int i = 0; i < dirinode.node.size; i++)
+    {
+        newpointers[i] = oldpointers[i];
+    }
+
+    newpointers[dirinode.node.size] = inode.node.nodenumber;
+
+    inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
 
     inodeRewrite(dirinode);
     return 0;
@@ -191,7 +202,7 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
 }
 
 
-int mrfsWriteFile(char* path, char* filename, char* contents,int length)
+void mrfsWriteFile(char* path, char* filename, char* contents,int length)
 {
     mrfsDeleteFile(path, filename);
     mrfsNewFile(path, filename, contents, length);
@@ -216,17 +227,24 @@ int mrfsNewFolder(char* path,char* foldername)
     inode.node.size = 0;
 
 
-
     if (inodeWrite(&inode))
         return FILELIMITREACHED;
-
 
     inodeSetName(&inode, foldername);
 
     inode.node.info.exists = 1;
     inodeRewrite(inode);
 
-    dirinode.node.pointers[dirinode.node.size++] = inode.node.nodenumber;
+    int* oldpointers = inodeGetPointers(dirinode);
+    int* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
+
+    for (int i = 0; i < dirinode.node.size; i++)
+        newpointers[i] = oldpointers[i];
+
+    newpointers[dirinode.node.size] = inode.node.nodenumber;
+
+    inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
+
     inodeRewrite(dirinode);
     return 0;
 }
@@ -258,11 +276,11 @@ char* mrfsReadFile(char* path,char* filename)
             outputstream[j+(i*(sb.data.blockSize-8))] = block[j+8];
         }
         length += blockfilllevel.i;
-        //free(block);
+        free(block);
     }
 
     outputstream[length] = 0;
-    //free(pointers);
+    free(pointers);
     return outputstream;
 }
 
@@ -314,10 +332,7 @@ int mrfsDeleteFile(char*path,char* filename)
     int* pointers = inodeGetPointers(inode);
 
     for(int i = 0; i < numblocks; i++)
-    {
         blockFree(pointers[i]);
-    }
-
     blockFree(inode.node.nameblock);
 
     union Inode dirinode = getDirInodeByPath(path);

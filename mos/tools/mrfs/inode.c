@@ -50,11 +50,11 @@ void inodeRemoveEntry(union Inode* nodeOut, int entryIn)
             found = 1;
         newPointers[i] = oldPointers[i + found];
     }
-
+    if (nodeOut->node.size-1 == 12)
+        blockFree(nodeOut->node.pointerblock);
     inodeWritePointers(nodeOut, newPointers, nodeOut->node.size-1);
     inodeRewrite(*nodeOut);
-    //free(oldPointers);
-    oldPointers = NULL;
+    free(oldPointers);
 }
 
 //This function returns the 'name block' of an inode
@@ -67,17 +67,14 @@ char* inodeGetName(union Inode nodeIn)
     union int_char length;
 
     for (int i = 0; i < 4; i++)
-    {
         length.c[i] = block[i];
-    }
 
     char* nameNew = malloc(sizeof(char)*(length.i+1));
     for (int i = 0; i < length.i; i++)
-    {
         nameNew[i] = block[i+8];
-    }
+
     nameNew[length.i] = '\0';
-    //free(block);
+    free(block);
     return nameNew;
 }
 
@@ -126,9 +123,10 @@ int* inodeGetPointers(union Inode nodeIn)
                 p.c[k++] = block[j+8];
             }
             pointersNew[pointer] = p.i;
+
             pointer++;
         }
-        //free(block);
+        free(block);
     }
     return pointersNew;
 }
@@ -137,10 +135,14 @@ int* inodeGetPointers(union Inode nodeIn)
 
 void inodeWritePointers(union Inode* nodeOut, int* pointersIn, int countIn)
 {
+    int oldsize = 0;
     if (nodeOut->node.info.directory)
+    {
+        oldsize = nodeOut->node.size;
         nodeOut->node.size = countIn;
+    }
     int pointer = 0;
-    for (int i = 0 ; i < 12 && pointer < countIn; i++)
+    for (int i = 0; i < 12 && pointer < countIn; i++)
     {
         nodeOut->node.pointers[i] = pointersIn[pointer];
         pointer++;
@@ -158,8 +160,15 @@ void inodeWritePointers(union Inode* nodeOut, int* pointersIn, int countIn)
                 block[j] = p.c[k++];
             }
         }
-        nodeOut->node.pointerblock = blockWrite(block, 0, blockLength, nodeOut->node.nodenumber);
-        //free (block);
+        if (oldsize > 12)
+        {
+            blockRewrite(block, 0, blockLength, nodeOut->node.nodenumber, nodeOut->node.pointerblock);
+        }
+        else
+        {
+            nodeOut->node.pointerblock = blockWrite(block, 0, blockLength, nodeOut->node.nodenumber);
+        }
+        free (block);
     }
 }
 
@@ -191,7 +200,7 @@ int* inodeGetBlocks(union Inode nodeIn)
             pointersNew[pointer] = p.i;
             pointer++;
         }
-        //free(block);
+        free(block);
     }
     for (int i = 0; i < count; i++){
     }
@@ -203,7 +212,12 @@ int* inodeGetBlocks(union Inode nodeIn)
 
 void inodeWriteBlocks(union Inode* nodeOut, int* pointersIn, int countIn)
 {
-
+    int oldsize = 0;
+    if (nodeOut->node.info.directory)
+    {
+        oldsize = nodeOut->node.size;
+        nodeOut->node.size = countIn-1;
+    }
     int pointer = 1;
     nodeOut->node.nameblock = pointersIn[0];
     for (int i = 0 ; i < 12 && pointer < countIn; i++)
@@ -225,8 +239,11 @@ void inodeWriteBlocks(union Inode* nodeOut, int* pointersIn, int countIn)
                 block[j] = p.c[k++];
             }
         }
-        nodeOut->node.pointerblock = blockWrite(block, 0, blockLength, nodeOut->node.nodenumber);
-        //free (block);
+        if (oldsize > 12)
+            blockRewrite(block, 0, blockLength, nodeOut->node.nodenumber, nodeOut->node.pointerblock);
+        else
+            nodeOut->node.pointerblock = blockWrite(block, 0, blockLength, nodeOut->node.nodenumber);
+        free (block);
     }
 }
 

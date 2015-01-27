@@ -13,6 +13,7 @@ all: kernel-code loader-code stdlib-code programs-code
 	./mrfs-write disk.img / joeprogram3 file programs/joeprogram3/joeprogram3
 	./mrfs-write disk.img / name file programs/name/name
 	./mrfs-write disk.img / time file programs/time/time
+	./mrfs-write disk.img / launcher file programs/launcher/launcher
 	./mrfs-write disk.img / user raw "Michael Rochester"
 
 

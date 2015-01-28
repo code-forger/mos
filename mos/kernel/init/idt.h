@@ -65,3 +65,4 @@ void pipe_write_syscall(void);
 void pipe_read_syscall(void);
 void file_read_syscall(void);
 void file_write_syscall(void);
+void dir_read_syscall(void);

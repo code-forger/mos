@@ -78,12 +78,34 @@ void *malloc(uint32_t size) {
     return malloc(size);
 }
 
+void dump_memory(uint32_t memory)
+{
+    header* current = (header*)memory;
+
+    do
+    {
+        char* freee;
+        if (current->free)
+            if ((uint32_t)current == 3)
+                freee = "END!";
+            else
+                freee = "FREE";
+        else
+            freee = "NOTF";
+        printf("Current Node %h : %s, : %h\n", current, freee, current->size);
+
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+        for(int i = 0;i < 1000000;i++);
+    } while (current->free != 3);
+}
+
 void *malloc_for_process(uint32_t size, uint32_t memory) {
     header* current = (header*)memory;
     do
     {
         if (size + HEAD_SIZE < current->size && current->free)
         {
+            //printf("Found free node at %h size %d\n", current, current->size);
             uint32_t node_size = current->size;
             uint32_t ret = (uint32_t)current + HEAD_SIZE;
 
@@ -94,6 +116,7 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
 
             current->size = node_size - size - HEAD_SIZE;
             current->free = true;
+            //printf("set next node at %h size %d\n", current, current->size);
 
             return (void *) ret;
         }
@@ -133,7 +156,7 @@ void free(void *memory)
         if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
         {
             header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
-            if (next_node->free)
+            if (next_node->free && next_node->free != 3)
             {
                 current->size = current->size + next_node->size + HEAD_SIZE;
                 current->free = true;

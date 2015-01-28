@@ -75,7 +75,7 @@ void main(void)
         sleep(1);
     }
 
-    char *file = file_read("notes");
+    char *file = file_read("/notes");
     if (file[0] == '\0')
     {
         free(file);
@@ -152,7 +152,7 @@ void main(void)
                 else if (c == '\b')
                 {
                     putcharat(file[caret_loc] = ' ', caret_loc%24+1, caret_loc/24+1);
-                    file_write("notes", file);
+                    file_write("/notes", file);
                     if ((caret_loc--) <= 0)
                         caret_loc = 0;
                 }
@@ -168,7 +168,7 @@ void main(void)
                 else
                 {
                     putcharat(file[caret_loc] = c, caret_loc%24+1, caret_loc/24+1);
-                    file_write("notes", file);
+                    file_write("/notes", file);
                     if ((caret_loc++) >= 21*24-1)
                         caret_loc = 21*24-1;
                 }

@@ -37,6 +37,7 @@ extern c_pipe_write_syscall
 extern c_pipe_read_syscall
 extern c_file_read_syscall
 extern c_file_write_syscall
+extern c_dir_read_syscall
 
 global int_zero_division
 global int_debugger
@@ -77,6 +78,7 @@ global pipe_write_syscall
 global pipe_read_syscall
 global file_read_syscall
 global file_write_syscall
+global dir_read_syscall
 
 int_zero_division:
     pushad
@@ -264,8 +266,7 @@ scheduler_exec_string_syscall:
     pushad
     call c_scheduler_exec_string_syscall
     popad
-    mov esp, 0xbfffffff
-    jmp 0x08048074
+    iret
 
 scheduler_sleep_syscall:
     pushad
@@ -315,6 +316,14 @@ file_write_syscall:
     cli
     pushad
     call c_file_write_syscall
+    popad
+    sti
+    iret
+
+dir_read_syscall:
+    cli
+    pushad
+    call c_dir_read_syscall
     popad
     sti
     iret

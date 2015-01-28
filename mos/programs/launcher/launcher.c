@@ -47,7 +47,21 @@ void main(void)
                 }
                 else if (c == '\n')
                 {
-                    // FORK HERE!
+                    buffer[caret_loc] = '\0';
+                    int id = fork();
+                    if (id==get_pid())
+                    {
+                        exec_by_name(buffer);
+                        for(;;);
+                    }
+                    else
+                    {
+                        for (int j = 0; j < 80 -  carret_base; j++)
+                        {
+                            putcharat(buffer[j] = ' ', carret_base + j, 0);
+                        }
+                        caret_loc = 0;
+                    }
                 }
                 else if (c == (char)0xE0)
                 {

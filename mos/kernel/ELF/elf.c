@@ -1,7 +1,7 @@
 #include "elf.h"
 #include "../mrfs/mrfs.h"
 
-uint32_t elf_load(const char* name, process_table_entry* ptb)
+int64_t elf_load(const char* name, process_table_entry* ptb)
 {
     int n_length = strlen(name);
     int fn_length = 0;
@@ -31,6 +31,12 @@ uint32_t elf_load(const char* name, process_table_entry* ptb)
 
 
     char *file = mrfsReadFile(dn, fn);
+    //printf("found file %s\n", file);
+    if (file[0] == '\0')
+    {
+        //printf("FAILED TO FIND FILE %s\n", name);
+        return -1;
+    }
 
     elf_header *e_header = (elf_header*) file;
 

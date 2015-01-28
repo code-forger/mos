@@ -112,6 +112,7 @@ void  c_int_page_fault(void)
     uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
     printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
+    dump_memory(0x80000000);
     asm("cli");
     asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
@@ -285,10 +286,41 @@ void  c_file_read_syscall(void)
     asm("mov %%esi, %0":"=r"(fname):);
     asm("mov %%eax, %0":"=r"(ret):);
     //printf("Reading file %s\n", fname);
-    char* buff = mrfsReadFile("/", fname);
-    //printf("[interupts.c] INFO : Read file \n", buff);
+   // printf("[interupts.c] CALL : c_file_read_syscall %s\n", fname);
+
+
+    int n_length = strlen(fname);
+    int fn_length = 0;
+    for(int i = n_length-1; i >= 0; i--)
+    {
+        if (fname[i] != '/')
+            fn_length++;
+        else
+            break;
+    }
+
+    int dn_length = n_length - fn_length;
+
+    char fn[fn_length+1];
+    fn[fn_length] = '\0';
+    char dn[dn_length+1];
+    dn[dn_length] = '\0';
+
+    for(int i = 0; i < fn_length; i++)
+    {
+        fn[i] = fname[i + dn_length];
+    }
+    for(int i = dn_length - 1; i >= 0; i--)
+    {
+        dn[i] = fname[i];
+    }
+
+
+
+    char* buff = mrfsReadFile(dn, fn);
+    //printf("[interupts.c] INFO : Read file %s\n", buff);
     uint32_t len = strlen(buff);
-    *ret =  malloc_for_process(len, 0x80000000);
+    *ret =  malloc_for_process(len+1, 0x80000000);
     strcpy(*ret, buff);
     //free(buff);
     //asm("hlt");
@@ -304,9 +336,70 @@ void  c_file_write_syscall(void)
     asm("mov %%esi, %0":"=r"(fname):);
     asm("mov %%edi, %0":"=r"(data):);
     asm("mov %%eax, %0":"=r"(ret):);
-    mrfsDeleteFile("/", fname);
+
+
+
+
+    int n_length = strlen(fname);
+    int fn_length = 0;
+    for(int i = n_length-1; i >= 0; i--)
+    {
+        if (fname[i] != '/')
+            fn_length++;
+        else
+            break;
+    }
+
+    int dn_length = n_length - fn_length;
+
+    char fn[fn_length+1];
+    fn[fn_length] = '\0';
+    char dn[dn_length+1];
+    dn[dn_length] = '\0';
+
+    for(int i = 0; i < fn_length; i++)
+    {
+        fn[i] = fname[i + dn_length];
+    }
+    for(int i = dn_length - 1; i >= 0; i--)
+    {
+        dn[i] = fname[i];
+    }
+
+
+
+
+
+    mrfsDeleteFile(dn, fn);
     strlen(data);
-    *ret = mrfsNewFile("/", fname, data, strlen(data));
+    *ret = mrfsNewFile(dn, fn, data, strlen(data));
     init_mem();
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_dir_read_syscall(void)
+{
+    char ***ret;
+    char *dir;
+    asm("mov %%esi, %0":"=r"(dir):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    char** buff = mrfsGetFolderChildren(dir);
+    int count;
+    for (count = 0; buff[count][0] != '\0' ;count++);
+    count++;
+    *ret = malloc_for_process(count*sizeof(char*), 0x80000000);
+    for (int i = 0; buff[i][0] != '\0' ;i++)
+    {
+        //printf("read folder %s\n", buff[i]);
+        uint32_t len = strlen(buff[i]);
+        (*ret)[i] =  malloc_for_process(len+5, 0x80000000);
+        strcpy((*ret)[i], buff[i]);
+    }
+
+    (*ret)[--count] = malloc_for_process(sizeof(char)*2, 0x80000000);
+    (*ret)[count][0] = '\0';
+    //free(buff);
+    //asm("hlt");
+    //init_mem();
     send_byte_to(MASTER_PIC, 0x20);
 }

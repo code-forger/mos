@@ -448,9 +448,10 @@ char** mrfsGetFolderChildren(   char* path)
         if (childnode.node.info.directory)
         {
             int nameLength = strlen(name);
-            char * newname = malloc(sizeof(char)*(nameLength+1));
+            char * newname = malloc(sizeof(char)*(nameLength+2));
             strcpy(newname, name);
             newname[nameLength] = '/';
+            newname[nameLength+1] = '\0';
             free(name);
             names[i] = newname;
         }

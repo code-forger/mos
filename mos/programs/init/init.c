@@ -9,7 +9,7 @@ asm("    call main");
 
 void main(void)
 {
-    char *file = file_read("init-files");
+    char *file = file_read("/init-files");
     int entries = 0;
 
     for (int i = 0;;i++)

@@ -45,3 +45,10 @@ uint32_t file_write(char* name, char* data)
     asm("int $111"::"S"(name), "D"(data), "a"(&ret):);
     return ret;
 }
+
+char** dir_read(char* dir)
+{
+    char** ret;
+    asm("int $112"::"S"(dir), "a"(&ret):);
+    return ret;
+}

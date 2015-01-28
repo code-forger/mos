@@ -54,6 +54,7 @@ void idt_init()
 
     idt_encode_entry(110, (unsigned)&file_read_syscall, 0x08, 0x8E);
     idt_encode_entry(111, (unsigned)&file_write_syscall, 0x08, 0x8E);
+    idt_encode_entry(112, (unsigned)&dir_read_syscall, 0x08, 0x8E);
     construct_idtp();
 }
 

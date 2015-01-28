@@ -10,6 +10,27 @@ typedef struct header_t {
 header *top;
 int heap = 0;
 
+static void clean_memory()
+{
+    header *current = top;
+
+    do
+    {
+        if (current->free)
+        {
+            header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+            if (next_node->free && next_node->free != 3)
+            {
+                current->size = current->size + next_node->size + HEAD_SIZE;
+                current = top;
+                continue;
+            }
+        }
+
+        current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+    } while (current->free != 3);
+}
+
 void *malloc(uint32_t size) {
     header* current = top;
 
@@ -34,9 +55,6 @@ void *malloc(uint32_t size) {
     } while (current->free != 3);
 
     return 0;
-}
-void init_mem()
-{
 }
 
 void create_heap()
@@ -64,7 +82,7 @@ void free(void *memory)
         if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
         {
             header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
-            if (next_node->free)
+            if (next_node->free && next_node->free != 3)
             {
                 current->size = current->size + next_node->size + HEAD_SIZE;
                 current->free = true;
@@ -78,4 +96,5 @@ void free(void *memory)
 
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
+    //clean_memory();
 }

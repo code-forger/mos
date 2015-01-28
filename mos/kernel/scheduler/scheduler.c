@@ -19,7 +19,7 @@ static uint64_t global_ms;
 
 uint32_t fork()
 {
-    //printf("[scheduler.c] CALL : fork()\n");
+    //printf("[scheduler.c] CALL : fork() : %d into %d \n", current_pid, next_pid);
     process_table[next_pid].flags = F_INIT;
     uint32_t pid = next_pid;
     process_table[next_pid].code_physical[0] = current_pid;
@@ -34,7 +34,8 @@ uint32_t fork()
     //printf("                   : %s:\n", parentprocdir);
 
     mrfsNewFolder("/proc/", proc);
-    mrfsNewFile(procdir, "name", mrfsReadFile(parentprocdir, "name"), 5);
+    char* f = mrfsReadFile(parentprocdir, "name");
+    mrfsNewFile(procdir, "name", f, strlen(f));
 
     next_pid++;
 
@@ -60,9 +61,14 @@ void scheduler_exec(uint32_t program_number)
 
 void scheduler_exec_string(char *program_name)
 {
-    //printf("[scheduler.c] CALL : scheduler_exec(%s)\n", program_name);
+    //printf("[scheduler.c] CALL : scheduler_exec_string()\n");
+    int64_t jump_target = elf_load(program_name, &(process_table[current_pid]));
 
-    //char proc[10] = {current_pid + '0'};
+    if (jump_target == -1) // {no such file}
+    {
+        return;
+    }
+
     char procdir[10] = {'/', 'p', 'r', 'o', 'c', '/', current_pid + '0', '/'};
 
     //printf("[scheduler.c] INFO : Got names:\n");
@@ -70,8 +76,6 @@ void scheduler_exec_string(char *program_name)
     //printf("                   : %s:\n", procdir);
 
     mrfsWriteFile(procdir, "name", program_name, strlen(program_name));
-
-    uint32_t jump_target = elf_load(program_name, &(process_table[current_pid]));
 
 
 

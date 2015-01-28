@@ -38,4 +38,4 @@ typedef struct program_header_t
     uint32_t flags;
 } __attribute__ ((packed)) program_header;
 
-uint32_t elf_load(const char* name, process_table_entry* ptb);
+int64_t elf_load(const char* name, process_table_entry* ptb);

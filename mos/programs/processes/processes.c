@@ -21,8 +21,9 @@ void main(void)
 
     while(1)
     {
+        int lines = 25 - 4;
         printf("********Processes********\n\n");
-
+        lines--;
         char** directory = dir_read("/proc/");
 
         for (int i = 0; directory[i][0] != '\0'; i++)
@@ -37,13 +38,16 @@ void main(void)
             char* file = file_read(proc_dir);
 
             printf("    %s  =  %s\n", directory[i], file);
+            lines--;
             free(proc_dir);
             free(file);
             free(directory[i]);
         }
 
         free(directory);
-        sleep(100000);
+        for(;lines >=0; lines--)
+            printf("\n");
+        sleep(50000);
     }
 
     for(;;);

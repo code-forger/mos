@@ -24,16 +24,52 @@ uint32_t fork()
     uint32_t pid = next_pid;
     process_table[next_pid].code_physical[0] = current_pid;
 
-    char proc[10] = {next_pid + '0'};
-    char procdir[10] = {'/', 'p', 'r', 'o', 'c', '/', next_pid + '0', '/'};
-    char parentprocdir[10] = {'/', 'p', 'r', 'o', 'c', '/', current_pid + '0', '/'};
+
+
+    char proc_num_str[7] = "0";
+    int p = next_pid;
+    int i;
+
+    for (i = p?0:1; p; i++)
+    {
+        proc_num_str[i] = p%10 + '0';
+        p /= 10;
+    }
+
+    proc_num_str[i++] = '/';
+    proc_num_str[i] = '\0';
+
+    char procdir[7+7] = "/proc/";
+
+    strcpy(procdir+6, proc_num_str);
+
+    proc_num_str[--i] = '\0';
+
+
+    char parentproc_num_str[7] = "0";
+    p = current_pid;
+
+    for (i = p?0:1; p; i++)
+    {
+        parentproc_num_str[i] = p%10 + '0';
+        p /= 10;
+    }
+
+    parentproc_num_str[i++] = '/';
+    parentproc_num_str[i] = '\0';
+
+    char parentprocdir[7+7] = "/proc/";
+
+    strcpy(parentprocdir+6, parentproc_num_str);
 
     //printf("[scheduler.c] INFO : Got names:\n");
     //printf("                   : %s:\n", proc);
     //printf("                   : %s:\n", procdir);
     //printf("                   : %s:\n", parentprocdir);
 
-    mrfsNewFolder("/proc/", proc);
+
+
+    mrfsNewFolder("/proc/", proc_num_str);
     char* f = mrfsReadFile(parentprocdir, "name");
     mrfsNewFile(procdir, "name", f, strlen(f));
 
@@ -69,10 +105,24 @@ void scheduler_exec_string(char *program_name)
         return;
     }
 
-    char procdir[10] = {'/', 'p', 'r', 'o', 'c', '/', current_pid + '0', '/'};
+    char proc_num_str[7] = "0";
+    int p = current_pid;
+    int i;
+
+    for (i = p?0:1; p; i++)
+    {
+        proc_num_str[i] = p%10 + '0';
+        p /= 10;
+    }
+
+    proc_num_str[i++] = '/';
+    proc_num_str[i] = '\0';
+
+    char procdir[7+7] = "/proc/";
+
+    strcpy(procdir+6, proc_num_str);
 
     //printf("[scheduler.c] INFO : Got names:\n");
-    //printf("                   : %s:\n", proc);
     //printf("                   : %s:\n", procdir);
 
     mrfsWriteFile(procdir, "name", program_name, strlen(program_name));

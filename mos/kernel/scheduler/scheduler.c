@@ -148,6 +148,30 @@ void scheduler_pause()
     process_table[current_pid].flags |= F_PAUSED;
 }
 
+void scheduler_kill()
+{
+    process_table[current_pid].flags |= F_PAUSED;
+
+    char proc_num_str[7] = "0";
+    int p = current_pid;
+    int i;
+
+    for (i = p?0:1; p; i++)
+    {
+        proc_num_str[i] = p%10 + '0';
+        p /= 10;
+    }
+
+    proc_num_str[i++] = '/';
+    proc_num_str[i] = '\0';
+
+    char procdir[7+7] = "/proc/";
+
+    strcpy(procdir+6, proc_num_str);
+
+    mrfsDeleteFolderRecursive(procdir);
+}
+
 static void events()
 {
     global_ms += 52;

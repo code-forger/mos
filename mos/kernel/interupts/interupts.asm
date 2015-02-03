@@ -32,6 +32,7 @@ extern c_scheduler_exec_syscall
 extern c_scheduler_exec_string_syscall
 extern c_scheduler_sleep_syscall
 extern c_scheduler_pause_syscall
+extern c_scheduler_kill_syscall
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
@@ -73,6 +74,7 @@ global scheduler_exec_syscall
 global scheduler_exec_string_syscall
 global scheduler_sleep_syscall
 global scheduler_pause_syscall
+global scheduler_kill_syscall
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
@@ -277,6 +279,12 @@ scheduler_sleep_syscall:
 scheduler_pause_syscall:
     pushad
     call c_scheduler_pause_syscall
+    popad
+    iret
+
+scheduler_kill_syscall:
+    pushad
+    call c_scheduler_kill_syscall
     popad
     iret
 

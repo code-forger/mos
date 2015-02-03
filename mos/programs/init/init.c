@@ -1,12 +1,5 @@
 #include "../../stdlib/stdio.h"
 
-
-asm(".global _start");
-asm("_start:");
-asm("    sti");
-asm("    call create_heap");
-asm("    call main");
-
 void main(void)
 {
     char *file = file_read("/init-files");
@@ -23,7 +16,6 @@ void main(void)
         }
     }
     setio(1,1,20,20);
-
     char** programs = malloc(sizeof(char*)*entries);
     int program_tracker = 0;
 

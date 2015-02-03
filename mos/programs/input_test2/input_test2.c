@@ -3,14 +3,6 @@
 #include "../../stdlib/process.h"
 
 
-asm(".global _start");
-asm("_start:");
-asm("    sti");
-asm("    call create_heap");
-asm("    call main");
-
-
-
 /*uint32_t pipe(PIPE[2]);
 uint32_t write(PIPE pipe, uint8_t data);
 int64_t read(PIPE pipe);*/

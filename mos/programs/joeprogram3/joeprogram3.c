@@ -1,12 +1,5 @@
 #include "../../stdlib/stdio.h"
 
-
-asm(".global _start");
-asm("_start:");
-asm("    sti");
-asm("    call create_heap");
-asm("    call main");
-
 #define I(A) (6-A)
 
 void main(void)

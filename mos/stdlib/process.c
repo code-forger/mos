@@ -43,6 +43,14 @@ void sleep(uint32_t millseconds)
     asm("sti");
 }
 
+void kill(uint32_t pid)
+{
+    asm("cli");
+    asm("int $96"::"S"(pid):);
+    asm("int $32");
+    asm("sti");
+}
+
 void pause()
 {
     asm("cli");

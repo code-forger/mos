@@ -1,13 +1,5 @@
 #include "../../stdlib/stdio.h"
 
-
-
-asm(".global _start");
-asm("_start:");
-asm("    sti");
-asm("    call create_heap");
-asm("    call main");
-
 void main(void)
 {
     setio(0,24,80,1);
@@ -47,6 +39,7 @@ void main(void)
                 }
                 else if (c == '\n')
                 {
+
                     buffer[caret_loc] = '\0';
                     int id = fork();
                     if (id==get_pid())

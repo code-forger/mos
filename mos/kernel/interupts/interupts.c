@@ -246,6 +246,14 @@ void  c_scheduler_pause_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+void  c_scheduler_kill_syscall(void)
+{
+    uint32_t pid;
+    asm("mov %%esi, %0":"=r"(pid):);
+    scheduler_kill(pid);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
 void  c_pipe_pipe_syscall(void)
 {
     uint32_t loc, *pipe_head, *pipe_tail, *ret;

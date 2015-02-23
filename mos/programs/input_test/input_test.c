@@ -107,66 +107,66 @@ void main(void)
     {
         putcharat(caret, caret_loc%24+1, caret_loc/24+1);
         if ((caret_counter = (caret_counter + 1) % 15) == 0) { if (caret == '%') caret = file[caret_loc]; else caret = '%'; }
-        for (int i = 0; i < 100; i++)
+        //for (int i = 0; i < 100; i++)
+        //{
+        int64_t get = getchar();
+        if (get > 0)
         {
-            int64_t get = getchar();
-            if (get > 0)
+            char c = (char)get;
+            if (state)
             {
-                char c = (char)get;
-                if (state)
+                state = 0;
+                if (c == (char)0x48)
                 {
-                    state = 0;
-                    if (c == (char)0x48)
-                    {
-                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                        if ((caret_loc -= 24) < 0)
-                            caret_loc = 0;
-                    }
-                    else if (c == (char)0x50)
-                    {
-                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                        if ((caret_loc += 24) >= 21*24-1)
-                            caret_loc = 21*24-1;
-                    }
-                    else if (c == (char)0x4D)
-                    {
-                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                        if ((caret_loc++) >= 21*24-1)
-                            caret_loc = 21*24-1;
-                    }
-                    else if (c == (char)0x4B)
-                    {
-                        putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                        if ((caret_loc--) <= 0)
-                            caret_loc = 0;
-                    }
-                }
-                else if (c == '\b')
-                {
-                    putcharat(file[caret_loc] = ' ', caret_loc%24+1, caret_loc/24+1);
-                    file_write("/notes", file);
-                    if ((caret_loc--) <= 0)
+                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                    if ((caret_loc -= 24) < 0)
                         caret_loc = 0;
                 }
-                else if (c == '\n')
+                else if (c == (char)0x50)
                 {
-                    if ((caret_loc = (caret_loc + 24) - (caret_loc + 24) % 24) > 21*24-1)
+                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                    if ((caret_loc += 24) >= 21*24-1)
                         caret_loc = 21*24-1;
                 }
-                else if (c == (char)0xE0)
+                else if (c == (char)0x4D)
                 {
-                    state = 1;
-                }
-                else
-                {
-                    putcharat(file[caret_loc] = c, caret_loc%24+1, caret_loc/24+1);
-                    file_write("/notes", file);
+                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
                     if ((caret_loc++) >= 21*24-1)
                         caret_loc = 21*24-1;
                 }
+                else if (c == (char)0x4B)
+                {
+                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
+                    if ((caret_loc--) <= 0)
+                        caret_loc = 0;
+                }
+            }
+            else if (c == '\b')
+            {
+                putcharat(file[caret_loc] = ' ', caret_loc%24+1, caret_loc/24+1);
+                file_write("/notes", file);
+                if ((caret_loc--) <= 0)
+                    caret_loc = 0;
+            }
+            else if (c == '\n')
+            {
+                if ((caret_loc = (caret_loc + 24) - (caret_loc + 24) % 24) > 21*24-1)
+                    caret_loc = 21*24-1;
+            }
+            else if (c == (char)0xE0)
+            {
+                state = 1;
+            }
+            else
+            {
+                putcharat(file[caret_loc] = c, caret_loc%24+1, caret_loc/24+1);
+                file_write("/notes", file);
+                if ((caret_loc++) >= 21*24-1)
+                    caret_loc = 21*24-1;
             }
         }
-        sleep(1000);
+        //}
+        //sleep(100);
     }
     for(;;);
 }

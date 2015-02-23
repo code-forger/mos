@@ -18,3 +18,5 @@ int inodeGetNextFree(int* nextOut);
 void inodeFree(int nodeIn);
 int* inodeGetBlocks(union Inode nodeIn);
 void inodeWriteBlocks(union Inode* nodeOut, int* pointersIn, int countIn);
+int inodeLockForWrite(union Inode* nodeIn);
+void inodeUnlockForWrite(union Inode* nodeIn);

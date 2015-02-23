@@ -2,7 +2,7 @@ all: kernel-code loader-code stdlib-code programs-code
 	cp kernel/mos.bin isodir/boot/
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
-	#cp bdisk.img disk.img
+	cp bdisk.img disk.img
 	./mrfs-write disk.img / init-files file init-files
 	./mrfs-write disk.img / init file programs/init/init
 	./mrfs-write disk.img / banner_left file programs/banner_left/banner_left

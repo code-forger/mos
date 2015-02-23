@@ -45,6 +45,6 @@ void pic_init(void)
 
     send_byte_to(MASTER_PIC_1, 0x00);
     send_byte_to(SLAVE_PIC_1,  0x00);
-          
-    populate_idt(); 
+
+    populate_idt();
 }

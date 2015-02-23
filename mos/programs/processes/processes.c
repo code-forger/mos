@@ -8,10 +8,10 @@ int64_t read(PIPE pipe);*/
 
 void main(void)
 {
-    setio(54, 1, 25, 25-2);
 
     while(1)
     {
+        setio(54, 1, 25, 25-2);
         int lines = 25 - 4;
         printf("********Processes********\n\n");
         lines--;
@@ -38,7 +38,7 @@ void main(void)
         free(directory);
         for(;lines >=0; lines--)
             printf("\n");
-        sleep(50000);
+        sleep(2000);
     }
 
     for(;;);

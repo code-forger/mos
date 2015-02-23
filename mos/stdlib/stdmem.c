@@ -1,8 +1,11 @@
 #include "stdmem.h"
 
 typedef struct header_t {
+    uint8_t pad1;
     uint32_t size;
+    uint8_t pad2;
     uint8_t free;
+    uint8_t pad3;
 } __attribute__ ((packed)) header;
 
 #define HEAD_SIZE sizeof(header)
@@ -44,7 +47,6 @@ void *malloc(uint32_t size) {
             current->free = false;
 
             current = (header*)((uint32_t)current + HEAD_SIZE + size);
-
             current->size = node_size - size - HEAD_SIZE;
             current->free = true;
 
@@ -81,20 +83,10 @@ void free(void *memory)
     {
         if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
         {
-            header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
-            if (next_node->free && next_node->free != 3)
-            {
-                current->size = current->size + next_node->size + HEAD_SIZE;
-                current->free = true;
-            }
-            else
-            {
-                current->free = true;
-            }
+            current->free = true;
+            clean_memory();
             return;
         }
-
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
-    //clean_memory();
 }

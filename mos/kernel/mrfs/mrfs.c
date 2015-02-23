@@ -74,6 +74,7 @@ union Inode getDirChildrenByPath(union Inode inode, char* path)
 
     union Inode retnode;
     retnode.node.info.exists = 0;
+    retnode.node.info.directory = 0;
     return retnode;
 }
 
@@ -174,6 +175,121 @@ int mrfsFormatHdd(int _blockSize, int rootDirSize)
     return 0;
 }
 
+static bool isDirPath(char* path)
+{
+    return path[strlen(path)-1] == '/';
+}
+
+static bool isDir(char* path)
+{
+    return getDirInodeByPath(path).node.info.directory;
+}
+
+static char* splitForLookup(char* name)
+{
+    int pos,l  = strlen(name);
+    for (;pos>0 && name[pos]!='/';pos--);
+    char* buff = malloc(l-pos+1);
+    strcpy(buff, name+(++pos));
+    buff[l-pos] = '\0';
+    name[pos] = '\0';
+    return buff;
+}
+
+
+int mrfsOpenFile(char* name, bool create)
+{
+    char* fname;
+    union Inode file = getInodeByName(name, fname = splitForLookup(name));
+    printf("%s %s\n", name, fname);
+    if (file.node.info.exists)
+    {
+        free(fname);
+        return file.node.nodenumber;
+    }
+    else if (create)
+    {
+        mrfsNewFile(name, fname, "1", 1);
+        file = getInodeByName(name, fname);
+        free(fname);
+        return file.node.nodenumber;
+    }
+    free(fname);
+    return -1;
+}
+
+int mrfsOpenDir(char* name)
+{
+    if (isDirPath(name) && isDir(name))
+        return getDirInodeByPath(name).node.nodenumber;
+    return -1;
+}
+
+void mrfsPutC(int file_num, char c)
+{
+    if (file_num < 0) return;
+    union Inode file = inodeRead(file_num);
+    if (!file.node.info.exists) return;
+    while(inodeLockForWrite(&file));
+    int *pointers = inodeGetPointers(file);
+
+    int count = file.node.size / (sb.data.blockSize-8) + 1;
+
+    char* block = blockRead(pointers[count-1]);
+    union int_char length;
+    for (int i = 0; i < 4; i++)
+    {
+        length.c[i] = block[i];
+    }
+    if (length.i == sb.data.blockSize-8)
+    {
+        int* newPointers = malloc(sizeof(int)*(count+1));
+        for (int i = 0; i < count; i++)
+        {
+            newPointers[i] = pointers[i];
+        }
+        newPointers[count] = blockWrite(&c, 0, 1, file.node.nodenumber);
+        inodeWritePointers(&file, newPointers, count+1);
+        file.node.size += 1;
+        inodeRewrite(file);
+        free(newPointers);
+    }
+    else
+    {
+        char* block_data = malloc(length.i+2);
+        for(int i = 0; i < (length.i); i++)
+            block_data[i] = block[i+8];
+        block_data[length.i] = c;
+        block_data[length.i+1] = '\0';
+        blockRewrite(block_data, 0, length.i + 1, file.node.nodenumber, pointers[count-1]);
+        file.node.size += 1;
+        inodeRewrite(file);
+        free(block_data);
+    }
+    free(pointers);
+    free(block);
+    inodeUnlockForWrite(&file);
+}
+
+int mrfsGetC(int file_num, int index)
+{
+    if (file_num < 0) return -1;
+    union Inode file = inodeRead(file_num);
+    if (!file.node.info.exists) return -1;
+
+    if (index < 0 || index > file.node.size) return -1;
+    int *pointers = inodeGetPointers(file);
+
+    int pointer = index / (sb.data.blockSize-8);
+    int blockpointer = index % (sb.data.blockSize-8);
+
+    char* block = blockRead(pointers[pointer]);
+    char ret = block[blockpointer+8];
+    free(pointers);
+    free(block);
+    return ret;
+}
+
 //this function creates a new file under the specified name and directory with the given data
 
 int mrfsNewFile(char* path, char* filename, char* contents,int length)
@@ -226,7 +342,6 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
     return 0;
 
 }
-
 
 void mrfsWriteFile(char* path, char* filename, char* contents,int length)
 {
@@ -431,7 +546,7 @@ int mrfsDeleteFolderRecursive(char* path)
 
 //this function lists all the childern of a directory (like dir or ls)
 
-char** mrfsGetFolderChildren(   char* path)
+char** mrfsGetFolderChildren(char* path)
 {
     union Inode inode = getDirInodeByPath(path);
 

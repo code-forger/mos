@@ -10,6 +10,7 @@
 #include "mrfs/mrfs.h"
 #include "paging/paging.h"
 #include "io/hdd.h"
+#include "io/port.h"
 #include "ELF/elf.h"
 
 void kerror(const char* data)
@@ -47,6 +48,17 @@ void init_kernel()
     mrfsDeleteFolderRecursive("/proc/");
 
     mrfsNewFolder("/", "proc");
+
+    /*uint32_t rate = 3;
+    rate &= 0x0F;            // rate must be above 2 and not over 15
+    send_byte_to(0x70, 0x8A);        // set index to register A, disable NMI
+    char prev=get_byte_from(0x71);    // get initial value of register A
+    send_byte_to(0x70, 0x8A);        // reset index to A
+    send_byte_to(0x71, (prev & 0xF0) | rate); //write only our rate to A. Note, rate is the bottom 4 bits.
+    */
+
+
+
 
     uint32_t esp, ebp;
 

@@ -13,6 +13,10 @@ char *strcpy(char *dest, const char *src);
 
 int mrfsFormatHdd(int _blockSize, int rootDirSize);
 
+int mrfsOpenFile(char* name, bool create);
+void mrfsPutC(int file_num, char c);
+int mrfsGetC(int file_num, int index);
+
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
 void mrfsWriteFile(char* path, char* filename, char* contents,int length);
 int mrfsNewFolder(char* path,char* foldername);

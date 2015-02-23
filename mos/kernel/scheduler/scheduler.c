@@ -148,12 +148,14 @@ void scheduler_pause()
     process_table[current_pid].flags |= F_PAUSED;
 }
 
-void scheduler_kill()
+void scheduler_kill(uint32_t pid)
 {
-    process_table[current_pid].flags |= F_PAUSED;
+    process_table[pid].flags |= F_DEAD;
+
+    terminal_clear_process(pid);
 
     char proc_num_str[7] = "0";
-    int p = current_pid;
+    int p = pid;
     int i;
 
     for (i = p?0:1; p; i++)
@@ -170,6 +172,7 @@ void scheduler_kill()
     strcpy(procdir+6, proc_num_str);
 
     mrfsDeleteFolderRecursive(procdir);
+
 }
 
 static void events()
@@ -212,7 +215,7 @@ void scheduler_time_interupt()
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
 
-    if (process_table[current_pid].io.outpipe != 0)
+    if (process_table[current_pid].io.outpipe != 0 && !(process_table[current_pid].flags & F_DEAD))
         terminal_string_for_process(&process_table[current_pid].io);
     hdd_write_cache();
 

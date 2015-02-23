@@ -84,7 +84,7 @@ void main(void)
         if(time[0] < 10)
             putchar('0');
         putint(time[0]);
-        sleep(10000);
+        sleep(200);
         putchar('\n');
 
     }

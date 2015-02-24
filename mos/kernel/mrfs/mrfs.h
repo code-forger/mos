@@ -13,7 +13,8 @@ char *strcpy(char *dest, const char *src);
 
 int mrfsFormatHdd(int _blockSize, int rootDirSize);
 
-int mrfsOpenFile(char* name, bool create);
+void mrfsOpenFile(char* name, bool create, FILE* fout);
+void mrfsPutCAt(int file_num, char c, int index);
 void mrfsPutC(int file_num, char c);
 int mrfsGetC(int file_num, int index);
 

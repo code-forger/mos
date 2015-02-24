@@ -67,3 +67,6 @@ void pipe_read_syscall(void);
 void file_read_syscall(void);
 void file_write_syscall(void);
 void dir_read_syscall(void);
+void file_open_syscall(void);
+void file_putc_syscall(void);
+void file_getc_syscall(void);

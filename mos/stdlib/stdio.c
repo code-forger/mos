@@ -10,59 +10,6 @@ static PIPE i_pipes[2];
 #define READ 1
 
 
-void setio(int px, int py, int wx, int wy)
-{
-    asm("cli");
-    pipe(o_pipes);
-    write(o_pipes[WRITE], px);
-    read(o_pipes[READ]);
-    write(o_pipes[WRITE], px);
-    write(o_pipes[WRITE], py);
-    write(o_pipes[WRITE], wx);
-    write(o_pipes[WRITE], wy);
-    asm("int $81"::"S"(o_pipes));
-    asm("sti");
-}
-
-void stdin_init()
-{
-    asm("cli");
-    pipe(i_pipes);
-    asm("int $82"::"S"(i_pipes));
-    asm("sti");
-}
-
-int64_t getchar()
-{
-    return read(i_pipes[READ]);
-}
-
-void putchar(char c)
-{
-    write(o_pipes[WRITE], c);
-}
-
-void putcharat(char c, uint32_t x, uint32_t y)
-{
-    asm("cli");
-    uint32_t uc = (uint32_t)c;
-    asm("int $80"::"S"(uc), "D"(x), "d"(y):);
-    asm("sti");
-}
-
-int strlen(const char * str)
-{
-    int i = 0;
-    while (str[i++] != '\0');
-    return i-1;
-}
-
-char *strcpy(char *dest, const char *src)
-{
-   char *save = dest;
-   while((*dest++ = *src++));
-   return save;
-}
 
 static void putint(uint32_t in)
 {
@@ -130,6 +77,47 @@ static void putintbin(uint32_t in)
         putchar(buff[(length-1)-i]);
 }
 
+
+void setio(int px, int py, int wx, int wy)
+{
+    asm("cli");
+    pipe(o_pipes);
+    write(o_pipes[WRITE], px);
+    read(o_pipes[READ]);
+    write(o_pipes[WRITE], px);
+    write(o_pipes[WRITE], py);
+    write(o_pipes[WRITE], wx);
+    write(o_pipes[WRITE], wy);
+    asm("int $81"::"S"(o_pipes));
+    asm("sti");
+}
+
+void stdin_init()
+{
+    asm("cli");
+    pipe(i_pipes);
+    asm("int $82"::"S"(i_pipes));
+    asm("sti");
+}
+
+int64_t getchar()
+{
+    return read(i_pipes[READ]);
+}
+
+void putchar(char c)
+{
+    write(o_pipes[WRITE], c);
+}
+
+void putcharat(char c, uint32_t x, uint32_t y)
+{
+    asm("cli");
+    uint32_t uc = (uint32_t)c;
+    asm("int $80"::"S"(uc), "D"(x), "d"(y):);
+    asm("sti");
+}
+
 void printf(const char* string, ...)
 {
     va_list valist;
@@ -164,14 +152,47 @@ void printf(const char* string, ...)
     va_end(valist);
 }
 
-
-int atoi(const char* s)
+char* file_read(char* name)
 {
-    int ret = 0;
-    for (int i = 0; s[i] != '\0'; i++)
-    {
-        ret *= 10;
-        ret += s[i] - '0';
-    }
+    char* ret;
+    asm("int $110"::"S"(name), "a"(&ret):);
     return ret;
+}
+
+uint32_t file_write(char* name, char* data)
+{
+    uint32_t ret;
+    asm("int $111"::"S"(name), "D"(data), "a"(&ret):);
+    return ret;
+}
+
+char** dir_read(char* dir)
+{
+    char** ret;
+    asm("int $112"::"S"(dir), "a"(&ret):);
+    return ret;
+}
+
+uint32_t fopen(char* name, FILE* fd)
+{
+    uint32_t ret;
+    asm("int $113"::"S"(name), "D"(fd), "a"(&ret):);
+    return ret;
+}
+
+void fputc(char c, FILE* fd)
+{
+    asm("int $114"::"S"(c), "D"(fd):);
+}
+
+int32_t fgetc(FILE* fd)
+{
+    int32_t ret;
+    asm("int $115":: "a"(&ret), "D"(fd):);
+    return ret;
+}
+
+int32_t fseek(FILE* fd, int index)
+{
+    fd->index = index;
 }

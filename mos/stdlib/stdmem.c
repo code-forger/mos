@@ -59,22 +59,6 @@ void *malloc(uint32_t size) {
     return 0;
 }
 
-void create_heap()
-{
-    top = (header*) 0x80000000;
-    top->size = 0x1000 - HEAD_SIZE - HEAD_SIZE;
-    top->free = true;
-
-    top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
-    top->size = 0;
-    top->free = 3;
-
-    top = (header*) 0x80000000;
-
-    heap += top->size;
-}
-
-
 void free(void *memory)
 {
     header *current = top;
@@ -89,4 +73,19 @@ void free(void *memory)
         }
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
+}
+
+void create_heap()
+{
+    top = (header*) 0x80000000;
+    top->size = 0x1000 - HEAD_SIZE - HEAD_SIZE;
+    top->free = true;
+
+    top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
+    top->size = 0;
+    top->free = 3;
+
+    top = (header*) 0x80000000;
+
+    heap += top->size;
 }

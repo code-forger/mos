@@ -411,3 +411,38 @@ void  c_dir_read_syscall(void)
     //init_mem();
     send_byte_to(MASTER_PIC, 0x20);
 }
+
+void  c_file_open_syscall(void)
+{
+    char *fname;
+    FILE *data;
+    asm("mov %%esi, %0":"=r"(fname):);
+    asm("mov %%edi, %0":"=r"(data):);
+
+    mrfsOpenFile(fname, true, data);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_putc_syscall(void)
+{
+    int c;
+    FILE *data;
+    asm("mov %%esi, %0":"=r"(c):);
+    asm("mov %%edi, %0":"=r"(data):);
+    mrfsPutCAt(data->inode, c, data->index++);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_getc_syscall(void)
+{
+    uint32_t *ret;
+    uint32_t *datain;
+    asm("mov %%edi, %0":"=r"(datain):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    FILE* data = (FILE*)datain;
+    *ret = mrfsGetC(data->inode, data->index++);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}

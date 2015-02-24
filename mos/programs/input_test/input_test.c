@@ -60,8 +60,23 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
+    FILE fd;
 
-    for (int i = 0; i < 23; i++)
+    printf("aaa %h\n", &fd);
+    fopen("/notes", &fd);
+
+    fseek(&fd, 0);
+
+    int c;
+    printf("got file handle\n");
+    while ((c = fgetc(&fd)) != -1)
+        printf("%c", c);
+    printf("DONE\n");
+
+    for(;;);
+
+
+    /*for (int i = 0; i < 23; i++)
     {
         printf(lines[i]);
         sleep(1);
@@ -168,5 +183,5 @@ void main(void)
         //}
         //sleep(100);
     }
-    for(;;);
+    for(;;);*/
 }

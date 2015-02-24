@@ -1,3 +1,4 @@
+#include "../declarations.h"
 #define SUPERBLOCKSIZE 7*4
 #define INODESIZE (17*4)
 
@@ -79,3 +80,11 @@ union SuperBlock
     struct SuperBlockData data;
     char bytes[SUPERBLOCKSIZE];
 } sb;
+
+
+typedef struct FILE_type
+{
+    uint32_t inode;
+    uint32_t index;
+    uint32_t size;
+} __attribute__((packed)) FILE;

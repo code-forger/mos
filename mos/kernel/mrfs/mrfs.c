@@ -196,26 +196,30 @@ static char* splitForLookup(char* name)
     return buff;
 }
 
-
-int mrfsOpenFile(char* name, bool create)
+void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
     char* fname;
     union Inode file = getInodeByName(name, fname = splitForLookup(name));
-    printf("%s %s\n", name, fname);
     if (file.node.info.exists)
     {
         free(fname);
-        return file.node.nodenumber;
+        fout->inode = file.node.nodenumber;
+        fout->index = fout->size = file.node.size;
+        return;
     }
     else if (create)
     {
         mrfsNewFile(name, fname, "1", 1);
         file = getInodeByName(name, fname);
         free(fname);
-        return file.node.nodenumber;
+        fout->inode = file.node.nodenumber;
+        fout->index = fout->size = file.node.size;
+        return;
     }
     free(fname);
-    return -1;
+    fout->inode = -1;
+    fout->index = fout->size = -1;
+    return;
 }
 
 int mrfsOpenDir(char* name)
@@ -223,6 +227,40 @@ int mrfsOpenDir(char* name)
     if (isDirPath(name) && isDir(name))
         return getDirInodeByPath(name).node.nodenumber;
     return -1;
+}
+
+void mrfsPutCAt(int file_num, char c, int index)
+{
+    if (file_num < 0) return;
+    union Inode file = inodeRead(file_num);
+    if (!file.node.info.exists) return;
+
+    if (index == file.node.size)
+        mrfsPutC(file_num, c);
+    else
+    {
+
+        while(inodeLockForWrite(&file));
+        int *pointers = inodeGetPointers(file);
+
+        int pointer = index / (sb.data.blockSize-8);
+        int blockpointer = index % (sb.data.blockSize-8);
+
+        char* block = blockRead(pointers[pointer]);
+        block[blockpointer+8] = c;
+
+        union int_char length;
+        for (int i = 0; i < 4; i++)
+        {
+            length.c[i] = block[i];
+        }
+
+        blockRewrite(block, 8, length.i, file.node.nodenumber, pointers[pointer]);
+
+        free(pointers);
+        free(block);
+        inodeUnlockForWrite(&file);
+    }
 }
 
 void mrfsPutC(int file_num, char c)
@@ -277,7 +315,7 @@ int mrfsGetC(int file_num, int index)
     union Inode file = inodeRead(file_num);
     if (!file.node.info.exists) return -1;
 
-    if (index < 0 || index > file.node.size) return -1;
+    if (index < 0 || index >= file.node.size) return -1;
     int *pointers = inodeGetPointers(file);
 
     int pointer = index / (sb.data.blockSize-8);

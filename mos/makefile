@@ -1,4 +1,4 @@
-all: kernel-code loader-code stdlib-code programs-code
+ all: kernel-code loader-code stdlib-code programs-code
 	cp kernel/mos.bin isodir/boot/
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
@@ -16,6 +16,7 @@ all: kernel-code loader-code stdlib-code programs-code
 	./mrfs-write disk.img / launcher file programs/launcher/launcher
 	./mrfs-write disk.img / processes file programs/processes/processes
 	./mrfs-write disk.img / user raw "Michael Rochester"
+	./mrfs-write disk.img / notes raw "Michael Rochester"
 
 
 

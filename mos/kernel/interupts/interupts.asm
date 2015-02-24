@@ -39,6 +39,9 @@ extern c_pipe_read_syscall
 extern c_file_read_syscall
 extern c_file_write_syscall
 extern c_dir_read_syscall
+extern c_file_open_syscall
+extern c_file_putc_syscall
+extern c_file_getc_syscall
 
 global int_zero_division
 global int_debugger
@@ -81,6 +84,9 @@ global pipe_read_syscall
 global file_read_syscall
 global file_write_syscall
 global dir_read_syscall
+global file_open_syscall
+global file_putc_syscall
+global file_getc_syscall
 
 int_zero_division:
     pushad
@@ -332,6 +338,30 @@ dir_read_syscall:
     cli
     pushad
     call c_dir_read_syscall
+    popad
+    sti
+    iret
+
+file_open_syscall:
+    cli
+    pushad
+    call c_file_open_syscall
+    popad
+    sti
+    iret
+
+file_putc_syscall:
+    cli
+    pushad
+    call c_file_putc_syscall
+    popad
+    sti
+    iret
+
+file_getc_syscall:
+    cli
+    pushad
+    call c_file_getc_syscall
     popad
     sti
     iret

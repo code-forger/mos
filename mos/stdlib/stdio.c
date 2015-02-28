@@ -178,7 +178,33 @@ int32_t fgetc(FILE* fd)
     return ret;
 }
 
+int32_t fopendir(char* name, FILE* fd)
+{
+    uint32_t ret;
+    asm("int $116"::"S"(name), "D"(fd), "a"(&ret):);
+    return ret;
+}
+
+int32_t fgetfile(FILE* dd, FILE* fd)
+{
+    int32_t ret;
+    asm("int $117":: "a"(dd), "D"(fd):);
+    return ret;
+}
+
+int32_t fgetnamec(FILE* fd)
+{
+    int32_t ret;
+    asm("int $118":: "a"(&ret), "D"(fd):);
+    return ret;
+}
+
 int32_t fseek(FILE* fd, int index)
 {
     fd->index = index;
+}
+
+int32_t fseekname(FILE* fd, int index)
+{
+    fd->nameindex = index;
 }

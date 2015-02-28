@@ -45,3 +45,6 @@ void terminal_send_to_process(char data);
 void terminal_switch_context(uint32_t target);
 void terminal_clear_process(uint32_t pid);
 char terminal_get_last_char_pressed();
+
+void terminal_hide_process(uint32_t pid);
+void terminal_show_process(uint32_t pid);

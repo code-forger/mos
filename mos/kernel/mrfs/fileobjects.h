@@ -88,4 +88,8 @@ typedef struct FILE_type
     uint32_t inode;
     uint32_t index;
     uint32_t size;
+    uint32_t nameindex;
+    uint32_t namesize;
+    uint32_t type;
+
 } __attribute__((packed)) FILE;

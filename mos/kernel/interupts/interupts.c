@@ -112,7 +112,7 @@ void  c_int_page_fault(void)
     uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
     printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
-    dump_memory(0xc0010000);
+    dump_memory(0x80000000);
     asm("cli");
     asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
@@ -251,6 +251,23 @@ void  c_scheduler_kill_syscall(void)
     uint32_t pid;
     asm("mov %%esi, %0":"=r"(pid):);
     scheduler_kill(pid);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_scheduler_hide_syscall(void)
+{
+    uint32_t pid;
+    asm("mov %%esi, %0":"=r"(pid):);
+    terminal_hide_process(pid);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
+void  c_scheduler_show_syscall(void)
+{
+    uint32_t pid;
+    asm("mov %%esi, %0":"=r"(pid):);
+    terminal_show_process(pid);
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -444,6 +461,40 @@ void  c_file_getc_syscall(void)
     asm("mov %%edi, %0":"=r"(data):);
     asm("mov %%eax, %0":"=r"(ret):);
     *ret = mrfsGetC(data);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_opendir_syscall(void)
+{
+    char *dname;
+    FILE *dd;
+    asm("mov %%esi, %0":"=r"(dname):);
+    asm("mov %%edi, %0":"=r"(dd):);
+
+    mrfsOpenDir(dname, dd);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_getfile_syscall(void)
+{
+    FILE *ret;
+    FILE *dd;
+    asm("mov %%edi, %0":"=r"(ret):);
+    asm("mov %%eax, %0":"=r"(dd):);
+    mrfsGetFile(dd, ret);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+void  c_file_getnamec_syscall(void)
+{
+    uint32_t *ret;
+    FILE *data;
+    asm("mov %%edi, %0":"=r"(data):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = mrfsGetNameC(data);
 
     send_byte_to(MASTER_PIC, 0x20);
 }

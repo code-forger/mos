@@ -132,8 +132,6 @@ void malloc_selftest(void)
         pointer[i] = 0;
     }
     dump_memory(KERNEL_HEAP);
-    asm("cli");
-    asm("hlt");
 }
 
 

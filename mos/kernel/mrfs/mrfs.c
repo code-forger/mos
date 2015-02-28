@@ -164,7 +164,7 @@ static bool isDir(char* path)
 
 static char* splitForLookup(char* name)
 {
-    int pos,l  = strlen(name);
+    int pos = strlen(name),l  = strlen(name);
     for (;pos>0 && name[pos]!='/';pos--);
     char* buff = malloc(l-pos+1);
     strcpy(buff, name+(++pos));
@@ -176,35 +176,67 @@ static char* splitForLookup(char* name)
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
     printf("");
+    char* namecpy = malloc(strlen(name)+1);
+    strcpy(namecpy, name);
+    namecpy[strlen(name)] = '\0';
+    printf("");
     char* fname;
-    union Inode file = getInodeByName(name, fname = splitForLookup(name));
+    union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
         free(fname);
         fout->inode = file.node.nodenumber;
         fout->index = fout->size = file.node.size;
+        fout->nameindex = fout->namesize = strlen(fname);
+        fout->type = 0;
         return;
     }
     else if (create)
     {
-        mrfsNewFile(name, fname, " ", 1);
-        file = getInodeByName(name, fname);
+        mrfsNewFile(namecpy, fname, "", 0);
+        file = getInodeByName(namecpy, fname);
         free(fname);
         fout->inode = file.node.nodenumber;
-        fout->index = fout->size = file.node.size - 1;
+        fout->index = fout->size = file.node.size;
+        fout->nameindex = fout->namesize = strlen(fname);
+        fout->type = 0;
         return;
     }
     free(fname);
+    free(namecpy);
     fout->inode = -1;
     fout->index = fout->size = -1;
+    fout->type = 2;
     return;
 }
 
-int mrfsOpenDir(char* name)
+void mrfsOpenDir(char* name, FILE* dout)
 {
-    if (isDirPath(name) && isDir(name))
-        return getDirInodeByPath(name).node.nodenumber;
-    return -1;
+
+    char* namecpy = malloc(strlen(name)+1);
+    strcpy(namecpy, name);
+    namecpy[strlen(name)] = '\0';
+    printf("");
+
+    if (isDirPath(namecpy) && isDir(namecpy))
+    {
+        union Inode dir = getDirInodeByPath(namecpy);
+        dout->inode = dir.node.nodenumber;
+        dout->index = dout->size = dir.node.size;
+        printf("");
+        namecpy[strlen(name)-1] = '\0';
+        char *fname = splitForLookup(namecpy);
+        dout->nameindex = dout->namesize = strlen(fname);
+        dout->type = 1;
+        free(fname);
+        free(namecpy);
+
+        return;
+    }
+    dout->inode = -1;
+    dout->index = dout->size = -1;
+    dout->type = 2;
+    return;
 }
 
 static void mrfsPutCEnd(int file_num, char c)
@@ -307,6 +339,51 @@ int mrfsGetC(FILE* fd)
     free(block);
     fd->index = (fd->index == fd->size)?fd->size:fd->index+1;
     return ret;
+}
+
+int mrfsGetNameC(FILE* fd)
+{
+    union Inode file = inodeRead(fd->inode);
+    if (!file.node.info.exists) return -1;
+
+    if (fd->nameindex >= (uint32_t)fd->namesize) return -1;
+
+    char* block = blockRead(file.node.nameblock);
+    char ret = block[fd->nameindex+8];
+    free(block);
+    fd->nameindex = (fd->nameindex == fd->namesize)?fd->namesize:fd->nameindex+1;
+    return ret;
+}
+
+int mrfsGetFile(FILE* dd, FILE* fd)
+{
+    union Inode dir = inodeRead(dd->inode);
+    if (!dir.node.info.exists) return -1;
+
+    if (dd->index >= (uint32_t)dir.node.size)
+    {
+        fd->type = 2;
+        return -1;
+    }
+    int *pointers = inodeGetPointers(dir);
+
+    union Inode file = inodeRead(pointers[dd->index]);
+    fd->inode = file.node.nodenumber;
+    fd->index = fd->size = file.node.size;
+
+    char* block = blockRead(file.node.nameblock);
+    union int_char length;
+    for (int i = 0; i < 4; i++)
+    {
+        length.c[i] = block[i];
+    }
+
+    fd->nameindex = fd->namesize = length.i;
+    fd->type = file.node.info.directory;
+    free(block);
+    free(pointers);
+    dd->index = (dd->index == dd->size)?dd->size:dd->index+1;
+    return 0;
 }
 
 //this function creates a new file under the specified name and directory with the given data
@@ -719,6 +796,27 @@ int mrfsDefragFile(char* path, char* filename, int position)
 }
 
 
+static char* testing_read_file(FILE fd)
+{
+    char* buff = malloc (fd.size +1);
+    char c;
+    fd.index=0;
+    for(int i = 0;(c = mrfsGetC(&fd)) != -1; i++)
+        buff[i] = c;
+    buff[fd.size] = '\0';
+    return buff;
+}
+
+static char* testing_read_file_name(FILE fd)
+{
+    char* buff = malloc (fd.namesize +1);
+    char c;
+    fd.nameindex=0;
+    for(int i = 0;(c = mrfsGetNameC(&fd)) != -1; i++)
+        buff[i] = c;
+    buff[fd.namesize] = '\0';
+    return buff;
+}
 
 int mrfs_selftest()
 {
@@ -726,11 +824,12 @@ int mrfs_selftest()
 
     FILE fd;
 
-    printf("Starting MRFS Tests.\n");
 
     mrfsOpenFile("/test", true, &fd);
 
     printf("got %d\n", fd.inode);
+
+    fd.index = 0;
 
     mrfsPutC(&fd, 'a');
     mrfsPutC(&fd, 'b');
@@ -738,20 +837,98 @@ int mrfs_selftest()
     mrfsPutC(&fd, 'd');
     mrfsPutC(&fd, 'e');
 
+    printf("%d == %d\n", fd.index, fd.size);
+
     fd.index = 0;
 
-    for (int i = 0; i < 6; i++)
+    printf("test file constructed\n");
+
+    for (int i = 0; i < 10; i++)
         printf("%c", mrfsGetC(&fd));
 
     printf("\n");
 
 
-    char name[6] = {'t','e','s','t','x','\0'};
+    char name[7] = {'/','t','e','s','t','x','\0'};
 
     for (int i = 0; i < 6; i++)
     {
-        name[4] = '0' + i;
+        name[5] = '0' + i;
+        printf("opening file %s\n",name );
         mrfsOpenFile(name, true, &fd);
+    }
+
+    hdd_write_cache();
+
+    mrfsOpenFile("/test", true, &fd);
+    fd.index = 0;
+
+    printf("test file re openend\n");
+
+    for (int i = 0; i < 10; i++)
+        printf("%c", mrfsGetC(&fd));
+
+    char* filecontenc = testing_read_file(fd);
+    printf("GOT %s for %s!\n", filecontenc, "/test");
+    free(filecontenc);
+    hdd_write_cache();
+
+
+    mrfsOpenDir("/", &fd);
+    fd.index = 0;
+
+    FILE child;
+
+    mrfsGetFile(&fd, &child);
+    while (child.type != 2)
+    {
+
+        char*filename;
+        if(child.type == 1)
+        {
+            filename = testing_read_file_name(child);
+            printf("got directory %s\n", filename);
+            free(filecontenc);
+        }
+        else
+        {
+            filecontenc = testing_read_file(child);
+            filename = testing_read_file_name(child);
+            printf("GOT %s for %s!\n", filecontenc, filename);
+            free(filename);
+            free(filecontenc);
+        }
+        mrfsGetFile(&fd, &child);
+    }
+
+    mrfsOpenFile("/proc/testproc", true, &fd);
+    hdd_write_cache();
+
+
+    mrfsOpenDir("/proc/", &fd);
+    fd.index = 0;
+
+
+    mrfsGetFile(&fd, &child);
+    while (child.type != 2)
+    {
+
+        char*filename;
+        if(child.type == 1)
+        {
+            filename = testing_read_file_name(child);
+            printf("got directory %s\n", filename);
+            free(filecontenc);
+        }
+        else
+        {
+            filecontenc = testing_read_file(child);
+            filename = testing_read_file_name(child);
+            printf("GOT %s for %s!\n", filecontenc, filename);
+            free(filename);
+            free(filecontenc);
+        }
+        mrfsGetFile(&fd, &child);
     }
 
 

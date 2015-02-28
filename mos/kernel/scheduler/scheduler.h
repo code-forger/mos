@@ -11,8 +11,11 @@ void scheduler_exec(uint32_t program_number);
 void scheduler_exec_string(char *program_name);
 void scheduler_sleep(uint32_t milliseconds);
 void scheduler_pause();
+void scheduler_pause_process(uint32_t pid);
+void scheduler_wake_process(uint32_t pid);
 void scheduler_kill();
 uint32_t scheduler_get_next_input(uint32_t current);
+uint32_t scheduler_get_next_process(uint32_t current);
 
 #define F_INIT      (uint32_t)0b000001
 #define F_DEAD      (uint32_t)0b000010
@@ -31,6 +34,7 @@ typedef struct io_part
     uint8_t wy;
     uint8_t column;
     uint8_t row;
+    char* snapshot;
 } __attribute__((packed)) io_part;
 
 #include "../io/terminal.h"

@@ -149,6 +149,16 @@ void scheduler_pause()
     process_table[current_pid].flags |= F_PAUSED;
 }
 
+void scheduler_pause_process(uint32_t pid)
+{
+    process_table[pid].flags |= F_PAUSED;
+}
+
+void scheduler_wake_process(uint32_t pid)
+{
+    process_table[pid].flags &= ~(F_PAUSED | F_SKIP);
+}
+
 void scheduler_kill(uint32_t pid)
 {
     process_table[pid].flags |= F_DEAD;
@@ -205,6 +215,22 @@ uint32_t scheduler_get_next_input(uint32_t current_input)
         break;
     }
     return current_input;
+}
+
+uint32_t scheduler_get_next_process(uint32_t current_process)
+{
+    uint32_t starting_process = current_process;
+    for (;;)
+    {
+        ++current_process;
+        current_process = (current_process % next_pid);
+        if (current_process == starting_process)
+            break;
+        if (process_table[current_process].flags & F_DEAD)
+            continue;
+        break;
+    }
+    return current_process;
 }
 
 void scheduler_time_interupt()

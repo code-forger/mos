@@ -33,6 +33,8 @@ extern c_scheduler_exec_string_syscall
 extern c_scheduler_sleep_syscall
 extern c_scheduler_pause_syscall
 extern c_scheduler_kill_syscall
+extern c_scheduler_hide_syscall
+extern c_scheduler_show_syscall
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
@@ -42,6 +44,9 @@ extern c_dir_read_syscall
 extern c_file_open_syscall
 extern c_file_putc_syscall
 extern c_file_getc_syscall
+extern c_file_opendir_syscall
+extern c_file_getfile_syscall
+extern c_file_getnamec_syscall
 
 global int_zero_division
 global int_debugger
@@ -78,6 +83,8 @@ global scheduler_exec_string_syscall
 global scheduler_sleep_syscall
 global scheduler_pause_syscall
 global scheduler_kill_syscall
+global scheduler_hide_syscall
+global scheduler_show_syscall
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
@@ -87,6 +94,9 @@ global dir_read_syscall
 global file_open_syscall
 global file_putc_syscall
 global file_getc_syscall
+global file_opendir_syscall
+global file_getfile_syscall
+global file_getnamec_syscall
 
 int_zero_division:
     pushad
@@ -294,6 +304,18 @@ scheduler_kill_syscall:
     popad
     iret
 
+scheduler_hide_syscall:
+    pushad
+    call c_scheduler_hide_syscall
+    popad
+    iret
+
+scheduler_show_syscall:
+    pushad
+    call c_scheduler_show_syscall
+    popad
+    iret
+
 pipe_pipe_syscall:
     cli
     pushad
@@ -362,6 +384,30 @@ file_getc_syscall:
     cli
     pushad
     call c_file_getc_syscall
+    popad
+    sti
+    iret
+
+file_opendir_syscall:
+    cli
+    pushad
+    call c_file_opendir_syscall
+    popad
+    sti
+    iret
+
+file_getfile_syscall:
+    cli
+    pushad
+    call c_file_getfile_syscall
+    popad
+    sti
+    iret
+
+file_getnamec_syscall:
+    cli
+    pushad
+    call c_file_getnamec_syscall
     popad
     sti
     iret

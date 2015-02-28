@@ -13,6 +13,10 @@ void mrfsOpenFile(char* name, bool create, FILE* fout);
 void mrfsPutC(FILE* fd, char c);
 int mrfsGetC(FILE* fd);
 
+void mrfsOpenDir(char* name, FILE* fout);
+int mrfsGetNameC(FILE* fd);
+int mrfsGetFile(FILE* dd, FILE* fd);
+
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
 void mrfsWriteFile(char* path, char* filename, char* contents,int length);
 int mrfsNewFolder(char* path,char* foldername);

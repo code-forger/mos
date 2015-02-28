@@ -19,12 +19,13 @@ static void clean_memory()
 
     do
     {
-        if (current->free)
+        if (current->free && current->free != 3)
         {
             header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
             if (next_node->free && next_node->free != 3)
             {
                 current->size = current->size + next_node->size + HEAD_SIZE;
+                current->free = true;
                 current = top;
                 continue;
             }
@@ -35,6 +36,7 @@ static void clean_memory()
 }
 
 void *malloc(uint32_t size) {
+    size += size % 4;
     header* current = top;
 
     do {
@@ -49,7 +51,8 @@ void *malloc(uint32_t size) {
             current = (header*)((uint32_t)current + HEAD_SIZE + size);
             current->size = node_size - size - HEAD_SIZE;
             current->free = true;
-
+            current->pad1 = 0xDE; current->pad2 = 0xDE; current->pad3 = 0xDE;
+            //printf("serving %h for size %d\n", ret, size);
             return (void *) ret;
         }
 
@@ -62,15 +65,28 @@ void *malloc(uint32_t size) {
 void free(void *memory)
 {
     header *current = top;
+    header *last = top;
+    header *next_node = top;
 
     do
     {
         if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
         {
+            if (last != current && last->free)
+            {
+                last->size = last->size + HEAD_SIZE + current->size;
+                current = last;
+            }
+            next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+            if (next_node->free && next_node->free != 3)
+            {
+                current->size = current->size + HEAD_SIZE + next_node->size;
+            }
             current->free = true;
             clean_memory();
             return;
         }
+        last = current;
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 }

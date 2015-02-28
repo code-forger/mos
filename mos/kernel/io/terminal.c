@@ -1,6 +1,7 @@
 #include "terminal.h"
 #include <stdarg.h>
 #include "../paging/paging.h"
+#include "../kstdlib/kstdlib.h"
 
 uint8_t terminal_make_color(terminal_color text, terminal_color back)
 {
@@ -364,4 +365,69 @@ void terminal_send_to_process(char data)
 char terminal_get_last_char_pressed()
 {
     return last_char_pressed;
+}
+
+void terminal_hide_process(uint32_t pid)
+{
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
+
+    if (ptb->io.snapshot)
+        return;
+
+    ptb->io.snapshot = (char*)malloc(sizeof(char) * ptb->io.wx * ptb->io.wy);
+
+    for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
+    {
+        for (uint32_t x = ptb->io.px; x <= ptb->io.px + ptb->io.wx; x++)
+        {
+            ptb->io.snapshot[(x - ptb->io.px) + ((y - ptb->io.py) * ptb->io.wx)] = process_terminal[y * VGA_WIDTH + x];
+            process_terminal[y * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
+        }
+    }
+
+    scheduler_pause_process(pid);
+}
+
+static int overlaps(uint32_t pid, uint32_t process)
+{
+
+    process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
+    process_table_entry ptb2 = scheduler_get_process_table_entry(process);
+
+    return (ptb1.io.px < ptb2.io.px + ptb2.io.wx &&
+        ptb2.io.px < ptb1.io.px + ptb1.io.wx &&
+        ptb1.io.py < ptb2.io.py + ptb2.io.wy &&
+        ptb2.io.py < ptb1.io.py + ptb1.io.wy);
+}
+
+static void terminal_hide_overlapping(uint32_t pid)
+{
+    uint32_t process = scheduler_get_next_process(0);
+    while (process != 0)
+    {
+        if (process == pid)
+            continue;
+        if (overlaps(pid, process))
+            terminal_hide_process(process);
+        process = scheduler_get_next_process(0);
+    }
+}
+
+void terminal_show_process(uint32_t pid)
+{
+    terminal_hide_overlapping(pid);
+
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
+
+    for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
+    {
+        for (uint32_t x = ptb->io.px; x <= ptb->io.px + ptb->io.wx; x++)
+        {
+            process_terminal[y * VGA_WIDTH + x] = ptb->io.snapshot[(x - ptb->io.px) + ((y - ptb->io.py) * ptb->io.wx)];
+        }
+    }
+
+    ptb->io.snapshot = 0;
+
+    scheduler_wake_process(pid);
 }

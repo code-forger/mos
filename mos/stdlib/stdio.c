@@ -152,13 +152,6 @@ void printf(const char* string, ...)
     va_end(valist);
 }
 
-char** dir_read(char* dir)
-{
-    char** ret;
-    asm("int $112"::"S"(dir), "a"(&ret):);
-    return ret;
-}
-
 uint32_t fopen(char* name, FILE* fd)
 {
     uint32_t ret;

@@ -24,10 +24,6 @@ void putchar(char c);
 void putcharat(char c, uint32_t xin, uint32_t yin);
 void printf(const char* string, ...);
 
-char* file_read(char* name);
-uint32_t file_write(char* name, char* data);
-char** dir_read(char* dir);
-
 uint32_t fopen(char* name, FILE* fd);
 void fputc(char c, FILE* fd);
 int32_t fgetc(FILE* fd);

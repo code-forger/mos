@@ -35,6 +35,11 @@ static bool shift = false;
 static bool ctrl = false;
 static bool command = false;
 
+char keyboard_get_a_byte()
+{
+    return alpha_map[get_byte_from(0x60)];
+}
+
 void keyboard_interupt(void)
 {
     uint8_t code = get_byte_from(0x60);

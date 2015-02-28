@@ -2,7 +2,24 @@
 
 void main(void)
 {
-    char *file = file_read("/init-files");
+    FILE fd;
+
+    fopen("/init-files", &fd);
+
+    int stream_size = fd.index;
+
+    char* file = malloc(stream_size);
+
+    fseek(&fd, 0);
+
+    int cin;
+    for (int i = 0 ; i < stream_size && (cin = fgetc(&fd)) != -1; i++)
+    {
+        file[i] = cin;
+    }
+
+    file[fd.index] = '\0';
+
     int entries = 0;
 
     for (int i = 0;;i++)

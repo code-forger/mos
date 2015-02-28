@@ -76,6 +76,7 @@ uint32_t fork()
     next_pid++;
 
     //printf("[scheduler.c] RETE : fork = %d\n", pid);
+    free(f);
     return pid;
 }
 

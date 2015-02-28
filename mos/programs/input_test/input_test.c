@@ -1,11 +1,28 @@
 #include "../../stdlib/stdio.h"
 #include "../../stdlib/pipe.h"
 #include "../../stdlib/process.h"
+#include "../../stdlib/string.h"
 
+FILE fd;
+int caret_loc;
+char* file;
 
-/*uint32_t pipe(PIPE[2]);
-uint32_t write(PIPE pipe, uint8_t data);
-int64_t read(PIPE pipe);*/
+int move_caret(int to)
+{
+    caret_loc = to;
+    fseek(&fd, to);
+    return to;
+}
+
+void put_char_in_file(char c)
+{
+    for (int i = fd.size; i < caret_loc; i++)
+    {
+        fseek(&fd, i);
+        fputc(file[i]?file[i]:' ', &fd);
+    }
+    fputc(c, &fd);
+}
 
 void main(void)
 {
@@ -60,70 +77,45 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
-    FILE fd;
-
-    printf("aaa %h\n", &fd);
     fopen("/notes", &fd);
+
+    int width = 24;
+    int height = 21;
+
+    int stream_size = width*height;
+
+    file = malloc(stream_size);
 
     fseek(&fd, 0);
 
     int c;
-    printf("got file handle\n");
-    while ((c = fgetc(&fd)) != -1)
-        printf("%c", c);
-    printf("DONE\n");
+    for (int i = 0 ; i < stream_size && (c = fgetc(&fd)) != -1; i++)
+    {
+        file[i] = c;
+    }
 
-    for(;;);
-
-
-    /*for (int i = 0; i < 23; i++)
+    for (int i = 0; i < 23; i++)
     {
         printf(lines[i]);
         sleep(1);
     }
 
-    char *file = file_read("/notes");
-    if (file[0] == '\0')
-    {
-        free(file);
-        file = malloc(23*21 + 2);
-        for(int i = 0; i < 23*21; i++)
-        {
-            file[i] = ' ';
-        }
-        file[23*21+1] = '\0';
-        file[23*21+1] = '!';
-
-    }
-    else
-    {
-        char *fold = file;
-        file = malloc(23*21 + 2);
-        for(int i = 0; i < 23*21; i++)
-        {
-            file[i] = fold[i];
-        }
-        file[23*21+1] = '\0';
-        file[23*21+1] = '!';
-        free(fold);
-    }
-
     for(int i = 0; i < strlen(file); i++)
     {
-        putcharat(file[i], i%24+1, i/24+1);
+        putcharat(file[i], i%width+1, i/width+1);
     }
 
-    int caret_loc = 24;
+    caret_loc = width;
+    fseek(&fd, caret_loc);
     char caret = '%';
     int caret_counter = 0;
 
     uint32_t state = 0;
     while(1)
     {
-        putcharat(caret, caret_loc%24+1, caret_loc/24+1);
+        putcharat(caret, caret_loc%width+1, caret_loc/width+1);
         if ((caret_counter = (caret_counter + 1) % 15) == 0) { if (caret == '%') caret = file[caret_loc]; else caret = '%'; }
-        //for (int i = 0; i < 100; i++)
-        //{
+
         int64_t get = getchar();
         if (get > 0)
         {
@@ -131,42 +123,42 @@ void main(void)
             if (state)
             {
                 state = 0;
-                if (c == (char)0x48)
+                if (c == (char)0x48) // up
                 {
-                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                    if ((caret_loc -= 24) < 0)
-                        caret_loc = 0;
+                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
+                    if ((caret_loc -= width) < 0)
+                        move_caret(0);
                 }
-                else if (c == (char)0x50)
+                else if (c == (char)0x50) // down
                 {
-                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                    if ((caret_loc += 24) >= 21*24-1)
-                        caret_loc = 21*24-1;
+                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
+                    if ((caret_loc += width) > stream_size)
+                        move_caret(stream_size-1);
                 }
-                else if (c == (char)0x4D)
+                else if (c == (char)0x4D) // right
                 {
-                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                    if ((caret_loc++) >= 21*24-1)
-                        caret_loc = 21*24-1;
+                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
+                    if (move_caret(caret_loc+1) > stream_size)
+                        move_caret(stream_size-1);
                 }
-                else if (c == (char)0x4B)
+                else if (c == (char)0x4B) // left
                 {
-                    putcharat(file[caret_loc], caret_loc%24+1, caret_loc/24+1);
-                    if ((caret_loc--) <= 0)
-                        caret_loc = 0;
+                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
+                    if (move_caret(caret_loc-1) <= 0)
+                        move_caret(0);
                 }
             }
             else if (c == '\b')
             {
-                putcharat(file[caret_loc] = ' ', caret_loc%24+1, caret_loc/24+1);
-                file_write("/notes", file);
-                if ((caret_loc--) <= 0)
-                    caret_loc = 0;
+                putcharat(file[caret_loc] = ' ', caret_loc% width +1, caret_loc/ width +1);
+                put_char_in_file(' ');
+                if (move_caret(caret_loc-1) <= 0)
+                    move_caret(0);
             }
             else if (c == '\n')
             {
-                if ((caret_loc = (caret_loc + 24) - (caret_loc + 24) % 24) > 21*24-1)
-                    caret_loc = 21*24-1;
+                if (move_caret((caret_loc +  width ) - (caret_loc +  width ) %  width ) > stream_size-1)
+                    move_caret(stream_size-1);
             }
             else if (c == (char)0xE0)
             {
@@ -174,14 +166,12 @@ void main(void)
             }
             else
             {
-                putcharat(file[caret_loc] = c, caret_loc%24+1, caret_loc/24+1);
-                file_write("/notes", file);
-                if ((caret_loc++) >= 21*24-1)
-                    caret_loc = 21*24-1;
+                putcharat(file[caret_loc] = c, caret_loc% width +1, caret_loc/ width +1);
+                put_char_in_file(c);
+                if (move_caret(caret_loc+1) > stream_size)
+                    move_caret(stream_size-1);
             }
         }
-        //}
-        //sleep(100);
     }
-    for(;;);*/
+    for(;;);
 }

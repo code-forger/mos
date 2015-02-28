@@ -1,7 +1,7 @@
     #include "interupts.h"
 #include "../scheduler/scheduler.h"
 #include "../IPC/pipe.h"
-#include "../mrfs/malloc.h"
+#include "../kstdlib/kstdlib.h"
 #include "../mrfs/mrfs.h"
 
 void  c_int_zero_division(void)
@@ -330,7 +330,7 @@ void  c_file_read_syscall(void)
     uint32_t len = strlen(buff);
     *ret =  malloc_for_process(len+1, 0x80000000);
     strcpy(*ret, buff);
-    //free(buff);
+    free(buff);
     //asm("hlt");
     //init_mem();
     //printf("RETURNING TO USER SPACE\n");
@@ -402,11 +402,12 @@ void  c_dir_read_syscall(void)
         uint32_t len = strlen(buff[i]);
         (*ret)[i] =  malloc_for_process(len+5, 0x80000000);
         strcpy((*ret)[i], buff[i]);
+        free(buff[i]);
     }
 
     (*ret)[--count] = malloc_for_process(sizeof(char)*2, 0x80000000);
     (*ret)[count][0] = '\0';
-    //free(buff);
+    free(buff);
     //asm("hlt");
     //init_mem();
     send_byte_to(MASTER_PIC, 0x20);
@@ -430,7 +431,8 @@ void  c_file_putc_syscall(void)
     FILE *data;
     asm("mov %%esi, %0":"=r"(c):);
     asm("mov %%edi, %0":"=r"(data):);
-    mrfsPutCAt(data->inode, c, data->index++);
+
+    mrfsPutC(data, c);
 
     send_byte_to(MASTER_PIC, 0x20);
 }
@@ -438,11 +440,10 @@ void  c_file_putc_syscall(void)
 void  c_file_getc_syscall(void)
 {
     uint32_t *ret;
-    uint32_t *datain;
-    asm("mov %%edi, %0":"=r"(datain):);
+    FILE *data;
+    asm("mov %%edi, %0":"=r"(data):);
     asm("mov %%eax, %0":"=r"(ret):);
-    FILE* data = (FILE*)datain;
-    *ret = mrfsGetC(data->inode, data->index++);
+    *ret = mrfsGetC(data);
 
     send_byte_to(MASTER_PIC, 0x20);
 }

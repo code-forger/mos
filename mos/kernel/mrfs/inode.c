@@ -83,7 +83,7 @@ char* inodeGetName(union Inode nodeIn)
 void inodeSetName(union Inode* nodeOut, char* nameIn)
 {
     int i = 0;
-    for (i = 0; i < sb.data.blockSize && nameIn[i];i++);
+    for (i = 0; i < sb.data.blockSize-8 && nameIn[i];i++);
     nodeOut->node.nameblock = blockWrite(nameIn, 0, i, nodeOut->node.nodenumber);
 }
 

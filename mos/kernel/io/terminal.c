@@ -16,6 +16,7 @@ uint16_t terminal_make_character(char c, uint8_t color)
 static uint32_t VGA_WIDTH = 80;
 static uint32_t VGA_HEIGHT = 25;
 
+static char last_char_pressed;
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
 static uint8_t inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
@@ -50,6 +51,7 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
+    terminal_switch_context(KERNEL_CONTEXT);
     kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
 }
 
@@ -65,6 +67,7 @@ void terminal_initialize()
     process_terminal = terminal = paging_get_terminal_buffer();
     kernel_terminal = paging_get_kernel_terminal_buffer();
     context = PROCESS_CONTEXT;
+    last_char_pressed = ' ';
     current_row = 0;
     currnet_column = 0;
     inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
@@ -250,7 +253,7 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
-    terminal_switch_context(KERNEL_CONTEXT);
+    //terminal_switch_context(KERNEL_CONTEXT);
     //asm("cli");
     va_list valist;
 
@@ -355,5 +358,10 @@ void terminal_send_to_process(char data)
         process_table_entry ptb = scheduler_get_process_table_entry(active_process);
         pipe_write(ptb.io.inpipe, data);
     }
+    last_char_pressed = data;
 }
 
+char terminal_get_last_char_pressed()
+{
+    return last_char_pressed;
+}

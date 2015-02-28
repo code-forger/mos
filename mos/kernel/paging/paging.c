@@ -37,10 +37,6 @@ Node* paging_get_event_map()
 {
     return (Node*)EVENT_TABLE;
 }
-PCI* paging_get_pci_map()
-{
-    return (PCI*)PCI_TABLE;
-}
 
 uint8_t* paging_get_memory_free_map()
 {
@@ -140,7 +136,6 @@ void paging_copy_virtual_to_virtual(uint32_t source, uint32_t target)
 void paging_init()
 {
     paging_map_new_to_virtual(KERNEL_HEAP);
-    paging_map_new_to_virtual(PCI_TABLE);
     paging_map_new_to_virtual(EVENT_TABLE);
     paging_map_new_to_virtual(PIPE_TABLE);
     paging_map_new_to_virtual(PROCESS_TABLE);

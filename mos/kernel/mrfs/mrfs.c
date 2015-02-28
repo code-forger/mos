@@ -2,29 +2,6 @@
 //#include "fileexceptions.h"
 #include "../io/terminal.h"
 
-int strcmp(const char* s1, const char* s2)
-{
-    while(*s1 && (*s1==*s2))
-        s1++,s2++;
-    return *(const unsigned char*)s1-*(const unsigned char*)s2;
-}
-
-int strlen(const char * str)
-{
-    int i = 0;
-    while (str[i++] != '\0');
-    return i-1;
-}
-
-char *strcpy(char *dest, const char *src)
-{
-   char *save = dest;
-   while((*dest++ = *src++));
-   return save;
-}
-
-
-
 //These three functions  are  helper functions that allow the caller to get inodes off the by name and path, they are used to abstract the name → inode relationship
 
 union Inode getDirChildrenByPath(union Inode inode, char* path)
@@ -198,6 +175,7 @@ static char* splitForLookup(char* name)
 
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
+    printf("");
     char* fname;
     union Inode file = getInodeByName(name, fname = splitForLookup(name));
     if (file.node.info.exists)
@@ -209,11 +187,11 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     }
     else if (create)
     {
-        mrfsNewFile(name, fname, "1", 1);
+        mrfsNewFile(name, fname, " ", 1);
         file = getInodeByName(name, fname);
         free(fname);
         fout->inode = file.node.nodenumber;
-        fout->index = fout->size = file.node.size;
+        fout->index = fout->size = file.node.size - 1;
         return;
     }
     free(fname);
@@ -229,41 +207,7 @@ int mrfsOpenDir(char* name)
     return -1;
 }
 
-void mrfsPutCAt(int file_num, char c, int index)
-{
-    if (file_num < 0) return;
-    union Inode file = inodeRead(file_num);
-    if (!file.node.info.exists) return;
-
-    if (index == file.node.size)
-        mrfsPutC(file_num, c);
-    else
-    {
-
-        while(inodeLockForWrite(&file));
-        int *pointers = inodeGetPointers(file);
-
-        int pointer = index / (sb.data.blockSize-8);
-        int blockpointer = index % (sb.data.blockSize-8);
-
-        char* block = blockRead(pointers[pointer]);
-        block[blockpointer+8] = c;
-
-        union int_char length;
-        for (int i = 0; i < 4; i++)
-        {
-            length.c[i] = block[i];
-        }
-
-        blockRewrite(block, 8, length.i, file.node.nodenumber, pointers[pointer]);
-
-        free(pointers);
-        free(block);
-        inodeUnlockForWrite(&file);
-    }
-}
-
-void mrfsPutC(int file_num, char c)
+static void mrfsPutCEnd(int file_num, char c)
 {
     if (file_num < 0) return;
     union Inode file = inodeRead(file_num);
@@ -309,22 +253,59 @@ void mrfsPutC(int file_num, char c)
     inodeUnlockForWrite(&file);
 }
 
-int mrfsGetC(int file_num, int index)
+void mrfsPutC(FILE* fd, char c)
 {
-    if (file_num < 0) return -1;
-    union Inode file = inodeRead(file_num);
+    union Inode file = inodeRead(fd->inode);
+    if (!file.node.info.exists) return;
+
+    if (fd->index == (uint32_t)file.node.size)
+    {
+        mrfsPutCEnd(fd->inode, c);
+        fd->size++;
+    }
+    else
+    {
+
+        while(inodeLockForWrite(&file));
+        int *pointers = inodeGetPointers(file);
+
+        int pointer = fd->index / (sb.data.blockSize-8);
+        int blockpointer = fd->index % (sb.data.blockSize-8);
+
+        char* block = blockRead(pointers[pointer]);
+        block[blockpointer+8] = c;
+
+        union int_char length;
+        for (int i = 0; i < 4; i++)
+        {
+            length.c[i] = block[i];
+        }
+
+        blockRewrite(block, 8, length.i, file.node.nodenumber, pointers[pointer]);
+
+        free(pointers);
+        free(block);
+        inodeUnlockForWrite(&file);
+    }
+    fd->index++;
+}
+
+int mrfsGetC(FILE* fd)
+{
+    union Inode file = inodeRead(fd->inode);
     if (!file.node.info.exists) return -1;
 
-    if (index < 0 || index >= file.node.size) return -1;
+    if (fd->index >= (uint32_t)file.node.size) return -1;
     int *pointers = inodeGetPointers(file);
 
-    int pointer = index / (sb.data.blockSize-8);
-    int blockpointer = index % (sb.data.blockSize-8);
+    int pointer = fd->index / (sb.data.blockSize-8);
+    int blockpointer = fd->index % (sb.data.blockSize-8);
 
     char* block = blockRead(pointers[pointer]);
     char ret = block[blockpointer+8];
     free(pointers);
     free(block);
+    fd->index = (fd->index == fd->size)?fd->size:fd->index+1;
     return ret;
 }
 
@@ -377,6 +358,8 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
     inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
 
     inodeRewrite(dirinode);
+    free(oldpointers);
+    free(newpointers);
     return 0;
 
 }
@@ -425,6 +408,8 @@ int mrfsNewFolder(char* path,char* foldername)
     inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
 
     inodeRewrite(dirinode);
+    free(oldpointers);
+    free(newpointers);
     return 0;
 }
 
@@ -497,7 +482,6 @@ int mrfsMove(char*filename,char* path,char* newpath)
     newdirnode.node.pointers[newdirnode.node.size++] = filenode.node.nodenumber;
     inodeRewrite(newdirnode);
     return 0;
-
 }
 
 //these three functions delete files and folders
@@ -520,8 +504,6 @@ int mrfsDeleteFile(char*path,char* filename)
     inodeFree(inode.node.nodenumber);
     free(pointers);
     return 0;
-
-
 }
 
 int mrfsDeleteFolder(char* path)
@@ -734,4 +716,44 @@ int mrfsDefragFile(char* path, char* filename, int position)
         free(targets);
     }
     return position;
+}
+
+
+
+int mrfs_selftest()
+{
+    printf("Starting MRFS Tests.\n");
+
+    FILE fd;
+
+    printf("Starting MRFS Tests.\n");
+
+    mrfsOpenFile("/test", true, &fd);
+
+    printf("got %d\n", fd.inode);
+
+    mrfsPutC(&fd, 'a');
+    mrfsPutC(&fd, 'b');
+    mrfsPutC(&fd, 'c');
+    mrfsPutC(&fd, 'd');
+    mrfsPutC(&fd, 'e');
+
+    fd.index = 0;
+
+    for (int i = 0; i < 6; i++)
+        printf("%c", mrfsGetC(&fd));
+
+    printf("\n");
+
+
+    char name[6] = {'t','e','s','t','x','\0'};
+
+    for (int i = 0; i < 6; i++)
+    {
+        name[4] = '0' + i;
+        mrfsOpenFile(name, true, &fd);
+    }
+
+
+    return 0;
 }

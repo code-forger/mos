@@ -4,14 +4,15 @@
 #include "scheduler/scheduler.h"
 #include "io/terminal.h"
 #include "IPC/pipe.h"
-#include "io/pci.h"
 #include "io/hdd.h"
-#include "mrfs/malloc.h"
+#include "kstdlib/kstdlib.h"
 #include "mrfs/mrfs.h"
 #include "paging/paging.h"
 #include "io/hdd.h"
 #include "io/port.h"
 #include "ELF/elf.h"
+#include "drivers/keyboard.h"
+#include "kerneltest.h"
 
 void kerror(const char* data)
 {
@@ -26,7 +27,6 @@ extern "C" /* Use C linkage for kernel_main. */
 #define R_W_NP 2 //read + write + not present
 #define R_W_P 3 // read + write + present
 
-
 void init_kernel()
 {
     uint32_t* directory = (uint32_t*)0xfffff000;
@@ -38,7 +38,6 @@ void init_kernel()
     idt_init();
     pic_init();
     pipe_init();
-    pci_init();
     hdd_init();
     init_mem();
 
@@ -57,8 +56,9 @@ void init_kernel()
     send_byte_to(0x71, (prev & 0xF0) | rate); //write only our rate to A. Note, rate is the bottom 4 bits.
     */
 
+    //for(int i = 0 ; i < 10000000; i++);
 
-
+    //kernel_test_mode();
 
     uint32_t esp, ebp;
 

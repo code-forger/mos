@@ -77,5 +77,7 @@ int64_t elf_load(const char* name, process_table_entry* ptb)
     ptb[0].io.column = 0;
     ptb[0].io.row = 0;
 
+    free(file);
+
     return e_header->p_start;
 }

@@ -1,4 +1,5 @@
 #include "../declarations.h"
+#include "../kstdlib/string.h"
 #define SUPERBLOCKSIZE 7*4
 #define INODESIZE (17*4)
 

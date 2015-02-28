@@ -6,11 +6,9 @@
 #include "../memory/memory.h"
 #include "../scheduler/events.h"
 #include "../scheduler/scheduler.h"
-#include "../io/pci.h"
 
 static const uint32_t DIRECTORY            = 0xFFFFF000;
 static const uint32_t KERNEL_HEAP          = 0xC0010000;
-static const uint32_t PCI_TABLE            = 0xC0009000;
 static const uint32_t EVENT_TABLE          = 0xC0008000;
 static const uint32_t PIPE_TABLE           = 0xC0007000;
 static const uint32_t SCRATCH              = 0xC0006000;
@@ -32,7 +30,6 @@ idt_info_type* paging_get_idt();
 gdt_info_type* paging_get_gdt();
 memory_map_entry* paging_get_memory_map();
 Node* paging_get_event_map();
-PCI* paging_get_pci_map();
 uint8_t* paging_get_memory_free_map();
 uint16_t* paging_get_terminal_buffer();
 uint16_t* paging_get_process_terminal_buffer();

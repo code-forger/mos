@@ -44,3 +44,4 @@ uint32_t terminal_get_active_input();
 void terminal_send_to_process(char data);
 void terminal_switch_context(uint32_t target);
 void terminal_clear_process(uint32_t pid);
+char terminal_get_last_char_pressed();

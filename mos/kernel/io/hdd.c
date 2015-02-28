@@ -176,11 +176,12 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
             asm("rep outsw"::"c"(words), "d"(bus), "S"(edi)); // Send Data
             //asm("popw %ds");
             edi += (words*2);
+            hdd_wait(channel, 1); // Polling.
         }
         hdd_ident_write(channel, HDD_REG_COMMAND, (char []) {   HDD_CMD_CACHE_FLUSH,
         HDD_CMD_CACHE_FLUSH,
         HDD_CMD_CACHE_FLUSH_EXT}[lba_mode]);
-        hdd_wait(channel, 0); // Polling.
+        hdd_wait(channel, 1); // Polling.
     }
 
     return 0; // Easy, isn't it?

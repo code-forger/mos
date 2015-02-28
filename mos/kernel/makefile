@@ -3,7 +3,7 @@ GCC = ~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc
 
 all: mos.bin
 
-mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o io/pci.o io/hdd.o mrfs/inode.o mrfs/block.o mrfs/mrfs.o mrfs/malloc.o ELF/elf.o
+mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o io/hdd.o mrfs/inode.o mrfs/block.o mrfs/mrfs.o kstdlib/malloc.o ELF/elf.o kerneltest.o kstdlib/string.o
 	$(GCC) -T linker.ld -o mos.bin -ffreestanding -nostdlib $+ -lgcc
 
 kernel.o: kernel.c kernel.asm
@@ -16,9 +16,6 @@ io/terminal.o: io/terminal.c io/terminal.h
 io/port.o: io/port.c io/port.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
-io/pci.o: io/pci.c io/pci.h
-	$(GCC) -c $< -o $@ $(CPPFLAGS)
-
 io/hdd.o: io/hdd.c io/hdd.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
@@ -29,6 +26,9 @@ pic/pic.o: pic/pic.c pic/pic.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 paging/paging.o: paging/paging.c paging/paging.h
+	$(GCC) -c $< -o $@ $(CPPFLAGS)
+
+kstdlib/string.o: kstdlib/string.c kstdlib/string.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 init/gdt.o: init/gdt.c init/gdt.h init/gdt.asm
@@ -69,10 +69,13 @@ mrfs/inode.o: mrfs/inode.c
 mrfs/block.o: mrfs/block.c
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
-mrfs/malloc.o: mrfs/malloc.c
+kstdlib/malloc.o: kstdlib/malloc.c
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 ELF/elf.o: ELF/elf.c
+	$(GCC) -c $< -o $@ $(CPPFLAGS)
+
+kerneltest.o: kerneltest.c
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 

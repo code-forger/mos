@@ -7,16 +7,11 @@ union Inode getInodeByName(char* path, char * name);
 union Inode getDirInodeByPath(char* path);
 union Inode getDirChildrenByPath(union Inode inode, char* path);
 
-int strcmp(const char* s1, const char* s2);
-int strlen(const char * str);
-char *strcpy(char *dest, const char *src);
-
 int mrfsFormatHdd(int _blockSize, int rootDirSize);
 
 void mrfsOpenFile(char* name, bool create, FILE* fout);
-void mrfsPutCAt(int file_num, char c, int index);
-void mrfsPutC(int file_num, char c);
-int mrfsGetC(int file_num, int index);
+void mrfsPutC(FILE* fd, char c);
+int mrfsGetC(FILE* fd);
 
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
 void mrfsWriteFile(char* path, char* filename, char* contents,int length);
@@ -32,3 +27,5 @@ int mrfsDeleteFolderRecursive(char* path);
 int mrfsDefragDisk();
 int mrfsDefragFolder(char* path, int position);
 int mrfsDefragFile(char* path, char* filename, int position);
+
+int mrfs_selftest();

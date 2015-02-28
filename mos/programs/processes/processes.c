@@ -6,6 +6,30 @@
 uint32_t write(PIPE pipe, uint8_t data);
 int64_t read(PIPE pipe);*/
 
+char *file_read(char* name)
+{
+
+    FILE fd;
+
+    fopen(name, &fd);
+
+    int stream_size = fd.index;
+
+    char* file = malloc(stream_size);
+
+    fseek(&fd, 0);
+
+    int cin;
+    for (int i = 0 ; i < stream_size && (cin = fgetc(&fd)) != -1; i++)
+    {
+        file[i] = cin;
+    }
+
+    file[fd.index] = '\0';
+
+    return file;
+}
+
 void main(void)
 {
 

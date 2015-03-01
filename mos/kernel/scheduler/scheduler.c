@@ -50,8 +50,17 @@ uint32_t fork()
     mrfsNewFolder(procdir, "env");
     char envdir[18];
     sprintf(envdir, "/proc/%d/env/", next_pid);
+    char parentenvdir[18];
+    sprintf(parentenvdir, "/proc/%d/env/", current_pid);
 
-    mrfsNewFile(envdir, "PATH", "/bin/", strlen("/bin/"));
+    char* parentPATH = mrfsReadFile(parentenvdir, "PATH");
+    char* parentcwd = mrfsReadFile(parentenvdir, "cwd");
+
+    mrfsNewFile(envdir, "PATH", parentPATH, strlen(parentPATH));
+    mrfsNewFile(envdir, "cwd", parentcwd, strlen(parentcwd));
+
+    free(parentPATH);
+    free(parentcwd);
 
     next_pid++;
 
@@ -332,10 +341,9 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     mrfsNewFolder("/proc/", "0");
     mrfsNewFile("/proc/0/", "name", "/init", 5);
 
-
-
-    mrfsNewFolder("/proc/0", "env");
-    mrfsNewFile("/proc/0/env", "PATH", "/bin/", strlen("/bin/"));
+    mrfsNewFolder("/proc/0/", "env");
+    mrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));
+    mrfsNewFile("/proc/0/env/", "cwd", "/", strlen("/"));
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 

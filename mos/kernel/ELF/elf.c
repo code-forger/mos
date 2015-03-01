@@ -66,7 +66,7 @@ int64_t elf_load(const char* name, process_table_entry* ptb)
     ptb[0].ebp = 0xbfffffff;
     ptb[0].stack_size = 1;
     ptb[0].heap_size = 1;
-    ptb[0].padding = 0xBEEF;
+    ptb[0].padding = 0xBE;
 
     ptb[0].io.outpipe = 0;
     ptb[0].io.inpipe = 0;

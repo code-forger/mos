@@ -313,7 +313,7 @@ void scheduler_time_interupt()
             process_table[i].io.wy = 0;
             process_table[i].io.column = 0;
             process_table[i].io.row = 0;
-            process_table[i].padding = 0xBEEF;
+            process_table[i].padding = 0xBE;
 
             for (uint32_t p = 0; p < process_table[i].code_size; p++)
                 process_table[i].code_physical[p] = paging_copy_virtual_to_new(0x08048000 + 0x1000 * p);

@@ -40,7 +40,7 @@ typedef struct io_part
     uint8_t wy;
     uint8_t column;
     uint8_t row;
-    char* snapshot;
+    uint16_t* snapshot;
 } __attribute__((packed)) io_part;
 
 #include "../io/terminal.h"
@@ -57,7 +57,7 @@ typedef struct p_t_entry
     uint32_t heap_physical;
     uint32_t heap_size;
     io_part io;
-    uint16_t padding;
+    uint8_t padding;
 } __attribute__((packed)) process_table_entry;
 
 process_table_entry scheduler_get_process_table_entry(uint32_t pid);

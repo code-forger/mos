@@ -389,7 +389,7 @@ void terminal_hide_process(uint32_t pid)
     if (ptb->io.snapshot)
         return;
 
-    ptb->io.snapshot = (char*)malloc(sizeof(char) * ptb->io.wx * ptb->io.wy);
+    ptb->io.snapshot = (uint16_t*)malloc(sizeof(uint16_t) * (ptb->io.wx+1) * (ptb->io.wy+1));
 
     for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
     {
@@ -430,6 +430,10 @@ void terminal_show_process(uint32_t pid)
 {
     last_shown = pid;
 
+    scheduler_unmark_process_as(pid, F_IS_HIDDEN);
+
+    terminal_hide_overlapping(pid);
+
     process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
 
     for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
@@ -442,8 +446,4 @@ void terminal_show_process(uint32_t pid)
 
     free(ptb->io.snapshot);
     ptb->io.snapshot = 0;
-
-    scheduler_unmark_process_as(pid, F_IS_HIDDEN);
-
-    terminal_hide_overlapping(pid);
 }

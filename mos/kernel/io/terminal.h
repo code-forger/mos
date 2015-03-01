@@ -41,6 +41,7 @@ void terminal_setin(PIPE pipes[2]);
 void terminal_string_for_process(io_part* io);
 void terminal_set_active_input(uint32_t pid);
 uint32_t terminal_get_active_input();
+uint32_t terminal_get_last_shown_input();
 void terminal_send_to_process(char data);
 void terminal_switch_context(uint32_t target);
 void terminal_clear_process(uint32_t pid);

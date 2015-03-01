@@ -185,6 +185,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     if (file.node.info.exists)
     {
         free(fname);
+        free(namecpy);
         fout->inode = file.node.nodenumber;
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
@@ -196,6 +197,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
         mrfsNewFile(namecpy, fname, "", 0);
         file = getInodeByName(namecpy, fname);
         free(fname);
+        free(namecpy);
         fout->inode = file.node.nodenumber;
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
@@ -230,9 +232,9 @@ void mrfsOpenDir(char* name, FILE* dout)
         dout->type = 1;
         free(fname);
         free(namecpy);
-
         return;
     }
+    free(namecpy);
     dout->inode = -1;
     dout->index = dout->size = -1;
     dout->type = 2;
@@ -445,6 +447,26 @@ void mrfsWriteFile(char* path, char* filename, char* contents,int length)
 {
     mrfsDeleteFile(path, filename);
     mrfsNewFile(path, filename, contents, length);
+}
+
+uint32_t mrfsFileExists(char* name)
+{
+    printf("");
+    char* namecpy = malloc(strlen(name)+1);
+    strcpy(namecpy, name);
+    namecpy[strlen(name)] = '\0';
+    printf("");
+    char* fname;
+    union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
+    if (file.node.info.exists)
+    {
+        free(fname);
+        free(namecpy);
+        return 1;
+    }
+    free(fname);
+    free(namecpy);
+    return 0;
 }
 
 //this function makes a new folder in the directory specified

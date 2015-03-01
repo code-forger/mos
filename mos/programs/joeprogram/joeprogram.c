@@ -6,8 +6,8 @@ void main(void)
     int x = 5, y = 5;
     char c = 1;
     int fieldW = 26, fieldH = 15;
-    setio(80-27, 7, fieldW, 1);
-    printf("Joe's Program!          |X|");
+    //setio(80-27, 7, fieldW, 1);
+    //printf("Joe's Program!          |X|");
     setio(80-27, 8, fieldW, fieldH);
 
     for(int i=0; i<=fieldH; i+=fieldH)

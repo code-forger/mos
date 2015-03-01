@@ -40,6 +40,13 @@ char keyboard_get_a_byte()
     return alpha_map[get_byte_from(0x60)];
 }
 
+void keryboard_init()
+{
+    shift = false;
+    ctrl = false;
+    command = false;
+}
+
 void keyboard_interupt(void)
 {
     uint8_t code = get_byte_from(0x60);
@@ -51,7 +58,15 @@ void keyboard_interupt(void)
     else if (code > 0 && code < 0x54 && alpha_map[code] != -1)
         if (ctrl && alpha_map[code] == '\t')
         {
-            terminal_set_active_input(scheduler_get_next_input(terminal_get_active_input()));
+            int32_t target;
+            if ((target = scheduler_get_next_input(terminal_get_active_input())) >= 0)
+                terminal_set_active_input(target);
+        }
+        else if (shift && alpha_map[code] == '\t')
+        {
+            int32_t target;
+            if ((target = scheduler_get_next_hidden(terminal_get_last_shown_input())) >= 0)
+                terminal_show_process(target);
         }
         else
         {

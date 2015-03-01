@@ -31,6 +31,8 @@ static uint32_t context;
 #define PROCESS_CONTEXT 0
 
 static int32_t active_process = -1;
+static int32_t last_shown;
+
 
 static void push_terminal_up()
 {
@@ -75,6 +77,9 @@ void terminal_initialize()
     active_color = COLOR_WHITE | COLOR_BLACK << 4;
     VGA_WIDTH = 80;
     VGA_HEIGHT = 25;
+
+    last_shown = 0;
+
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
@@ -290,6 +295,10 @@ void printf(const char* string, ...)
     //asm("sti");
 }
 
+
+
+static void terminal_hide_overlapping(uint32_t pid);
+
 void terminal_setio(PIPE* pipes)
 {
     process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
@@ -300,6 +309,7 @@ void terminal_setio(PIPE* pipes)
     ptb->io.outpipe = pipes[1];
     ptb->io.column = 0;
     ptb->io.row = 0;
+    terminal_hide_overlapping(scheduler_get_pid());
 }
 
 void terminal_setin(PIPE* pipes)
@@ -352,6 +362,11 @@ uint32_t terminal_get_active_input()
     return active_process;
 }
 
+uint32_t terminal_get_last_shown_input()
+{
+    return last_shown;
+}
+
 void terminal_send_to_process(char data)
 {
     if (active_process != -1)
@@ -385,7 +400,7 @@ void terminal_hide_process(uint32_t pid)
         }
     }
 
-    scheduler_pause_process(pid);
+    scheduler_mark_process_as(pid, F_IS_HIDDEN);
 }
 
 static int overlaps(uint32_t pid, uint32_t process)
@@ -394,9 +409,9 @@ static int overlaps(uint32_t pid, uint32_t process)
     process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
     process_table_entry ptb2 = scheduler_get_process_table_entry(process);
 
-    return (ptb1.io.px < ptb2.io.px + ptb2.io.wx &&
+    return (ptb1.io.px <= ptb2.io.px + ptb2.io.wx &&
         ptb2.io.px < ptb1.io.px + ptb1.io.wx &&
-        ptb1.io.py < ptb2.io.py + ptb2.io.wy &&
+        ptb1.io.py <= ptb2.io.py + ptb2.io.wy &&
         ptb2.io.py < ptb1.io.py + ptb1.io.wy);
 }
 
@@ -405,17 +420,15 @@ static void terminal_hide_overlapping(uint32_t pid)
     uint32_t process = scheduler_get_next_process(0);
     while (process != 0)
     {
-        if (process == pid)
-            continue;
-        if (overlaps(pid, process))
+        if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
             terminal_hide_process(process);
-        process = scheduler_get_next_process(0);
+        process = scheduler_get_next_process(process);
     }
 }
 
 void terminal_show_process(uint32_t pid)
 {
-    terminal_hide_overlapping(pid);
+    last_shown = pid;
 
     process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
 
@@ -427,7 +440,10 @@ void terminal_show_process(uint32_t pid)
         }
     }
 
+    free(ptb->io.snapshot);
     ptb->io.snapshot = 0;
 
-    scheduler_wake_process(pid);
+    scheduler_unmark_process_as(pid, F_IS_HIDDEN);
+
+    terminal_hide_overlapping(pid);
 }

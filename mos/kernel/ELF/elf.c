@@ -39,6 +39,7 @@ int64_t elf_load(const char* name, process_table_entry* ptb)
 
     elf_header *e_header = (elf_header*) file;
 
+
     for (uint32_t i = 0; i < e_header->p_header_count; i++)
     {
         program_header *p_header = (program_header*) (file + (e_header->p_header + (e_header->p_header_size*i)));

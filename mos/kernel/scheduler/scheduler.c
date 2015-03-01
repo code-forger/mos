@@ -106,12 +106,31 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
     sprintf(envdir, "/proc/%d/env/", current_pid);
     char* path = mrfsReadFile(envdir, "PATH");
 
-    char resloved_p_name[strlen(path) + strlen(program_name) + 1];
-    sprintf(resloved_p_name, "%s%s",path, program_name);
+    char resloved_path_name[strlen(path) + strlen(program_name) + 1];
+    sprintf(resloved_path_name, "%s%s",path, program_name);
 
-    free(envdir);
 
-    int64_t jump_target = elf_load(resloved_p_name, &(process_table[current_pid]));
+    int64_t jump_target = -1;
+
+    if (mrfsFileExists(resloved_path_name))
+    {
+        jump_target = elf_load(resloved_path_name, &(process_table[current_pid]));
+    }
+    else
+    {
+
+        char* cwd = mrfsReadFile(envdir, "cwd");
+
+        char resloved_cwd_name[strlen(cwd) + strlen(program_name) + 1];
+        sprintf(resloved_cwd_name, "%s%s",cwd, program_name);
+
+        if (mrfsFileExists(resloved_cwd_name))
+            jump_target = elf_load(resloved_cwd_name, &(process_table[current_pid]));
+        free(cwd);
+    }
+
+    free(path);
+
 
     if (jump_target == -1) // {no such file}
     {
@@ -156,6 +175,16 @@ void scheduler_wake_process(uint32_t pid)
     process_table[pid].flags &= ~(F_PAUSED | F_SKIP);
 }
 
+void scheduler_mark_process_as(uint32_t pid, uint32_t flags)
+{
+    process_table[pid].flags |= flags;
+}
+
+void scheduler_unmark_process_as(uint32_t pid, uint32_t flags)
+{
+    process_table[pid].flags &= ~flags;
+}
+
 void scheduler_kill(uint32_t pid)
 {
     process_table[pid].flags |= F_DEAD;
@@ -191,12 +220,12 @@ static void events()
     {
         if ((event >> 16) == F_WAKE)\
         {
-            process_table[(event&0xFFFF)].flags &= ~(F_PAUSED | F_SKIP);
+            scheduler_wake_process(event&0xFFFF);
         }
     }
 }
 
-uint32_t scheduler_get_next_input(uint32_t current_input)
+int32_t scheduler_get_next_input(uint32_t current_input)
 {
     uint32_t starting_input = current_input;
     for (;;)
@@ -204,7 +233,7 @@ uint32_t scheduler_get_next_input(uint32_t current_input)
         ++current_input;
         current_input = (current_input % next_pid);
         if (current_input == starting_input)
-            break;
+            return -1;
         if (process_table[current_input].flags & F_DEAD)
             continue;
         if (!(process_table[current_input].flags & F_HAS_INPUT))
@@ -214,7 +243,7 @@ uint32_t scheduler_get_next_input(uint32_t current_input)
     return current_input;
 }
 
-uint32_t scheduler_get_next_process(uint32_t current_process)
+int32_t scheduler_get_next_process(uint32_t current_process)
 {
     uint32_t starting_process = current_process;
     for (;;)
@@ -222,8 +251,26 @@ uint32_t scheduler_get_next_process(uint32_t current_process)
         ++current_process;
         current_process = (current_process % next_pid);
         if (current_process == starting_process)
-            break;
+            return -1;
         if (process_table[current_process].flags & F_DEAD)
+            continue;
+        break;
+    }
+    return current_process;
+}
+
+int32_t scheduler_get_next_hidden(uint32_t current_process)
+{
+    uint32_t starting_input = current_process;
+    for (;;)
+    {
+        ++current_process;
+        current_process = (current_process % next_pid);
+        if (current_process == starting_input)
+            return -1;
+        if (process_table[current_process].flags & F_DEAD)
+            continue;
+        if (!(process_table[current_process].flags & F_IS_HIDDEN))
             continue;
         break;
     }
@@ -294,9 +341,7 @@ void scheduler_time_interupt()
             process_table[current_pid].flags -= F_SKIP;
             continue;
         }
-        if (process_table[current_pid].flags & F_DEAD)
-            continue;
-        if (process_table[current_pid].flags & F_PAUSED)
+        if (process_table[current_pid].flags & FS_DONT_SCHEDULE)
             continue;
         break;
     }

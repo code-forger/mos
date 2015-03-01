@@ -40,6 +40,7 @@ void init_kernel()
     pipe_init();
     hdd_init();
     init_mem();
+    keryboard_init();
 
     mrfsFormatHdd(4*1024, 0);
     hdd_write_cache();

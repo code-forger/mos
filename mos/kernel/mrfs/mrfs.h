@@ -19,6 +19,7 @@ int mrfsGetFile(FILE* dd, FILE* fd);
 
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
 void mrfsWriteFile(char* path, char* filename, char* contents,int length);
+uint32_t mrfsFileExists(char* name);
 int mrfsNewFolder(char* path,char* foldername);
 char** mrfsGetFolderChildren(char* path);
 char* mrfsReadFile(char* path,char* filename);

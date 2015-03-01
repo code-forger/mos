@@ -3,7 +3,7 @@
 
 void print_usage()
 {
-    printf("Usage: mrfs-write <disk> <dir> <name> [file|raw] [fname|data]\n");
+    printf("Usage: mrfs-write <disk> <dir> <name> [file|raw|dir] [fname|data|unused]\n");
 }
 
 int main(int argc, char **argv)
@@ -39,6 +39,10 @@ int main(int argc, char **argv)
     else if (strcmp(argv[4],"raw") == 0)
     {
         mrfsWriteFile(argv[2], argv[3], argv[5], strlen(argv[5]));
+    }
+    else if (strcmp(argv[4],"dir") == 0)
+    {
+        mrfsNewFolder(argv[2], argv[3]);
     }
 
     close_hdd();

@@ -29,7 +29,6 @@ int64_t elf_load(const char* name, process_table_entry* ptb)
         dn[i] = name[i];
     }
 
-
     char *file = mrfsReadFile(dn, fn);
     //printf("found file %s\n", file);
     if (file[0] == '\0')

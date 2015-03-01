@@ -3,18 +3,19 @@
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
 	cp bdisk.img disk.img
+	./mrfs-write disk.img / bin dir unused
 	./mrfs-write disk.img / init-files file init-files
-	./mrfs-write disk.img / init file programs/init/init
-	./mrfs-write disk.img / banner_left file programs/banner_left/banner_left
-	./mrfs-write disk.img / input_test file programs/input_test/input_test
-	./mrfs-write disk.img / parameter_test file programs/parameter_test/parameter_test
-	./mrfs-write disk.img / joeprogram file programs/joeprogram/joeprogram
-	./mrfs-write disk.img / joeprogram2 file programs/joeprogram2/joeprogram2
-	./mrfs-write disk.img / joeprogram3 file programs/joeprogram3/joeprogram3
-	./mrfs-write disk.img / name file programs/name/name
-	./mrfs-write disk.img / time file programs/time/time
-	./mrfs-write disk.img / launcher file programs/launcher/launcher
-	./mrfs-write disk.img / processes file programs/processes/processes
+	./mrfs-write disk.img /bin/ init file programs/init/init
+	./mrfs-write disk.img /bin/ banner_left file programs/banner_left/banner_left
+	./mrfs-write disk.img /bin/ input_test file programs/input_test/input_test
+	./mrfs-write disk.img /bin/ parameter_test file programs/parameter_test/parameter_test
+	./mrfs-write disk.img /bin/ joeprogram file programs/joeprogram/joeprogram
+	./mrfs-write disk.img /bin/ joeprogram2 file programs/joeprogram2/joeprogram2
+	./mrfs-write disk.img /bin/ joeprogram3 file programs/joeprogram3/joeprogram3
+	./mrfs-write disk.img /bin/ name file programs/name/name
+	./mrfs-write disk.img /bin/ time file programs/time/time
+	./mrfs-write disk.img /bin/ launcher file programs/launcher/launcher
+	./mrfs-write disk.img /bin/ processes file programs/processes/processes
 	./mrfs-write disk.img / user raw "Michael Rochester"
 	./mrfs-write disk.img / notes raw "Michael Rochester"
 

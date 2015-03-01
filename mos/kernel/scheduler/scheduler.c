@@ -26,52 +26,32 @@ uint32_t fork()
 
 
 
-    char proc_num_str[7] = "0";
-    int p = next_pid;
-    int i;
+    char proc_num_str[7];
+    sprintf(proc_num_str,"%d",next_pid);
 
-    for (i = p?0:1; p; i++)
-    {
-        proc_num_str[i] = p%10 + '0';
-        p /= 10;
-    }
+    char procdir[7+7];
+    sprintf(procdir,"/proc/%d/",next_pid);
 
-    proc_num_str[i++] = '/';
-    proc_num_str[i] = '\0';
+    char parentprocdir[7+7];
+    sprintf(parentprocdir,"/proc/%d/",current_pid);
 
-    char procdir[7+7] = "/proc/";
-
-    strcpy(procdir+6, proc_num_str);
-
-    proc_num_str[--i] = '\0';
-
-
-    char parentproc_num_str[7] = "0";
-    p = current_pid;
-
-    for (i = p?0:1; p; i++)
-    {
-        parentproc_num_str[i] = p%10 + '0';
-        p /= 10;
-    }
-
-    parentproc_num_str[i++] = '/';
-    parentproc_num_str[i] = '\0';
-
-    char parentprocdir[7+7] = "/proc/";
-
-    strcpy(parentprocdir+6, parentproc_num_str);
-
-    //printf("[scheduler.c] INFO : Got names:\n");
-    //printf("                   : %s:\n", proc);
-    //printf("                   : %s:\n", procdir);
-    //printf("                   : %s:\n", parentprocdir);
+//    printf("[scheduler.c] INFO : Got names:\n");
+//    printf("                   : %s:\n", proc_num_str);
+//    printf("                   : %s:\n", procdir);
+//    printf("                   : %s:\n", parentprocdir);
 
 
 
     mrfsNewFolder("/proc/", proc_num_str);
     char* f = mrfsReadFile(parentprocdir, "name");
     mrfsNewFile(procdir, "name", f, strlen(f));
+
+
+    mrfsNewFolder(procdir, "env");
+    char envdir[18];
+    sprintf(envdir, "/proc/%d/env/", next_pid);
+
+    mrfsNewFile(envdir, "PATH", "/bin/", strlen("/bin/"));
 
     next_pid++;
 
@@ -112,8 +92,17 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
 {
 
     set_parameters(parameters);
-    //printf("[scheduler.c] CALL : scheduler_exec_string()\n");
-    int64_t jump_target = elf_load(program_name, &(process_table[current_pid]));
+
+    char envdir[19];
+    sprintf(envdir, "/proc/%d/env/", current_pid);
+    char* path = mrfsReadFile(envdir, "PATH");
+
+    char resloved_p_name[strlen(path) + strlen(program_name) + 1];
+    sprintf(resloved_p_name, "%s%s",path, program_name);
+
+    free(envdir);
+
+    int64_t jump_target = elf_load(resloved_p_name, &(process_table[current_pid]));
 
     if (jump_target == -1) // {no such file}
     {
@@ -335,13 +324,18 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     paging_map_new_page_table(0x2ff);
     paging_map_new_page_table(0x200);
 
-    uint32_t jump_target = elf_load("/init", process_table);
+    uint32_t jump_target = elf_load("/bin/init", process_table);
 
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
     process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
 
     mrfsNewFolder("/proc/", "0");
     mrfsNewFile("/proc/0/", "name", "/init", 5);
+
+
+
+    mrfsNewFolder("/proc/0", "env");
+    mrfsNewFile("/proc/0/env", "PATH", "/bin/", strlen("/bin/"));
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 

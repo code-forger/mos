@@ -52,12 +52,9 @@ void main(void)
         {
             char *processnum = file_read_name(process_dir);
             char *processnamefile = malloc(6 + strlen(processnum) + 6);
-            strcpy(processnamefile, "/proc/");
-            strcpy(processnamefile+6, processnum);
-            strcpy(processnamefile+6+strlen(processnum), "/name");
-            processnamefile[6 + strlen(processnum) + 5] = '\0';
+            sprintf(processnamefile, "/proc/%s/name", processnum);
             FILE processname;
-            fopen(processnamefile, &processname);
+            fopen(processnamefile, &processname, false);
             char* processnamestring = file_read_data(processname);
             lines--;
             printf("%s = %s \n", processnum, processnamestring);

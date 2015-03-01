@@ -43,19 +43,18 @@ void idt_init()
 
     idt_encode_entry(90, (unsigned)&scheduler_fork_syscall, 0x08, 0x8E);
     idt_encode_entry(91, (unsigned)&scheduler_pid_syscall, 0x08, 0x8E);
-    idt_encode_entry(92, (unsigned)&scheduler_exec_syscall, 0x08, 0x8E);
     idt_encode_entry(93, (unsigned)&scheduler_sleep_syscall, 0x08, 0x8E);
     idt_encode_entry(94, (unsigned)&scheduler_pause_syscall, 0x08, 0x8E);
     idt_encode_entry(95, (unsigned)&scheduler_exec_string_syscall, 0x08, 0x8E);
     idt_encode_entry(96, (unsigned)&scheduler_kill_syscall, 0x08, 0x8E);
     idt_encode_entry(97, (unsigned)&scheduler_hide_syscall, 0x08, 0x8E);
     idt_encode_entry(98, (unsigned)&scheduler_show_syscall, 0x08, 0x8E);
+    idt_encode_entry(99, (unsigned)&scheduler_exec_string_parameters_syscall, 0x08, 0x8E);
 
     idt_encode_entry(100, (unsigned)&pipe_pipe_syscall, 0x08, 0x8E);
     idt_encode_entry(101, (unsigned)&pipe_write_syscall, 0x08, 0x8E);
     idt_encode_entry(102, (unsigned)&pipe_read_syscall, 0x08, 0x8E);
 
-    idt_encode_entry(112, (unsigned)&dir_read_syscall, 0x08, 0x8E);
     idt_encode_entry(113, (unsigned)&file_open_syscall, 0x08, 0x8E);
     idt_encode_entry(114, (unsigned)&file_putc_syscall, 0x08, 0x8E);
     idt_encode_entry(115, (unsigned)&file_getc_syscall, 0x08, 0x8E);

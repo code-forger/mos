@@ -4,7 +4,7 @@ void main(void)
 {
     FILE fd;
 
-    fopen("/init-files", &fd);
+    fopen("/init-files", &fd, false);
 
     int stream_size = fd.index;
 
@@ -88,10 +88,10 @@ void main(void)
             if (id==get_pid())
             {
                 //printf("exec(%d)\n", i);
-                exec_by_name(programs[i]);
+                exec(programs[i]);
             }
         }
-        exec_by_name(programs[entries-1]);
+        exec(programs[entries-1]);
     }
     for(;;);
 }

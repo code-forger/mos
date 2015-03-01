@@ -8,7 +8,7 @@ void main(void)
 
     FILE fd;
 
-    fopen("/user", &fd);
+    fopen("/user", &fd, false);
 
     int stream_size = fd.index;
 

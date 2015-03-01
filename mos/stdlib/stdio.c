@@ -1,5 +1,6 @@
  #include "stdio.h"
 #include "pipe.h"
+#include "string.h"
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -152,11 +153,9 @@ void printf(const char* string, ...)
     va_end(valist);
 }
 
-uint32_t fopen(char* name, FILE* fd)
+uint32_t fopen(char* name, FILE* fd, uint32_t create)
 {
-    uint32_t ret;
-    asm("int $113"::"S"(name), "D"(fd), "a"(&ret):);
-    return ret;
+    asm("int $113"::"S"(name), "D"(fd), "d"(create):);
 }
 
 void fputc(char c, FILE* fd)

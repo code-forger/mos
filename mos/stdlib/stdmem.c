@@ -91,17 +91,17 @@ void free(void *memory)
     } while (current->free != 3);
 }
 
-void create_heap()
+void create_heap(int start)
 {
-    top = (header*) 0x80000000;
-    top->size = 0x1000 - HEAD_SIZE - HEAD_SIZE;
+    top = (header*) start;
+    top->size = 0x1000 - (start - 0x80000000) - HEAD_SIZE - HEAD_SIZE;
     top->free = true;
 
     top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
     top->size = 0;
     top->free = 3;
 
-    top = (header*) 0x80000000;
+    top = (header*) start;
 
     heap += top->size;
 }

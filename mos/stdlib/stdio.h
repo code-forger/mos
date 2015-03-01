@@ -24,7 +24,7 @@ void putchar(char c);
 void putcharat(char c, uint32_t xin, uint32_t yin);
 void printf(const char* string, ...);
 
-uint32_t fopen(char* name, FILE* fd);
+uint32_t fopen(char* name, FILE* fd, uint32_t create);
 void fputc(char c, FILE* fd);
 int32_t fgetc(FILE* fd);
 

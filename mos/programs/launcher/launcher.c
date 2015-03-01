@@ -1,5 +1,61 @@
 #include "../../stdlib/stdio.h"
 
+static void split_command(char* buffer,char ** command,char *** parameters)
+{
+    sleep(1);
+    int command_len = 0;
+    for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
+        command_len ++;
+    *command = malloc(command_len + 1);
+    for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
+        (*command)[i] = buffer[i];
+    (*command)[command_len] = '\0';
+    sleep(1);
+
+    buffer += command_len;
+    while (buffer[0] == ' ')
+        buffer++;
+
+    buffer--;
+
+    int parameter_count = 0;
+
+    for(int i = 0; buffer[i] != '\0'; i++)
+    {
+        if (buffer[i] == ' ')
+        {
+            while (buffer[i] == ' ')
+                i++;
+            if (buffer[i] != '\0')
+                parameter_count++;
+        }
+    }
+    buffer++;
+    *parameters = malloc((parameter_count + 1)*sizeof(char*));
+    for (int p = 0; p < parameter_count; p++)
+    {
+        int parameter_len = 0;
+        for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
+            parameter_len ++;
+        sleep(1);
+        char * parameter = malloc(parameter_len + 1);
+        sleep(1);
+        for (int i = 0; i < parameter_len; i++)
+            parameter[i] = buffer[i];
+        parameter[parameter_len] = '\0';
+
+        sleep(1);
+
+        buffer += parameter_len;
+        while (buffer[0] == ' ')
+            buffer++;
+        sleep(1);
+        (*parameters)[p] = parameter;
+    }
+    (*parameters)[parameter_count] = 0;
+
+}
+
 void main(void)
 {
     setio(0,24,80,1);
@@ -54,7 +110,10 @@ void main(void)
                     int id = fork();
                     if (id==get_pid())
                     {
-                        exec_by_name(buffer);
+                        char* command;
+                        char** parameters;
+                        split_command(buffer, &command, &parameters);
+                        execp(command, parameters);
                         return;
                     }
                 }

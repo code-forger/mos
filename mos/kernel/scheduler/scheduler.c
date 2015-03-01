@@ -80,24 +80,38 @@ uint32_t fork()
     return pid;
 }
 
-void scheduler_exec(uint32_t program_number)
-{
-
-    for (uint32_t i = 0; i < program_pointers[2+(program_number * 2)]; i++)
-        paging_copy_physical_to_virtual(program_pointers[1+(program_number * 2)] + 0x1000 * i, 0x08048000 + 0x1000 * i);
-
-    process_table[current_pid].io.outpipe = 0;
-    process_table[current_pid].io.inpipe = 0;
-    process_table[current_pid].io.px = 0;
-    process_table[current_pid].io.py = 0;
-    process_table[current_pid].io.wx = 0;
-    process_table[current_pid].io.wy = 0;
-    process_table[current_pid].io.column = 0;
-    process_table[current_pid].io.row = 0;
-}
-
 void scheduler_exec_string(char *program_name)
 {
+    char* parameters[1];
+    parameters[0] = (char*)0;
+    scheduler_exec_string_paramters(program_name, parameters);
+}
+
+static void set_parameters(char** parameters)
+{
+    uint32_t* num = (uint32_t*)0x80000000;
+    *num = 0;
+    for(uint32_t i = 0; parameters[i] != '\0'; i++) (*num)++;
+
+    char ** params = malloc((*num + 1)*sizeof(char*));
+    for(uint32_t i = 0; parameters[i] != '\0'; i++)
+    {
+        params[i] = malloc(strlen(parameters[i])+1);
+        sprintf(params[i], "%s", parameters[i]);
+    }
+    char* p = (char*)0x80000004;
+
+    for(uint32_t i = 0; i < *num; i++)
+    {
+        sprintf(p, "%s", params[i]);
+        p += strlen(p) + 1;
+    }
+}
+
+void scheduler_exec_string_paramters(char *program_name, char** parameters)
+{
+
+    set_parameters(parameters);
     //printf("[scheduler.c] CALL : scheduler_exec_string()\n");
     int64_t jump_target = elf_load(program_name, &(process_table[current_pid]));
 
@@ -106,29 +120,14 @@ void scheduler_exec_string(char *program_name)
         return;
     }
 
-    char proc_num_str[7] = "0";
-    int p = current_pid;
-    int i;
+    char procdir[7+7];
 
-    for (i = p?0:1; p; i++)
-    {
-        proc_num_str[i] = p%10 + '0';
-        p /= 10;
-    }
-
-    proc_num_str[i++] = '/';
-    proc_num_str[i] = '\0';
-
-    char procdir[7+7] = "/proc/";
-
-    strcpy(procdir+6, proc_num_str);
+    sprintf(procdir, "/proc/%d/",current_pid);
 
     //printf("[scheduler.c] INFO : Got names:\n");
     //printf("                   : %s:\n", procdir);
 
     mrfsWriteFile(procdir, "name", program_name, strlen(program_name));
-
-
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 

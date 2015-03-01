@@ -77,7 +77,7 @@ void main(void)
     lines[21] = l22;
     lines[22] = l23;
 
-    fopen("/notes", &fd);
+    fopen("/notes", &fd, false);
 
     int width = 24;
     int height = 21;

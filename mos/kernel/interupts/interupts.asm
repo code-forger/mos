@@ -26,6 +26,7 @@ extern c_keyboard_irq
 extern c_terminal_putchar_syscall
 extern c_terminal_init_syscall
 extern c_stdin_init_syscall
+extern c_relinquish_input_syscall
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
 extern c_scheduler_exec_string_syscall
@@ -74,6 +75,7 @@ global keyboard_irq
 global terminal_putchar_syscall
 global terminal_init_syscall
 global stdin_init_syscall
+global relinquish_input_syscall
 global scheduler_fork_syscall
 global scheduler_pid_syscall
 global scheduler_exec_string_syscall
@@ -252,6 +254,12 @@ terminal_init_syscall:
 stdin_init_syscall:
     pushad
     call c_stdin_init_syscall
+    popad
+    iret
+
+relinquish_input_syscall:
+    pushad
+    call c_relinquish_input_syscall
     popad
     iret
 

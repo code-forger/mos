@@ -39,7 +39,7 @@ void printf(const char* string, ...);
 void terminal_setio(PIPE pipes[2]);
 void terminal_setin(PIPE pipes[2]);
 void terminal_string_for_process(io_part* io);
-void terminal_set_active_input(uint32_t pid);
+void terminal_set_active_input(int32_t pid);
 uint32_t terminal_get_active_input();
 uint32_t terminal_get_last_shown_input();
 void terminal_send_to_process(char data);

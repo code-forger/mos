@@ -204,11 +204,11 @@ void scheduler_kill(uint32_t pid)
 
 static void events()
 {
-    global_ms += 52;
+    global_ms += 10;
     int64_t event = 0;
     while ((event = events_get_event(global_ms)) >= 0)
     {
-        if ((event >> 16) == F_WAKE)\
+        if ((event >> 16) == F_WAKE)
         {
             scheduler_unmark_process_as(event&0xFFFF, (F_PAUSED | F_SKIP));
         }

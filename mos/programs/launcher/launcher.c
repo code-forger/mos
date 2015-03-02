@@ -7,7 +7,6 @@
 
 static void split_command(char* buffer,char ** command,char *** parameters)
 {
-    sleep(1);
     int command_len = 0;
     for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
         command_len ++;
@@ -15,7 +14,6 @@ static void split_command(char* buffer,char ** command,char *** parameters)
     for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
         (*command)[i] = buffer[i];
     (*command)[command_len] = '\0';
-    sleep(1);
 
     buffer += command_len;
     while (buffer[0] == ' ')
@@ -42,19 +40,14 @@ static void split_command(char* buffer,char ** command,char *** parameters)
         int parameter_len = 0;
         for (int i = 0; buffer[i] != ' ' && buffer[i] != '\0'; i++)
             parameter_len ++;
-        sleep(1);
         char * parameter = malloc(parameter_len + 1);
-        sleep(1);
         for (int i = 0; i < parameter_len; i++)
             parameter[i] = buffer[i];
         parameter[parameter_len] = '\0';
 
-        sleep(1);
-
         buffer += parameter_len;
         while (buffer[0] == ' ')
             buffer++;
-        sleep(1);
         (*parameters)[p] = parameter;
     }
     (*parameters)[parameter_count] = 0;
@@ -141,7 +134,10 @@ void main(void)
                     caret_loc = 80 - carret_base;
             }
         }
-        //}
+        else
+        {
+            pause();
+        }
     }
     for(;;);
 }

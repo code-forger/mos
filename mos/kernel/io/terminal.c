@@ -159,6 +159,17 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
     {
         c = (char)uc;
 
+        if (c == 0x1A)
+        {
+            pipe_read(io->outpipe, &uc);
+            c = (char)uc;
+            uint8_t x, y;
+            pipe_read(io->outpipe, &x);
+            c = (char)uc;
+            pipe_read(io->outpipe, &y);
+            terminal_putchar_at_for_process(c, x, y);
+        }
+
         if (c == '\n')
         {
             io->column = 0;
@@ -323,7 +334,7 @@ void terminal_setin(PIPE* pipes)
         terminal_set_active_input(scheduler_get_pid());
 }
 
-void terminal_set_active_input(uint32_t pid)
+void terminal_set_active_input(int32_t pid)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(active_process);
     for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
@@ -334,7 +345,13 @@ void terminal_set_active_input(uint32_t pid)
             process_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, inactive_color);
         }
     }
+
     active_process = pid;
+
+    if (pid < 0)
+    {
+        return;
+    }
 
     ptb = scheduler_get_process_table_entry(active_process);
     for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
@@ -375,6 +392,7 @@ void terminal_send_to_process(char data)
     {
         process_table_entry ptb = scheduler_get_process_table_entry(active_process);
         pipe_write(ptb.io.inpipe, data);
+        scheduler_unmark_process_as(active_process, (F_PAUSED | F_SKIP));
     }
     last_char_pressed = data;
 }

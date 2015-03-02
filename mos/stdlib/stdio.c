@@ -10,6 +10,24 @@ static PIPE i_pipes[2];
 #define WRITE 0
 #define READ 1
 
+int hasinput = 0;
+
+static void relinquish_input()
+{
+    asm("int $83":::);
+}
+
+void pre_init_io(void)
+{
+    hasinput = 0;
+}
+
+void exit_io(void)
+{
+    if (hasinput)
+        relinquish_input();
+}
+
 
 
 static void putint(uint32_t in)
@@ -97,6 +115,7 @@ void stdin_init()
 {
     asm("cli");
     pipe(i_pipes);
+    hasinput = 1;
     asm("int $82"::"S"(i_pipes));
     asm("sti");
 }
@@ -118,6 +137,18 @@ void putcharat(char c, uint32_t x, uint32_t y)
     asm("int $80"::"S"(uc), "D"(x), "d"(y):);
     asm("sti");
 }
+
+/*
+
+void putcharat(char c, uint32_t x, uint32_t y)
+{
+    asm("cli");
+    write(o_pipes[WRITE], 0x1A);
+    write(o_pipes[WRITE], c);
+    write(o_pipes[WRITE], x);
+    write(o_pipes[WRITE], y);
+    asm("sti");
+}*/
 
 void printf(const char* string, ...)
 {

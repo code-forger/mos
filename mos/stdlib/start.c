@@ -28,7 +28,10 @@ void std_init()
 
     create_heap(heap_start);
 
+    pre_init_io();
+
     main(num, params);
+    exit_io();
     kill(get_pid());
 }
 

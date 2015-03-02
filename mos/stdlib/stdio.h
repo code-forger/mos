@@ -35,3 +35,7 @@ int32_t fgetnamec(FILE* fd);
 int32_t fseek(FILE* fd, int index);
 int32_t fseekname(FILE* fd, int index);
 int32_t fdelete(FILE* fd);
+
+
+void pre_init_io(void);
+void exit_io(void);

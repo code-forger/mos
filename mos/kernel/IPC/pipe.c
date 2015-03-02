@@ -4,12 +4,14 @@
 #include "../io/terminal.h"
 
 static uint32_t next_pipe;
+static uint32_t max_pipes;
 static pipe_descriptor *pipe_table;
 
 void pipe_init()
 {
     next_pipe = 0;
     pipe_table = paging_get_pipe_table();
+    max_pipes = 0x1000 / sizeof(pipe_descriptor);
 }
 
 

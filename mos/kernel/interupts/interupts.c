@@ -192,6 +192,12 @@ void  c_terminal_init_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+void  c_relinquish_input_syscall(void)
+{
+    terminal_set_active_input(scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD));
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
 void  c_stdin_init_syscall(void)
 {
     PIPE* pipes;

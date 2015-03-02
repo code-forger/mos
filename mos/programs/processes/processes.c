@@ -3,10 +3,6 @@
 #include "../../stdlib/process.h"
 #include "../../stdlib/string.h"
 
-/*uint32_t pipe(PIPE[2]);
-uint32_t write(PIPE pipe, uint8_t data);
-int64_t read(PIPE pipe);*/
-
 char *file_read_data(FILE fd)
 {
     char* file = malloc(fd.size);
@@ -21,20 +17,21 @@ char *file_read_data(FILE fd)
 
 char *file_read_name(FILE fd)
 {
-    char* file = malloc(fd.size);
+    char* file = malloc(fd.namesize);
     fseekname(&fd, 0);
 
     int cin;
-    for (int i = 0 ; i < fd.size && (cin = fgetnamec(&fd)) != -1; i++)
+    for (int i = 0 ; i < fd.namesize && (cin = fgetnamec(&fd)) != -1; i++)
         file[i] = cin;
-    file[fd.index] = '\0';
+    file[fd.nameindex] = '\0';
     return file;
 }
 
 void main(void)
 {
-
     setio(54, 1, 25, 25-2);
+    stdin_init();
+    sleep(1);
     while(1)
     {
         int lines = 25 - 4;
@@ -65,6 +62,8 @@ void main(void)
         }
         for(;lines >=0; lines--)
             printf("\n");
+        if (getchar() == 'q')
+            return;
         sleep(2000);
     }
 

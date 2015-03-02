@@ -27,6 +27,8 @@ extern "C" /* Use C linkage for kernel_main. */
 #define R_W_NP 2 //read + write + not present
 #define R_W_P 3 // read + write + present
 
+void kernel_set_pit(void);
+
 void init_kernel()
 {
     uint32_t* directory = (uint32_t*)0xfffff000;
@@ -49,14 +51,7 @@ void init_kernel()
 
     mrfsNewFolder("/", "proc");
 
-    /*uint32_t rate = 3;
-    rate &= 0x0F;            // rate must be above 2 and not over 15
-    send_byte_to(0x70, 0x8A);        // set index to register A, disable NMI
-    char prev=get_byte_from(0x71);    // get initial value of register A
-    send_byte_to(0x70, 0x8A);        // reset index to A
-    send_byte_to(0x71, (prev & 0xF0) | rate); //write only our rate to A. Note, rate is the bottom 4 bits.
-    */
-
+    kernel_set_pit();
     //for(int i = 0 ; i < 10000000; i++);
 
     //kernel_test_mode();

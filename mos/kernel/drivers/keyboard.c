@@ -78,13 +78,23 @@ void keyboard_interupt(void)
         terminal_send_to_process(code);
     }
     else if (code == LSHIFT_DOWN || code == RSHIFT_DOWN)
+    {
         shift = true;
+    }
     else if  (code == LSHIFT_UP || code == RSHIFT_UP)
+    {
         shift = false;
+    }
     else if (code == LCTRL_DOWN || code == RCTRL_DOWN)
+    {
         ctrl = true;
+        terminal_send_to_process(code);
+    }
     else if  (code == LCTRL_UP || code == RCTRL_UP)
+    {
         ctrl = false;
+        terminal_send_to_process(code);
+    }
     else if (code == F1_DOWN)
         terminal_switch_context(0);
     else if (code == F2_DOWN)

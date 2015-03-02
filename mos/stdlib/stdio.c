@@ -191,6 +191,13 @@ int32_t fgetnamec(FILE* fd)
     return ret;
 }
 
+int32_t fdelete(FILE* fd)
+{
+    int32_t ret;
+    asm("int $119":: "a"(&ret), "D"(fd):);
+    return ret;
+}
+
 int32_t fseek(FILE* fd, int index)
 {
     fd->index = index;

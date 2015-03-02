@@ -8,6 +8,7 @@
 typedef struct FILE_type
 {
     uint32_t inode;
+    uint32_t parent;
     uint32_t index;
     uint32_t size;
     uint32_t nameindex;
@@ -33,3 +34,4 @@ int32_t fgetfile(FILE* dd, FILE* fd);
 int32_t fgetnamec(FILE* fd);
 int32_t fseek(FILE* fd, int index);
 int32_t fseekname(FILE* fd, int index);
+int32_t fdelete(FILE* fd);

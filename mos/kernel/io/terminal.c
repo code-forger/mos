@@ -319,6 +319,8 @@ void terminal_setin(PIPE* pipes)
     ptb->flags |= F_HAS_INPUT;
     if (active_process == -1)
         active_process = scheduler_get_pid();
+    else
+        terminal_set_active_input(scheduler_get_pid());
 }
 
 void terminal_set_active_input(uint32_t pid)

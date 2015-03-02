@@ -44,6 +44,7 @@ extern c_file_getc_syscall
 extern c_file_opendir_syscall
 extern c_file_getfile_syscall
 extern c_file_getnamec_syscall
+extern c_file_delete_syscall
 
 global int_zero_division
 global int_debugger
@@ -91,6 +92,7 @@ global file_getc_syscall
 global file_opendir_syscall
 global file_getfile_syscall
 global file_getnamec_syscall
+global file_delete_syscall
 
 int_zero_division:
     pushad
@@ -377,6 +379,14 @@ file_getnamec_syscall:
     cli
     pushad
     call c_file_getnamec_syscall
+    popad
+    sti
+    iret
+
+file_delete_syscall:
+    cli
+    pushad
+    call c_file_delete_syscall
     popad
     sti
     iret

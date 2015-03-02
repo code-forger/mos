@@ -3,118 +3,346 @@
 #include "../../stdlib/process.h"
 #include "../../stdlib/string.h"
 
-FILE fd;
-int caret_loc;
-char* file;
+char** lines;
+int* max_line_lens;
+int* line_lens;
+int num_lines;
 
-int move_caret(int to)
+char header[81];
+
+int caret_x = 0, caret_line = 0;
+
+#define UP    (char)0x48
+#define DOWN  (char)0x50
+#define LEFT  (char)0x4B
+#define RIGHT (char)0x4D
+
+#define LCTRL_DOWN (char)0x1D
+#define RCTRL_DOWN (char)0x00
+#define LCTRL_UP   (char)0x9D
+#define RCTRL_UP   (char)0x00
+
+void extend_line_buffer(int line)
 {
-    caret_loc = to;
-    fseek(&fd, to);
-    return to;
+    int current_len = max_line_lens[line];
+    int new_len = current_len * 2;
+
+    char* current_buff = lines[line];
+    char* new_buff = malloc(new_len * sizeof(char));
+
+    for (int i = 0; i < current_len; i++)
+        new_buff[i] = current_buff[i];
+    for (int i = current_len; i < new_len; i++)
+        new_buff[i] = ' ';
+
+    free(current_buff);
+    lines[line] = new_buff;
+    max_line_lens[line] = new_len;
 }
 
-void put_char_in_file(char c)
+void insert_char(int line, int pos, char c)
 {
-    for (int i = fd.size; i < caret_loc; i++)
+    if (line_lens[line]+1 >= max_line_lens[line])
     {
-        fseek(&fd, i);
-        fputc(file[i]?file[i]:' ', &fd);
+        extend_line_buffer(line);
     }
-    fputc(c, &fd);
+
+    while (pos >= max_line_lens[line])
+        extend_line_buffer(line);
+    line_lens[line]++;
+    for(int i = line_lens[line]; i > pos; i--)
+        lines[line][i] = lines[line][i-1];
+
+    lines[line][pos] = c;
 }
+
+void remove_line(int line)
+{
+    //printf("removing line\n");
+
+    num_lines--;
+    char** new_lines = malloc(num_lines * sizeof(char*));
+    int* new_max_line_lens = malloc(num_lines * sizeof(int));
+    int* new_line_lens = malloc(num_lines * sizeof(int));
+
+    for (int i = 0; i < num_lines+1; i++)
+    {
+        int mod = (i>line)?-1:0;
+        if (i + mod == num_lines)
+            break;
+        new_lines[i + mod] = lines[i];
+        new_max_line_lens[i + mod] = max_line_lens[i];
+        new_line_lens[i + mod] = line_lens[i];
+    }
+
+    free (lines);
+    free (max_line_lens);
+    free (line_lens);
+
+    lines = new_lines;
+    max_line_lens = new_max_line_lens;
+    line_lens = new_line_lens;
+}
+
+void remove_char(int line, int pos)
+{
+    if (pos == 0)
+    {
+        if (line != 0)
+        {
+            caret_line--;
+            caret_x = line_lens[caret_line];
+            for(int i = 0; i < line_lens[line]; i++)
+                insert_char(line-1, line_lens[line-1], lines[line][i]);
+            remove_line(line);
+            print_file_after(line-1);
+        }
+    }
+    else
+    {
+        pos--;
+        caret_x--;
+        for(int i = pos; i < line_lens[line]; i++)
+            lines[line][i] = lines[line][i+1];
+        line_lens[line]--;
+    }
+}
+
+void insert_line(int pos)
+{
+    num_lines++;
+    char** new_lines = malloc(num_lines * sizeof(char*));
+    int* new_max_line_lens = malloc(num_lines * sizeof(int));
+    int* new_line_lens = malloc(num_lines * sizeof(int));
+
+    for (int i = 0; i < num_lines-1; i++)
+    {
+        int mod = (i>=pos)?1:0;
+        new_lines[i + mod] = lines[i];
+        new_max_line_lens[i + mod] = max_line_lens[i];
+        new_line_lens[i + mod] = line_lens[i];
+    }
+
+    new_lines[pos] = malloc(4 * sizeof(char));
+    new_max_line_lens[pos] = 4;
+    for(int i = 0; i < 4; i++)
+        new_lines[pos][i] = ' ';
+    new_line_lens[pos] = 0;
+
+    free (lines);
+    free (max_line_lens);
+    free (line_lens);
+
+    lines = new_lines;
+    max_line_lens = new_max_line_lens;
+    line_lens = new_line_lens;
+}
+
+void read_file(char* path)
+{
+    FILE fd;
+    fopen(path, &fd, 0);
+    fseek(&fd, 0);
+
+    if(fd.type == 2)
+    {
+        printf("FAIED TO OPEN FILE!\n");
+        sleep(1);
+        return;
+    }
+
+
+    lines = malloc(0 * sizeof(char*));
+    max_line_lens = malloc(0 * sizeof(int));
+    line_lens = malloc(0 * sizeof(int));
+    num_lines = 0;
+
+    int next_line = 0;
+    int next_char = 0;
+
+    insert_line(next_line++);
+
+    char c;
+    while ((c = fgetc(&fd)) != -1)
+    {
+        if (c == '\n')
+        {
+            insert_line(next_line++);
+            next_char = 0;
+        }
+        else
+            insert_char(next_line-1, next_char++, c);
+    }
+}
+
+void save_file(char* path)
+{
+    FILE fd;
+    fopen(path, &fd, 0);
+
+    if(fd.type == 0)
+    {
+        fdelete(&fd);
+    }
+
+    FILE fd2;
+
+    fopen(path, &fd2, 1);
+
+    if(fd2.type == 2)
+    {
+        printf("FAILED TO OPEN FILE!\n");
+        sleep(0);
+        return 0;
+    }
+
+    for (int i = 0 ; i < num_lines; i++)
+    {
+        for(int j = 0; j < line_lens[i]; j++)
+        {
+            fputc(lines[i][j], &fd2);
+        }
+        fputc('\n', &fd2);
+    }
+    sleep(0);
+}
+
+void print_header()
+{
+    int header_len = strlen(header);
+    for(int i = 0; i < header_len; i++)
+    {
+        putcharat(header[i],i,0);
+    }
+}
+
+void print_all()
+{
+    print_header();
+    for(int i = 0; i < num_lines; i++)
+    {
+        for(int j = 0; j < line_lens[i]; j++)
+        {
+            putcharat(lines[i][j],j,i+1);
+        }
+    }
+    for(int i = num_lines; i < 22; i++)
+    {
+        for(int j = 0; j < 80; j++)
+        {
+            putcharat(' ',j,i+1);
+        }
+    }
+}
+
+void print_file_after(int line)
+{
+    for(int i = line; i < num_lines; i++)
+    {
+        print_line_after(i,0);
+    }
+    for(int i = num_lines; i < 22; i++)
+    {
+        for(int j = 0; j < 80; j++)
+        {
+            putcharat(' ',j,i+1);
+        }
+    }
+}
+
+void print_line_after(int line, int pos)
+{
+    for(int j = pos; j < line_lens[line]; j++)
+    {
+        putcharat(lines[line][j],j,line+1);
+    }
+    for(int j = line_lens[line]; j < 80; j++)
+    {
+        putcharat(' ',j,line+1);
+    }
+}
+
+void print_char(int line, int x)
+{
+    putcharat(lines[line][x],x,line+1);
+}
+
+void move_caret(char c)
+{
+    switch(c)
+    {
+        case UP:
+            if (caret_line != 0)
+            {
+                caret_line--;
+                if (caret_x > line_lens[caret_line])
+                    caret_x = line_lens[caret_line];
+            }
+            break;
+        case DOWN:
+            if (caret_line != num_lines-1)
+            {
+                caret_line++;
+                if (caret_x > line_lens[caret_line])
+                    caret_x = line_lens[caret_line];
+            }
+            break;
+        case LEFT:
+            if (caret_x == 0)
+            {
+                if(caret_line != 0)
+                {
+                    move_caret(UP);
+                    caret_x = line_lens[caret_line];
+                }
+            }
+            else
+            {
+                caret_x--;
+            }
+            break;
+        case RIGHT:
+            if (caret_x == line_lens[caret_line])
+            {
+                if(caret_line != num_lines-1)
+                {
+                    move_caret(DOWN);
+                    caret_x = 0;
+                }
+            }
+            else
+            {
+                caret_x++;
+            }
+            break;
+        break;
+    }
+}
+
 
 void main(void)
 {
-    setio(27, 1, 25, 23);
+    setio(0, 1, 79, 22);
     stdin_init();
 
-    char* l1  = "*----------Notes---------*";
-    char* l2  = "|                        |";
-    char* l3  = "|                        |";
-    char* l4  = "|                        |";
-    char* l5  = "|                        |";
-    char* l6  = "|                        |";
-    char* l7  = "|                        |";
-    char* l8  = "|                        |";
-    char* l9  = "|                        |";
-    char* l10 = "|                        |";
-    char* l11 = "|                        |";
-    char* l12 = "|                        |";
-    char* l13 = "|                        |";
-    char* l14 = "|                        |";
-    char* l15 = "|                        |";
-    char* l16 = "|                        |";
-    char* l17 = "|                        |";
-    char* l18 = "|                        |";
-    char* l19 = "|                        |";
-    char* l20 = "|                        |";
-    char* l21 = "|                        |";
-    char* l22 = "|                        |";
-    char* l23 = "*------------------------*";
-    char* lines[23];
-    lines[0] = l1;
-    lines[1] = l2;
-    lines[2] = l3;
-    lines[3] = l4;
-    lines[4] = l5;
-    lines[5] = l6;
-    lines[6] = l7;
-    lines[7] = l8;
-    lines[8] = l9;
-    lines[9] = l10;
-    lines[10] = l11;
-    lines[11] = l12;
-    lines[12] = l13;
-    lines[13] = l14;
-    lines[14] = l15;
-    lines[15] = l16;
-    lines[16] = l17;
-    lines[17] = l18;
-    lines[18] = l19;
-    lines[19] = l20;
-    lines[20] = l21;
-    lines[21] = l22;
-    lines[22] = l23;
+    sprintf(header, "/*** %s ***\\", "/notes");
 
-    fopen("/notes", &fd, false);
+    char* filename = "/notes";
 
-    int width = 24;
-    int height = 21;
+    read_file(filename);
+    print_all();
 
-    int stream_size = width*height;
-
-    file = malloc(stream_size);
-
-    fseek(&fd, 0);
-
-    int c;
-    for (int i = 0 ; i < stream_size && (c = fgetc(&fd)) != -1; i++)
-    {
-        file[i] = c;
-    }
-
-    for (int i = 0; i < 23; i++)
-    {
-        printf(lines[i]);
-        sleep(1);
-    }
-
-    for(int i = 0; i < strlen(file); i++)
-    {
-        putcharat(file[i], i%width+1, i/width+1);
-    }
-
-    caret_loc = width;
-    fseek(&fd, caret_loc);
     char caret = '%';
     int caret_counter = 0;
+    caret_line = caret_x = 0;
 
-    uint32_t state = 0;
+    int ctrl = 0;
+    int state = 0;
     while(1)
     {
-        putcharat(caret, caret_loc%width+1, caret_loc/width+1);
-        if ((caret_counter = (caret_counter + 1) % 15) == 0) { if (caret == '%') caret = file[caret_loc]; else caret = '%'; }
+        putcharat(caret, caret_x, caret_line+1);
+        if ((caret_counter = (caret_counter + 1) % 15) == 0)
+            caret = (caret == '%')?lines[caret_line][caret_x]:'%';
 
         int64_t get = getchar();
         if (get > 0)
@@ -123,53 +351,55 @@ void main(void)
             if (state)
             {
                 state = 0;
-                if (c == (char)0x48) // up
+                switch(c)
                 {
-                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
-                    if ((caret_loc -= width) < 0)
-                        move_caret(0);
+                    case UP:
+                    case DOWN:
+                    case LEFT:
+                    case RIGHT:
+                        print_char(caret_line, caret_x);
+                        move_caret(c);
+                    break;
                 }
-                else if (c == (char)0x50) // down
-                {
-                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
-                    if ((caret_loc += width) > stream_size)
-                        move_caret(stream_size-1);
-                }
-                else if (c == (char)0x4D) // right
-                {
-                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
-                    if (move_caret(caret_loc+1) > stream_size)
-                        move_caret(stream_size-1);
-                }
-                else if (c == (char)0x4B) // left
-                {
-                    putcharat(file[caret_loc], caret_loc% width +1, caret_loc/ width +1);
-                    if (move_caret(caret_loc-1) <= 0)
-                        move_caret(0);
-                }
+            }
+            else if (c == '\t')
+            {
+                for(int i = 0; i < 4; i++)
+                    insert_char(caret_line, caret_x++, ' ');
+                print_line_after(caret_line, caret_x - 4);
             }
             else if (c == '\b')
             {
-                putcharat(file[caret_loc] = ' ', caret_loc% width +1, caret_loc/ width +1);
-                put_char_in_file(' ');
-                if (move_caret(caret_loc-1) <= 0)
-                    move_caret(0);
+                remove_char(caret_line, caret_x);
+                print_line_after(caret_line, caret_x - 1);
             }
             else if (c == '\n')
             {
-                if (move_caret((caret_loc +  width ) - (caret_loc +  width ) %  width ) > stream_size-1)
-                    move_caret(stream_size-1);
+                caret_line++;
+                insert_line(caret_line);
+                caret_x = 0;
+                print_file_after(caret_line-1);
             }
             else if (c == (char)0xE0)
             {
                 state = 1;
             }
+            else if (c == LCTRL_DOWN || c == RCTRL_DOWN)
+            {
+                ctrl = 1;
+            }
+            else if (c == LCTRL_UP || c == RCTRL_UP)
+            {
+                ctrl = 0;
+            }
+            else if (ctrl && c == 's')
+            {
+                save_file(filename);
+            }
             else
             {
-                putcharat(file[caret_loc] = c, caret_loc% width +1, caret_loc/ width +1);
-                put_char_in_file(c);
-                if (move_caret(caret_loc+1) > stream_size)
-                    move_caret(stream_size-1);
+                insert_char(caret_line, caret_x++, c);
+                print_line_after(caret_line, caret_x - 2);
             }
         }
     }

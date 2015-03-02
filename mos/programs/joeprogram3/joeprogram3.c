@@ -31,7 +31,7 @@ void main(void)
         if(x==6 && y==0) { hspeed=0; vspeed=1; }
         if(x==6 && y==6) { hspeed=-1; vspeed=0; }
         if(x==0 && y==6) { hspeed=0; vspeed=-1; }
-        sleep(5000);
+        sleep(500);
     }
     for(;;);
 }

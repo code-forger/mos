@@ -76,3 +76,4 @@ void file_getc_syscall(void);
 void file_opendir_syscall(void);
 void file_getfile_syscall(void);
 void file_getnamec_syscall(void);
+void file_delete_syscall(void);

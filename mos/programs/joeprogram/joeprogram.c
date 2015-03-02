@@ -33,7 +33,7 @@ void main(void)
         putcharat(' ', x, y);
         x+=hspeed; y+=vspeed;
         putcharat(c, x, y);
-        sleep(5000);
+        sleep(500);
     }
     for (;;);
 }

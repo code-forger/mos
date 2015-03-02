@@ -1,5 +1,10 @@
 #include "../../stdlib/stdio.h"
 
+#define LCTRL_DOWN (char)0x1D
+#define RCTRL_DOWN (char)0x00
+#define LCTRL_UP   (char)0x9D
+#define RCTRL_UP   (char)0x00
+
 static void split_command(char* buffer,char ** command,char *** parameters)
 {
     sleep(1);
@@ -127,6 +132,8 @@ void main(void)
             {
                 special_char = 1;
             }
+            else if (c == LCTRL_DOWN || c == RCTRL_DOWN);
+            else if (c == LCTRL_UP || c == RCTRL_UP);
             else
             {
                 putcharat(buffer[caret_loc] = c, carret_base + caret_loc, 0);

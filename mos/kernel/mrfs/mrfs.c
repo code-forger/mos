@@ -184,9 +184,11 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
+        union Inode parent = getDirInodeByPath(namecpy);
         free(fname);
         free(namecpy);
         fout->inode = file.node.nodenumber;
+        fout->parent = parent.node.nodenumber;
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
         fout->type = 0;
@@ -195,10 +197,12 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     else if (create)
     {
         mrfsNewFile(namecpy, fname, "", 0);
+        union Inode parent = getDirInodeByPath(namecpy);
         file = getInodeByName(namecpy, fname);
         free(fname);
         free(namecpy);
         fout->inode = file.node.nodenumber;
+        fout->parent = parent.node.nodenumber;
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
         fout->type = 0;
@@ -257,8 +261,10 @@ static void mrfsPutCEnd(int file_num, char c)
     {
         length.c[i] = block[i];
     }
-    if (length.i == sb.data.blockSize-8)
+    if (length.i == sb.data.blockSize-8 || file.node.size == 0)
     {
+        if (file.node.size == 0)
+            count = 0;
         int* newPointers = malloc(sizeof(int)*(count+1));
         for (int i = 0; i < count; i++)
         {
@@ -289,6 +295,7 @@ static void mrfsPutCEnd(int file_num, char c)
 
 void mrfsPutC(FILE* fd, char c)
 {
+    //printf("%c", c);
     union Inode file = inodeRead(fd->inode);
     if (!file.node.info.exists) return;
 
@@ -407,12 +414,13 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
 
 
     int numOfBlocks = length / (sb.data.blockSize-8) + 1;
+    if (length == 0)
+        numOfBlocks = 0;
     int pointers[numOfBlocks];
 
     if (inodeWrite(&inode))
         return FILELIMITREACHED;
     inodeSetName(&inode, filename);
-
 
     for (int currentByte = 0, blocknum = 0; currentByte < length;blocknum++)
     {
@@ -598,6 +606,27 @@ int mrfsDeleteFile(char*path,char* filename)
     blockFree(inode.node.nameblock);
 
     union Inode dirinode = getDirInodeByPath(path);
+    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
+
+    inodeFree(inode.node.nodenumber);
+    free(pointers);
+    return 0;
+}
+
+int mrfsDeleteFileWithDescriptor(FILE* fd)
+{
+    union Inode inode = inodeRead(fd->inode);
+    if (inode.node.info.exists == 0)
+        return NOSUCHFILEORDIRECTORY;
+    int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
+
+    int* pointers = inodeGetPointers(inode);
+
+    for(int i = 0; i < numblocks; i++)
+        blockFree(pointers[i]);
+    blockFree(inode.node.nameblock);
+
+    union Inode dirinode = inodeRead(fd->parent);
     inodeRemoveEntry(&dirinode, inode.node.nodenumber);
 
     inodeFree(inode.node.nodenumber);

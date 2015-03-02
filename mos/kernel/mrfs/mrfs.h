@@ -26,6 +26,7 @@ char* mrfsReadFile(char* path,char* filename);
 int mrfsRename(char*path,char* filename,char* newfilename);
 int mrfsMove(char*filename, char* path,char* newpath);
 int mrfsDeleteFile(char*path,char* filename);
+int mrfsDeleteFileWithDescriptor(FILE* fd);
 int mrfsDeleteFolder(char* path);
 int mrfsDeleteFolderRecursive(char* path);
 

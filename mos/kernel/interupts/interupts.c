@@ -325,11 +325,11 @@ void  c_file_open_syscall(void)
 void  c_file_putc_syscall(void)
 {
     int c;
-    FILE *data;
+    FILE *fd;
     asm("mov %%esi, %0":"=r"(c):);
-    asm("mov %%edi, %0":"=r"(data):);
+    asm("mov %%edi, %0":"=r"(fd):);
 
-    mrfsPutC(data, c);
+    mrfsPutC(fd, c);
 
     send_byte_to(MASTER_PIC, 0x20);
 }
@@ -337,10 +337,10 @@ void  c_file_putc_syscall(void)
 void  c_file_getc_syscall(void)
 {
     uint32_t *ret;
-    FILE *data;
-    asm("mov %%edi, %0":"=r"(data):);
+    FILE *fd;
+    asm("mov %%edi, %0":"=r"(fd):);
     asm("mov %%eax, %0":"=r"(ret):);
-    *ret = mrfsGetC(data);
+    *ret = mrfsGetC(fd);
 
     send_byte_to(MASTER_PIC, 0x20);
 }
@@ -371,10 +371,22 @@ void  c_file_getfile_syscall(void)
 void  c_file_getnamec_syscall(void)
 {
     uint32_t *ret;
-    FILE *data;
-    asm("mov %%edi, %0":"=r"(data):);
+    FILE *fd;
+    asm("mov %%edi, %0":"=r"(fd):);
     asm("mov %%eax, %0":"=r"(ret):);
-    *ret = mrfsGetNameC(data);
+    *ret = mrfsGetNameC(fd);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
+void  c_file_delete_syscall(void)
+{
+    uint32_t *ret;
+    FILE *fd;
+    asm("mov %%edi, %0":"=r"(fd):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = mrfsDeleteFileWithDescriptor(fd);
 
     send_byte_to(MASTER_PIC, 0x20);
 }

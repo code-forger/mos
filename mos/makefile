@@ -2,7 +2,7 @@
 	cp kernel/mos.bin isodir/boot/
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
-	cp bdisk.img disk.img
+	#cp bdisk.img disk.img
 	./mrfs-write disk.img / bin dir unused
 	./mrfs-write disk.img / init-files file init-files
 	./mrfs-write disk.img /bin/ init file programs/init/init
@@ -17,7 +17,7 @@
 	./mrfs-write disk.img /bin/ launcher file programs/launcher/launcher
 	./mrfs-write disk.img /bin/ processes file programs/processes/processes
 	./mrfs-write disk.img / user raw "Michael Rochester"
-	./mrfs-write disk.img / notes raw "Michael Rochester"
+	#./mrfs-write disk.img / notes file notes-test-file
 
 Tools:
 	$(MAKE) -C tools

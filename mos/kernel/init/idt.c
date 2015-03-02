@@ -61,6 +61,7 @@ void idt_init()
     idt_encode_entry(116, (unsigned)&file_opendir_syscall, 0x08, 0x8E);
     idt_encode_entry(117, (unsigned)&file_getfile_syscall, 0x08, 0x8E);
     idt_encode_entry(118, (unsigned)&file_getnamec_syscall, 0x08, 0x8E);
+    idt_encode_entry(119, (unsigned)&file_delete_syscall, 0x08, 0x8E);
     construct_idtp();
 }
 

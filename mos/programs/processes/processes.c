@@ -29,12 +29,12 @@ char *file_read_name(FILE fd)
 
 void main(void)
 {
-    setio(54, 1, 25, 25-2);
+    setio(0, 1, 79, 25-3);
     stdin_init();
     sleep(1);
     while(1)
     {
-        int lines = 25 - 4;
+        int lines = 23 - 4;
         printf("********Processes********\n\n");
         lines--;
 
@@ -52,12 +52,24 @@ void main(void)
             sprintf(processnamefile, "/proc/%s/name", processnum);
             FILE processname;
             fopen(processnamefile, &processname, false);
-            char* processnamestring = file_read_data(processname);
-            lines--;
-            printf("%s = %s \n", processnum, processnamestring);
-            free(processnum);
             free(processnamefile);
+            char* processnamestring = file_read_data(processname);
+
+
+
+            char *processcputimefile = malloc(6 + strlen(processnum) + 8);
+            sprintf(processcputimefile, "/proc/%s/cputime", processnum);
+            FILE processcputime;
+            fopen(processcputimefile, &processcputime, false);
+            free(processcputimefile);
+            char* processcputimestring = file_read_data(processcputime);
+
+            lines--;
+            printf("%s = %s  |  %sms \n", processnum, processnamestring, processcputimestring);
+            free(processnum);
             free(processnamestring);
+
+            free(processcputimestring);
 
         }
         for(;lines >=0; lines--)

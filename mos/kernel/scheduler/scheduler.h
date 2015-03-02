@@ -29,6 +29,9 @@ int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, ui
 
 #define FS_DONT_SCHEDULE (F_DEAD | F_PAUSED | F_IS_HIDDEN)
 
+#define E_WAKE      (uint32_t)0b0000001
+#define E_METRICS   (uint32_t)0b0000010
+
 typedef struct io_part
 {
     PIPE outpipe;
@@ -55,6 +58,7 @@ typedef struct p_t_entry
     uint32_t stack_size;
     uint32_t heap_physical;
     uint32_t heap_size;
+    uint32_t cpu_time;
     io_part io;
     uint8_t padding;
 } __attribute__((packed)) process_table_entry;

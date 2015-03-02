@@ -32,6 +32,7 @@ int32_t fork()
 
     process_table[fork_pid].flags = F_INIT;
     process_table[fork_pid].code_physical[0] = current_pid;
+    process_table[fork_pid].cpu_time = 0;
 
 
 
@@ -152,6 +153,7 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
     //printf("                   : %s:\n", procdir);
 
     mrfsWriteFile(procdir, "name", program_name, strlen(program_name));
+    mrfsWriteFile(procdir, "cputime", "0", 1);
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
@@ -164,7 +166,7 @@ void scheduler_sleep(uint32_t milliseconds)
 {
     scheduler_mark_process_as(current_pid, F_PAUSED);
     uint64_t time = global_ms + milliseconds;
-    events_new_event((scheduler_get_pid()&0xFFFF) + (F_WAKE << 16), time);
+    events_new_event((scheduler_get_pid()&0xFFFF) + (E_WAKE << 16), time);
 }
 
 /*
@@ -202,15 +204,40 @@ void scheduler_kill(uint32_t pid)
 
 }
 
+static void write_processes_metric(uint32_t process)
+{
+    char procpath[7 + 7];
+    char cputime[11];
+    sprintf(procpath, "/proc/%d/", process);
+    sprintf(cputime, "%d", process_table[process].cpu_time);
+    mrfsWriteFile(procpath, "cputime", cputime, strlen(cputime));
+}
+
+static void scheduler_write_metrics(void)
+{
+    int process = 0;
+    do
+    {
+        write_processes_metric(process);
+        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
+    } while (process != 0);
+    events_new_event((0&0xFFFF) + (E_METRICS << 16), global_ms +1000);
+
+}
+
 static void events()
 {
     global_ms += 10;
     int64_t event = 0;
     while ((event = events_get_event(global_ms)) >= 0)
     {
-        if ((event >> 16) == F_WAKE)
+        if ((event >> 16) == E_WAKE)
         {
             scheduler_unmark_process_as(event&0xFFFF, (F_PAUSED | F_SKIP));
+        }
+        if ((event >> 16) == E_METRICS)
+        {
+            scheduler_write_metrics();
         }
     }
 }
@@ -240,6 +267,9 @@ void scheduler_time_interupt()
     asm("movl %%ebp, %0":"=r"(process_table[current_pid].ebp)::"ebx");
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
+
+
+    process_table[current_pid].cpu_time += 10;
 
     if (process_table[current_pid].io.outpipe != 0 && !(process_table[current_pid].flags & F_DEAD))
         terminal_string_for_process(&process_table[current_pid].io);
@@ -345,6 +375,8 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     mrfsNewFolder("/proc/0/", "env");
     mrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));
     mrfsNewFile("/proc/0/env/", "cwd", "/", strlen("/"));
+
+    events_new_event((0&0xFFFF) + (E_METRICS << 16), 1000);
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 

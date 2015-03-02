@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code joeprogram-code joeprogram2-code joeprogram3-code input_test-code parameter_test-code launcher-code processes-code
+all: init-code name-code banner_left-code time-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -21,8 +21,8 @@ all: init-code name-code banner_left-code time-code joeprogram-code joeprogram2-
 .PHONY joeprogram3-code:
 	$(MAKE) -C joeprogram3
 
-.PHONY input_test-code:
-	$(MAKE) -C input_test
+.PHONY notes-code:
+	$(MAKE) -C notes
 
 .PHONY parameter_test-code:
 	$(MAKE) -C parameter_test

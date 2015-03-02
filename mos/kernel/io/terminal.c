@@ -417,12 +417,12 @@ static int overlaps(uint32_t pid, uint32_t process)
 
 static void terminal_hide_overlapping(uint32_t pid)
 {
-    uint32_t process = scheduler_get_next_process(0);
+    uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
     while (process != 0)
     {
         if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
             terminal_hide_process(process);
-        process = scheduler_get_next_process(process);
+        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
     }
 }
 

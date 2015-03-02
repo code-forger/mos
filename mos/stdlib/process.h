@@ -3,7 +3,7 @@
 #include "stdio.h"
 
 uint32_t get_pid();
-uint32_t fork();
+int32_t fork();
 
 void exec(char* program_name);
 void execp(char* program_name, char** parameters);

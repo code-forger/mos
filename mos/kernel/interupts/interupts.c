@@ -202,7 +202,7 @@ void  c_stdin_init_syscall(void)
 
 void  c_scheduler_fork_syscall(void)
 {
-    uint32_t *pid;
+    int32_t *pid;
     asm("mov %%esi, %0":"=r"(pid):);
     *pid = fork();
     send_byte_to(MASTER_PIC, 0x20);
@@ -246,7 +246,7 @@ void  c_scheduler_sleep_syscall(void)
 
 void  c_scheduler_pause_syscall(void)
 {
-    scheduler_pause();
+    scheduler_mark_process_as(scheduler_get_pid(), F_PAUSED);
     send_byte_to(MASTER_PIC, 0x20);
 }
 

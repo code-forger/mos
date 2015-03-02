@@ -3,22 +3,18 @@
 #include "../memory/memory.h"
 #include "../IPC/pipe.h"
 
-uint32_t fork();
+int32_t fork();
 void scheduler_time_interupt();
 void scheduler_init();
 uint32_t scheduler_get_pid();
 void scheduler_exec_string(char *program_name);
 void scheduler_exec_string_paramters(char *program_name, char** parameters);
 void scheduler_sleep(uint32_t milliseconds);
-void scheduler_pause();
-void scheduler_pause_process(uint32_t pid);
-void scheduler_wake_process(uint32_t pid);
 void scheduler_mark_process_as(uint32_t pid, uint32_t flags);
 void scheduler_unmark_process_as(uint32_t pid, uint32_t flags);
 void scheduler_kill();
-int32_t scheduler_get_next_input(uint32_t current);
-int32_t scheduler_get_next_process(uint32_t current);
-int32_t scheduler_get_next_hidden(uint32_t current_process);
+
+int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, uint32_t ignore);
 
 #define F_INIT      (uint32_t)0b0000001
 #define F_DEAD      (uint32_t)0b0000010
@@ -27,6 +23,9 @@ int32_t scheduler_get_next_hidden(uint32_t current_process);
 #define F_WAKE      (uint32_t)0b0010000
 #define F_HAS_INPUT (uint32_t)0b0100000
 #define F_IS_HIDDEN (uint32_t)0b1000000
+
+#define FS_ALL       (uint32_t)0b1111111
+#define FS_NONE      (uint32_t)0
 
 #define FS_DONT_SCHEDULE (F_DEAD | F_PAUSED | F_IS_HIDDEN)
 

@@ -7,7 +7,7 @@
 	./mrfs-write disk.img / init-files file init-files
 	./mrfs-write disk.img /bin/ init file programs/init/init
 	./mrfs-write disk.img /bin/ banner_left file programs/banner_left/banner_left
-	./mrfs-write disk.img /bin/ input_test file programs/input_test/input_test
+	./mrfs-write disk.img /bin/ notes file programs/notes/notes
 	./mrfs-write disk.img /bin/ parameter_test file programs/parameter_test/parameter_test
 	./mrfs-write disk.img /bin/ joeprogram file programs/joeprogram/joeprogram
 	./mrfs-write disk.img /bin/ joeprogram2 file programs/joeprogram2/joeprogram2
@@ -18,8 +18,6 @@
 	./mrfs-write disk.img /bin/ processes file programs/processes/processes
 	./mrfs-write disk.img / user raw "Michael Rochester"
 	./mrfs-write disk.img / notes raw "Michael Rochester"
-
-
 
 Tools:
 	$(MAKE) -C tools

@@ -13,10 +13,10 @@ uint32_t get_pid()
     return pid;
 }
 
-uint32_t fork()
+int32_t fork()
 {
     asm("cli");
-    uint32_t pid = 0;
+    int32_t pid = 0;
     asm("int $90": :"S"(&pid));
     asm("int $32");
     asm("sti");

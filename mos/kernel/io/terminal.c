@@ -367,11 +367,14 @@ void terminal_set_active_input(int32_t pid)
 void terminal_clear_process(uint32_t pid)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(pid);
-    for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
+    if(!(ptb.flags & F_IS_HIDDEN))
     {
-        for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
+        for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
         {
-            process_terminal[y * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
+            for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
+            {
+                process_terminal[y * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
+            }
         }
     }
 }

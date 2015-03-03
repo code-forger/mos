@@ -192,15 +192,18 @@ void scheduler_unmark_process_as(uint32_t pid, uint32_t flags)
 
 void scheduler_kill(uint32_t pid)
 {
-    scheduler_mark_process_as(pid, F_DEAD);
+    if (pid > 0 && pid < next_pid && !(process_table[pid].flags & F_DEAD))
+    {
+        scheduler_mark_process_as(pid, F_DEAD);
 
-    terminal_clear_process(pid);
+        terminal_clear_process(pid);
 
-    char procdir[7+7] = "/proc/";
+        char procdir[7+7] = "/proc/";
 
-    sprintf(procdir, "/proc/%d/", pid);
+        sprintf(procdir, "/proc/%d/", pid);
 
-    mrfsDeleteFolderRecursive(procdir);
+        mrfsDeleteFolderRecursive(procdir);
+    }
 
 }
 

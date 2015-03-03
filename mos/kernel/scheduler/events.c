@@ -45,6 +45,12 @@ static Node* insert_free_event(Node* node)
     return next;
 }
 
+static void remove_next_event(Node* node)
+{
+    Node *toremove = node->next;
+    node->next = insert_free_event(toremove);
+}
+
 void events_init()
 {
     events = NULL;
@@ -59,8 +65,31 @@ void events_init()
     }
 }
 
+static void events_remove_event(uint32_t data)
+{
+    Node *current = events;
+    Node *last = 0;
+    while(current)
+    {
+        if (current)
+        {
+            if (current->data == data)
+            {
+                if (last)
+                    remove_next_event(last);
+                else
+                    events = insert_free_event(current);
+                break;
+            }
+        }
+        last = current;
+        current = current->next;
+    }
+}
+
 void events_new_event(uint32_t data, uint64_t time)
 {
+    events_remove_event(data);
     Node *node = get_free_node();
     node->data = data;
     node->time = time;
@@ -80,5 +109,4 @@ int64_t events_get_event(uint64_t time)
     {
         return -1;
     }
-
 }

@@ -47,6 +47,8 @@ void main(void)
     write_processes_metric(1, "pid", 0, 5);
     write_processes_metric(1, "command", 8, 20);
     write_processes_metric(1, "cpu time", 31, 8);
+    write_processes_metric(1, "cpu %", 42, 6);
+    int* last_cycle_ms = 0;
     while(1)
     {
 
@@ -55,8 +57,17 @@ void main(void)
 
         FILE process_dir;
 
+        int num_processes = dd.size;
+
+        int* this_cycle_ms = malloc(num_processes * sizeof(int));
+
         fseek(&dd, 0);
         int line = 2;
+        write_processes_metric(line, "-----", 0, 5);
+        write_processes_metric(line, "--------------------", 8, 20);
+        write_processes_metric(line, "--------", 31, 8);
+        write_processes_metric(line, "------", 42, 6);
+        line ++;
         for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
         {
             char *processnum = file_read_name(process_dir);
@@ -76,9 +87,20 @@ void main(void)
             free(processcputimefile);
             char* processcputimestring = file_read_data(processcputime);
 
+            this_cycle_ms[line-3] = atoi(processcputimestring);
+
+            char percent_str[9] = "---%";
+            if (last_cycle_ms != 0)
+            {
+                int ms_this_cycle = this_cycle_ms[line-3] - last_cycle_ms[line-3];
+                int percent = (ms_this_cycle * 100) / 2000;
+                sprintf(percent_str, "%d%%", percent);
+            }
+
             write_processes_metric(line, processnum, 0, 5);
             write_processes_metric(line, processnamestring, 8, 20);
             write_processes_metric(line, processcputimestring, 31, 8);
+            write_processes_metric(line, percent_str, 42, 6);
             free(processnum);
             free(processnamestring);
 
@@ -87,6 +109,14 @@ void main(void)
             line++;
 
         }
+
+        write_processes_metric(line, "-----", 0, 5);
+        write_processes_metric(line, "--------------------", 8, 20);
+        write_processes_metric(line, "--------", 31, 8);
+        write_processes_metric(line, "------", 42, 6);
+        if (last_cycle_ms != 0)
+            free(last_cycle_ms);
+        last_cycle_ms = this_cycle_ms;
         if (getchar() == 'q')
             return;
         sleep(2000);

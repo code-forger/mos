@@ -12,14 +12,20 @@ void main(void)
 
     int stream_size = fd.index;
 
-    char* name = malloc(stream_size);
+    char* name = malloc(stream_size+1);
 
     fseek(&fd, 0);
 
     int cin;
     for (int i = 0 ; i < stream_size && (cin = fgetc(&fd)) != -1; i++)
     {
-        name[i] = cin;
+        if(cin == '\n')
+        {
+            name[i] = '\0';
+            break;
+        }
+        else
+            name[i] = cin;
     }
 
     name[fd.index] = '\0';
@@ -27,5 +33,5 @@ void main(void)
     int width = strlen(name);
     setio(80-width, 0, width, 0);
     printf(name);
-    for (;;) sleep(100000000);;
+    pause();
 }

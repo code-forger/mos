@@ -5,7 +5,7 @@
 
 char *file_read_data(FILE fd)
 {
-    char* file = malloc(fd.size);
+    char* file = malloc(fd.size+1);
     fseek(&fd, 0);
 
     int cin;
@@ -17,7 +17,7 @@ char *file_read_data(FILE fd)
 
 char *file_read_name(FILE fd)
 {
-    char* file = malloc(fd.namesize);
+    char* file = malloc(fd.namesize+1);
     fseekname(&fd, 0);
 
     int cin;
@@ -27,16 +27,28 @@ char *file_read_name(FILE fd)
     return file;
 }
 
+void write_processes_metric(int line, char*number, int pos, int padding)
+{
+    int len = strlen(number);
+    putcharat(' ', pos, line);
+    for(int i = 0; i < padding-len; i++)
+        putcharat(' ', i + 1 + pos, line);
+    for(int i = 0; i < len; i++)
+        putcharat(number[i], i + 1 + (padding-len) + pos, line);
+    putcharat(' ', pos+padding+1, line);
+    putcharat('|', pos+padding+2, line);
+}
+
 void main(void)
 {
-    setio(0, 1, 79, 25-3);
+    setio(0, 1, 79, 22);
     stdin_init();
-    sleep(1);
+    printf("********Processes********\n\n");
+    write_processes_metric(1, "pid", 0, 5);
+    write_processes_metric(1, "command", 8, 20);
+    write_processes_metric(1, "cpu time", 31, 8);
     while(1)
     {
-        int lines = 23 - 4;
-        printf("********Processes********\n\n");
-        lines--;
 
         FILE dd;
         fopendir("/proc/", &dd);
@@ -44,7 +56,7 @@ void main(void)
         FILE process_dir;
 
         fseek(&dd, 0);
-        fgetfile(&dd, &process_dir);
+        int line = 2;
         for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
         {
             char *processnum = file_read_name(process_dir);
@@ -64,16 +76,17 @@ void main(void)
             free(processcputimefile);
             char* processcputimestring = file_read_data(processcputime);
 
-            lines--;
-            printf("%s = %s  |  %sms \n", processnum, processnamestring, processcputimestring);
+            write_processes_metric(line, processnum, 0, 5);
+            write_processes_metric(line, processnamestring, 8, 20);
+            write_processes_metric(line, processcputimestring, 31, 8);
             free(processnum);
             free(processnamestring);
 
             free(processcputimestring);
 
+            line++;
+
         }
-        for(;lines >=0; lines--)
-            printf("\n");
         if (getchar() == 'q')
             return;
         sleep(2000);

@@ -112,7 +112,7 @@ void  c_int_page_fault(void)
     uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
     printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
-    dump_memory(0x80000004);
+    //dump_memory(0x80000004);
     asm("cli");
     asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);

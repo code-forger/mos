@@ -75,14 +75,14 @@ void show(uint32_t pid)
     asm("sti");
 }
 
-int get_env(char* key, FILE valuefile)
+int get_env(char* key, FILE *valuefile)
 {
-    char* env_target = malloc(15+strlen(key));
+    char* env_target = malloc(20+strlen(key));
     sprintf(env_target, "/proc/%d/env/%s", get_pid(), key);
 
-    fopen(env_target, &valuefile, 0);
+    fopen(env_target, valuefile, 0);
 
-    if (valuefile.type == 2)
+    if (valuefile->type == 2)
         return -1;
     else
         return 0;

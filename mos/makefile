@@ -16,9 +16,10 @@
 	./mrfs-write disk.img /bin/ time file programs/time/time
 	./mrfs-write disk.img /bin/ launcher file programs/launcher/launcher
 	./mrfs-write disk.img /bin/ processes file programs/processes/processes
+	./mrfs-write disk.img /bin/ less file programs/less/less
+	./mrfs-write disk.img /bin/ ls file programs/ls/ls
 	./mrfs-write disk.img /bin/ estimate_uptime file programs/estimate_uptime/estimate_uptime
 	./mrfs-write disk.img / user raw "Michael Rochester"
-	#./mrfs-write disk.img / notes file notes-test-file
 
 Tools:
 	$(MAKE) -C tools

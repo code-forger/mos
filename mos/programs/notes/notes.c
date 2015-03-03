@@ -138,17 +138,15 @@ void insert_line(int pos)
     line_lens = new_line_lens;
 }
 
-void read_file(char* path)
+int read_file(char* path)
 {
     FILE fd;
-    fopen(path, &fd, 0);
+    fopen(path, &fd, 1);
     fseek(&fd, 0);
 
-    if(fd.type == 2)
+    if(fd.type != 0)
     {
-        printf("FAIED TO OPEN FILE!\n");
-        sleep(1);
-        return;
+        return -1;
     }
 
 
@@ -173,6 +171,7 @@ void read_file(char* path)
         else
             insert_char(next_line-1, next_char++, c);
     }
+    return 0;
 }
 
 void save_file(char* path)
@@ -319,17 +318,13 @@ void move_caret(char c)
     }
 }
 
-
-void main(void)
+void do_main(char* filename)
 {
     setio(0, 1, 79, 22);
     stdin_init();
 
-    sprintf(header, "/*** %s ***\\", "/notes");
+    sprintf(header, "/*** notes | %s ***\\", filename);
 
-    char* filename = "/notes";
-
-    read_file(filename);
     print_all();
 
     char caret = '%';
@@ -403,5 +398,16 @@ void main(void)
             }
         }
     }
-    for(;;);
+}
+
+
+void main(int argc, char** argv)
+{
+    if (argc ==1)
+    {
+        if(read_file(argv[0]) == 0)
+        {
+            do_main(argv[0]);
+        }
+    }
 }

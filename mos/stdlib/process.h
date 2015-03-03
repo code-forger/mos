@@ -13,4 +13,4 @@ void pause();
 void hide(uint32_t pid);
 void show(uint32_t pid);
 
-int get_env(char* key, FILE valuefile);
+int get_env(char* key, FILE *valuefile);

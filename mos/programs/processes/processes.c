@@ -27,6 +27,14 @@ char *file_read_name(FILE fd)
     return file;
 }
 
+void write_blank(int line)
+{
+    for(int i = 0; i < 77; i++)
+    {
+        putcharat(' ', i, line);
+    }
+}
+
 void write_processes_metric(int line, char*number, int pos, int padding)
 {
     int len = strlen(number);
@@ -114,6 +122,7 @@ void main(void)
         write_processes_metric(line, "--------------------", 8, 20);
         write_processes_metric(line, "--------", 31, 8);
         write_processes_metric(line, "------", 42, 6);
+        write_blank(++line);
         if (last_cycle_ms != 0)
             free(last_cycle_ms);
         last_cycle_ms = this_cycle_ms;

@@ -2,7 +2,7 @@
 	cp kernel/mos.bin isodir/boot/
 	cp loader/loader.bin isodir/boot/
 	grub-mkrescue -o mos.iso isodir
-	#cp bdisk.img disk.img
+	cp bdisk.img disk.img
 	./mrfs-write disk.img / bin dir unused
 	./mrfs-write disk.img / init-files file init-files
 	./mrfs-write disk.img /bin/ init file programs/init/init
@@ -17,6 +17,7 @@
 	./mrfs-write disk.img /bin/ ls file programs/ls/ls
 	./mrfs-write disk.img /bin/ estimate_uptime file programs/estimate_uptime/estimate_uptime
 	./mrfs-write disk.img / user raw "Michael Rochester"
+	./mrfs-write disk.img / todo file todo
 
 Tools:
 	$(MAKE) -C tools

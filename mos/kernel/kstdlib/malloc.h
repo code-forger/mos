@@ -8,4 +8,6 @@ void init_mem();
 void free(void *address);
 void dump_memory(uint32_t memory);
 
-void malloc_selftest(void);
+uint32_t malloc_behaviour_test(void);
+uint32_t malloc_limits_test(void);
+uint32_t malloc_stress_test(void);

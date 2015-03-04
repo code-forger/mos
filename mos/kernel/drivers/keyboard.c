@@ -49,7 +49,7 @@ void keryboard_init()
 
 void keyboard_interupt(void)
 {
-    uint8_t code = get_byte_from(0x60);
+    uint8_t   code = get_byte_from(0x60);
     if (command)
     {
         command = false;

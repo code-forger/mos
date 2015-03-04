@@ -1,6 +1,10 @@
 #include "malloc.h"
 #include "../paging/paging.h"
 #include "../io/terminal.h"
+#include "../kerneltest.h"
+
+#undef NULL
+#define NULL ((void*)0xDEADBEEF)
 
 typedef struct header_t {
     uint8_t pad1;
@@ -49,8 +53,12 @@ static void clean_memory()
     } while (current->free != 3);
 }
 
-static void get_more_memory()
+static int get_more_memory()
 {
+    if (next_heap == (int32_t)0xC0400000)
+    {
+        return 1;
+    }
     paging_map_new_to_virtual(next_heap);
 
     header* current = (header*)(next_heap - HEAD_SIZE);
@@ -65,6 +73,7 @@ static void get_more_memory()
     next_heap = next_heap + 0x1000;
 
     clean_memory();
+    return 0;
 }
 
 void *malloc(uint32_t size) {
@@ -92,8 +101,10 @@ void *malloc(uint32_t size) {
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 
-    get_more_memory();
-    return malloc(size);
+    if (get_more_memory() == 0)
+        return malloc(size);
+    else
+        return NULL;
 }
 
 void dump_memory(uint32_t memory)
@@ -115,23 +126,6 @@ void dump_memory(uint32_t memory)
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
         //for(int i = 0;i < 1000000;i++);
     } while (current->free != 3);
-}
-
-void malloc_selftest(void)
-{
-    printf("Running Malloc Test\n");
-    int* pointer[10];
-    for(int i = 0; i < 10; i++)
-    {
-        pointer[i] = malloc(20);
-    }
-    dump_memory(KERNEL_HEAP);
-    for(int i = 0; i < 10; i++)
-    {
-        free(pointer[i]);
-        pointer[i] = 0;
-    }
-    dump_memory(KERNEL_HEAP);
 }
 
 
@@ -215,4 +209,67 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
     asm("cli");
     asm("hlt");
     return 0;
+}
+
+uint32_t malloc_test_helper(uint32_t target_size)
+{
+    int failures = 0;
+    failures += ktest_assert("[malloc] : freeing all memory should leave empty memory [size of node]", (top->size == target_size), ASSERT_CONTINUE);
+    failures += ktest_assert("[malloc] : freeing all memory should leave empty memory [free]", (top->free), ASSERT_CONTINUE);
+    failures += ktest_assert("[malloc] : freeing all memory should leave empty memory [pad1]", (top->pad1 == 0xDE), ASSERT_CONTINUE);
+    failures += ktest_assert("[malloc] : freeing all memory should leave empty memory [pad2]", (top->pad2 == 0xDE), ASSERT_CONTINUE);
+    failures += ktest_assert("[malloc] : freeing all memory should leave empty memory [pad3]", (top->pad3 == 0xDE), ASSERT_CONTINUE);
+    return failures;
+}
+
+uint32_t malloc_behaviour_test(void)
+{
+    int failures = 0;
+    int* pointer[10];
+    for(int i = 0; i < 10; i++)
+    {
+        pointer[i] = malloc(20 * sizeof(int));
+        for (int j = 0; j < 20; j++)
+            pointer[i][j] = 'a' + j;
+    }
+    for(int i = 0; i < 10; i++)
+        free(pointer[i]);
+    failures += malloc_test_helper(0xff0);
+    return failures;
+}
+
+uint32_t malloc_limits_test(void)
+{
+    int failures = 0;
+    int* pointer;
+    pointer = malloc(10);
+    free(pointer);
+    failures += malloc_test_helper(0xff0);
+    return failures;
+}
+
+uint32_t malloc_stress_test(void)
+{
+    int failures = 0;
+    int *pointer = malloc(2000*sizeof(int));
+    int *prev = (int*)pointer;
+    for(int i = 0; i < 1000; i++)
+    {
+        prev[0] = (int)malloc(2000*sizeof(int));
+        if (prev[0] == (int)NULL)
+        {
+            failures += ktest_assert("[malloc] : should take 514 steps to fill mem", (i == 514), ASSERT_CONTINUE);
+            break;
+        }
+        prev = (int*)prev[0];
+    }
+    prev = pointer;
+    while (prev != NULL)
+    {
+        prev = (int*)*pointer;
+        free(pointer);
+        pointer = prev;
+    }
+    failures += malloc_test_helper(0x3efff0);
+    return failures;
 }

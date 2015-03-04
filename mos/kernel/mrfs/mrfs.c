@@ -846,7 +846,7 @@ int mrfsDefragFile(char* path, char* filename, int position)
     return position;
 }
 
-
+/*
 static char* testing_read_file(FILE fd)
 {
     char* buff = malloc (fd.size +1);
@@ -867,18 +867,19 @@ static char* testing_read_file_name(FILE fd)
         buff[i] = c;
     buff[fd.namesize] = '\0';
     return buff;
-}
+}*/
 
-int mrfs_selftest()
+#include "../kerneltest.h"
+
+uint32_t mrfs_behaviour_test()
 {
-    printf("Starting MRFS Tests.\n");
+    int failures = 0;
+
+    //printf("Starting MRFS Tests.\n");
 
     FILE fd;
 
-
     mrfsOpenFile("/test", true, &fd);
-
-    printf("got %d\n", fd.inode);
 
     fd.index = 0;
 
@@ -888,19 +889,28 @@ int mrfs_selftest()
     mrfsPutC(&fd, 'd');
     mrfsPutC(&fd, 'e');
 
-    printf("%d == %d\n", fd.index, fd.size);
+    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal", fd.index == fd.size, ASSERT_CONTINUE);
 
     fd.index = 0;
 
-    printf("test file constructed\n");
+    char buff[6];
+    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    buff[5] = '\0';
 
-    for (int i = 0; i < 10; i++)
-        printf("%c", mrfsGetC(&fd));
+    failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
+    return failures;
+}
 
-    printf("\n");
 
 
-    char name[7] = {'/','t','e','s','t','x','\0'};
+
+uint32_t mrfs_limits_test()
+{
+    int failures = 0;
+
+    failures = failures;
+
+    /*char name[7] = {'/','t','e','s','t','x','\0'};
 
     for (int i = 0; i < 6; i++)
     {
@@ -980,8 +990,6 @@ int mrfs_selftest()
             free(filecontenc);
         }
         mrfsGetFile(&fd, &child);
-    }
-
-
-    return 0;
+    }*/
+    return failures;
 }

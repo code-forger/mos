@@ -52,9 +52,10 @@ void init_kernel()
     mrfsNewFolder("/", "proc");
 
     kernel_set_pit();
-    //for(int i = 0 ; i < 10000000; i++);
+    for(int i = 0 ; i < 3000000; i++);
 
-    //kernel_test_mode();
+    if(keyboard_get_a_byte() == 't')
+        kernel_test_mode(TEST_STRESS, TEST_VERBOSE);
 
     uint32_t esp, ebp;
 

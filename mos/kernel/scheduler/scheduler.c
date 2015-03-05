@@ -276,7 +276,6 @@ void scheduler_time_interupt()
 
     if (process_table[current_pid].io.outpipe != 0 && !(process_table[current_pid].flags & F_DEAD))
         terminal_string_for_process(&process_table[current_pid].io);
-    hdd_write_cache();
 
     events();
 

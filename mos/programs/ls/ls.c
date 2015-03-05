@@ -55,18 +55,29 @@ void main(int argc, char** argv)
     }
     else
     {
+        setio(0, 1, 79, 22);
+        stdin_init();
+        printf("HERE\n");
+        sleep(1);
         FILE cwd;
+        printf("HERE\n");
+        sleep(1);
         get_env("cwd", &cwd);
+        printf("HERE\n");
+        sleep(1);
         if (cwd.type == 0)
         {
-            setio(0, 1, 79, 22);
-            stdin_init();
             char* cwd_str = file_read_data(cwd);
+            printf("HERE\n");
+            sleep(1);
             FILE dd;
+            printf("HERE\n");
+            sleep(1);
             fopendir(cwd_str, &dd);
             if(dd.type == 1)
             {
                 printf("******** ls | %s********\n", cwd_str);
+                sleep(1);
                 free(cwd_str);
                 FILE fd;
 
@@ -78,6 +89,7 @@ void main(int argc, char** argv)
                         printf("%s\n", file_name);
                     else
                         printf("%s/\n", file_name);
+                    sleep(1);
                     free(file_name);
 
                 }

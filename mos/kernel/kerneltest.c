@@ -36,12 +36,12 @@ void kernel_test_mode(uint32_t test_level, uint32_t verbin)
     if (test_level >= TEST_LIMITS)
     {
         failures += malloc_limits_test();
-        failures += mrfs_limits_test();
     }
 
     if (test_level >= TEST_STRESS)
     {
         failures += malloc_stress_test();
+        failures += mrfs_stress_test();
     }
 
     printf("Tests complete with %d failures. Halting.\n", failures);

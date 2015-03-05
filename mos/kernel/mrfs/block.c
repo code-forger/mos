@@ -119,6 +119,7 @@ int blockGetNextFree()
 
 void blockFree(int block)
 {
+
     union Bitfield bf;
     int freelistbyte = block/8;
     int freelistbit = block%8;

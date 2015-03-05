@@ -195,22 +195,18 @@ static block_table_type* block_table;
 
 void hdd_init()
 {
-    /*printf("ATTEMPTING TO MAP TABLE\n");
     paging_map_new_page_table(302);
-    printf("MAPPED TABLE\n");*/
     for(uint32_t i = 0; i < 4; i++)
     {
-        //printf("ATTEMPTING TO MAP PAGE %h\n", 0xC0800000 + 0x1000*i);
-        paging_map_new_to_virtual(0xC00C0000 + 0x1000*i);
-        //printf("MAPPED PAGE\n");
+        paging_map_new_to_virtual(0xC0009000 + 0x1000*i);
     }
 
-    block_table = (block_table_type*)0xC00C0000;
+    block_table = (block_table_type*)0xC0009000;
 
     for(uint32_t i = 0; i < 31; i++)
     {
-        block_table->blocks[i].cache = 256;
-        block_table->blocks[i].dirty = 256;
+        block_table->blocks[i].cache = 0xDEADBEEF;
+        block_table->blocks[i].dirty = 0xDEADBEEF;
     }
 
     int count = 0;
@@ -335,14 +331,13 @@ void purge_cache()
 {
     for(uint32_t i = 0; i < 31; i++)
     {
-        block_table->blocks[i].cache = 256;
-        block_table->blocks[i].dirty = 256;
+        block_table->blocks[i].cache = 0xDEADBEEF;
+        block_table->blocks[i].dirty = 0xDEADBEEF;
     }
 }
 
 void hdd_write_cache()
 {
-    //printf("[HDD] - Writing Cache\n");
     for(uint32_t i = 0; i < 31; i++)
     {
         if (block_table->blocks[i].dirty == 1)
@@ -357,11 +352,10 @@ static uint8_t* find_free_block(uint32_t dirty)
 {
     for (uint32_t i = 0; i < 31; i++)
     {
-        if (256 == block_table->blocks[i].cache)
+        if (0xDEADBEEF == block_table->blocks[i].cache)
         {
             block_table->blocks[i].cache = (hdd_index >> 9);
             block_table->blocks[i].dirty = dirty;
-
             return block_table->block[i].data;
         }
     }

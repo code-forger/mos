@@ -175,11 +175,9 @@ static char* splitForLookup(char* name)
 
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
-    printf("");
     char* namecpy = malloc(strlen(name)+1);
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
-    printf("");
     char* fname;
     union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
@@ -222,14 +220,12 @@ void mrfsOpenDir(char* name, FILE* dout)
     char* namecpy = malloc(strlen(name)+1);
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
-    printf("");
 
     if (isDirPath(namecpy) && isDir(namecpy))
     {
         union Inode dir = getDirInodeByPath(namecpy);
         dout->inode = dir.node.nodenumber;
         dout->index = dout->size = dir.node.size;
-        printf("");
         namecpy[strlen(name)-1] = '\0';
         char *fname = splitForLookup(namecpy);
         dout->nameindex = dout->namesize = strlen(fname);
@@ -459,11 +455,9 @@ void mrfsWriteFile(char* path, char* filename, char* contents,int length)
 
 uint32_t mrfsFileExists(char* name)
 {
-    printf("");
     char* namecpy = malloc(strlen(name)+1);
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
-    printf("");
     char* fname;
     union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
@@ -620,11 +614,17 @@ int mrfsDeleteFileWithDescriptor(FILE* fd)
         return NOSUCHFILEORDIRECTORY;
     int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
 
+    if (inode.node.size == 0)
+    {
+        numblocks = 0;
+    }
+
     int* pointers = inodeGetPointers(inode);
 
     for(int i = 0; i < numblocks; i++)
         blockFree(pointers[i]);
     blockFree(inode.node.nameblock);
+    printf("deleting %d in %d\n", fd->inode, fd->parent);
 
     union Inode dirinode = inodeRead(fd->parent);
     inodeRemoveEntry(&dirinode, inode.node.nodenumber);
@@ -846,7 +846,7 @@ int mrfsDefragFile(char* path, char* filename, int position)
     return position;
 }
 
-/*
+
 static char* testing_read_file(FILE fd)
 {
     char* buff = malloc (fd.size +1);
@@ -857,7 +857,7 @@ static char* testing_read_file(FILE fd)
     buff[fd.size] = '\0';
     return buff;
 }
-
+/*
 static char* testing_read_file_name(FILE fd)
 {
     char* buff = malloc (fd.namesize +1);
@@ -898,98 +898,97 @@ uint32_t mrfs_behaviour_test()
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
+
+
+    mrfsOpenFile("/test", true, &fd);
+
+    fd.index = 0;
+
+    mrfsPutC(&fd, 'a');
+    mrfsPutC(&fd, 'b');
+    mrfsPutC(&fd, 'c');
+    mrfsPutC(&fd, 'd');
+    mrfsPutC(&fd, 'e');
+
+    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal", fd.index == fd.size, ASSERT_CONTINUE);
+
+    fd.index = 0;
+
+    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    buff[5] = '\0';
+
+    failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
+
+    mrfsDeleteFileWithDescriptor(&fd);
+
+    mrfsOpenFile("/test", false, &fd);
+
+    failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
+
+
+    mrfsOpenFile("/test", false, &fd);
+    mrfsDeleteFileWithDescriptor(&fd);
+
+    mrfsOpenFile("/test", false, &fd);
+
+    failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
+
+
     return failures;
 }
 
 
 
 
-uint32_t mrfs_limits_test()
+uint32_t mrfs_stress_test()
 {
     int failures = 0;
 
     failures = failures;
 
-    /*char name[7] = {'/','t','e','s','t','x','\0'};
+    char name[50];
+    FILE fd;
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 2; i++)
     {
-        name[5] = '0' + i;
-        printf("opening file %s\n",name );
+        sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
+        for(int j = 0; j < strlen(name); j++)
+            mrfsPutC(&fd, name[j]);
+        failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
-    hdd_write_cache();
+    mrfsNewFolder("/", "td");
 
-    mrfsOpenFile("/test", true, &fd);
-    fd.index = 0;
-
-    printf("test file re openend\n");
-
-    for (int i = 0; i < 10; i++)
-        printf("%c", mrfsGetC(&fd));
-
-    char* filecontenc = testing_read_file(fd);
-    printf("GOT %s for %s!\n", filecontenc, "/test");
-    free(filecontenc);
-    hdd_write_cache();
-
-
-    mrfsOpenDir("/", &fd);
-    fd.index = 0;
-
-    FILE child;
-
-    mrfsGetFile(&fd, &child);
-    while (child.type != 2)
+    for (int i = 0; i < 2; i++)
     {
-
-        char*filename;
-        if(child.type == 1)
-        {
-            filename = testing_read_file_name(child);
-            printf("got directory %s\n", filename);
-            free(filecontenc);
-        }
-        else
-        {
-            filecontenc = testing_read_file(child);
-            filename = testing_read_file_name(child);
-            printf("GOT %s for %s!\n", filecontenc, filename);
-            free(filename);
-            free(filecontenc);
-        }
-        mrfsGetFile(&fd, &child);
+        sprintf(name,"/td/test%d", i);
+        mrfsOpenFile(name, true, &fd);
+        for(int j = 0; j < strlen(name); j++)
+            mrfsPutC(&fd, name[j]);
+        failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
-    mrfsOpenFile("/proc/testproc", true, &fd);
-    hdd_write_cache();
 
-
-    mrfsOpenDir("/proc/", &fd);
-    fd.index = 0;
-
-
-    mrfsGetFile(&fd, &child);
-    while (child.type != 2)
+    for (int i = 0; i < 2; i++)
     {
+        sprintf(name,"/test%d", i);
+        mrfsOpenFile(name, true, &fd);
+        char* data = testing_read_file(fd);
+        char str[200];
+        sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
+        failures += ktest_assert(str, !strcmp(name, data), ASSERT_HALT);
+    }
+    for (int i = 0; i < 2; i++)
+    {
+        sprintf(name,"/td/test%d", i);
+        mrfsOpenFile(name, true, &fd);
+        char* data = testing_read_file(fd);
+        char str[200];
+        sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
+        failures += ktest_assert(str, !strcmp(name, data), ASSERT_HALT);
+    }
 
-        char*filename;
-        if(child.type == 1)
-        {
-            filename = testing_read_file_name(child);
-            printf("got directory %s\n", filename);
-            free(filecontenc);
-        }
-        else
-        {
-            filecontenc = testing_read_file(child);
-            filename = testing_read_file_name(child);
-            printf("GOT %s for %s!\n", filecontenc, filename);
-            free(filename);
-            free(filecontenc);
-        }
-        mrfsGetFile(&fd, &child);
-    }*/
+
     return failures;
 }

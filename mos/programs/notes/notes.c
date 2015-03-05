@@ -141,14 +141,7 @@ void insert_line(int pos)
 int read_file(char* path)
 {
     FILE fd;
-    fopen(path, &fd, 1);
-    fseek(&fd, 0);
-
-    if(fd.type != 0)
-    {
-        return -1;
-    }
-
+    fopen(path, &fd, 0);
 
     lines = malloc(0 * sizeof(char*));
     max_line_lens = malloc(0 * sizeof(int));
@@ -160,17 +153,23 @@ int read_file(char* path)
 
     insert_line(next_line++);
 
-    char c;
-    while ((c = fgetc(&fd)) != -1)
+
+    if(fd.type == 0)
     {
-        if (c == '\n')
+        fseek(&fd, 0);
+        char c;
+        while ((c = fgetc(&fd)) != -1)
         {
-            insert_line(next_line++);
-            next_char = 0;
+            if (c == '\n')
+            {
+                insert_line(next_line++);
+                next_char = 0;
+            }
+            else
+                insert_char(next_line-1, next_char++, c);
         }
-        else
-            insert_char(next_line-1, next_char++, c);
     }
+
     return 0;
 }
 
@@ -178,17 +177,16 @@ void save_file(char* path)
 {
     FILE fd;
     fopen(path, &fd, 0);
+    printf("%s\n", path);
 
     if(fd.type == 0)
     {
         fdelete(&fd);
     }
 
-    FILE fd2;
+    fopen(path, &fd, 1);
 
-    fopen(path, &fd2, 1);
-
-    if(fd2.type == 2)
+    if(fd.type == 2)
     {
         printf("FAILED TO OPEN FILE!\n");
         sleep(0);
@@ -199,9 +197,9 @@ void save_file(char* path)
     {
         for(int j = 0; j < line_lens[i]; j++)
         {
-            fputc(lines[i][j], &fd2);
+            fputc(lines[i][j], &fd);
         }
-        fputc('\n', &fd2);
+        fputc('\n', &fd);
     }
     sleep(0);
 }

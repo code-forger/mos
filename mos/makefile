@@ -18,6 +18,9 @@
 	./mrfs-write disk.img /bin/ estimate_uptime file programs/estimate_uptime/estimate_uptime
 	./mrfs-write disk.img /bin/ pong file programs/pong/pong
 	./mrfs-write disk.img /bin/ mv file programs/mv/mv
+	./mrfs-write disk.img /bin/ mkdir file programs/mkdir/mkdir
+	./mrfs-write disk.img /bin/ rm file programs/rm/rm
+	./mrfs-write disk.img /bin/ touch file programs/touch/touch
 	./mrfs-write disk.img / user raw "Michael Rochester"
 	./mrfs-write disk.img / todo file todo
 

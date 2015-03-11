@@ -311,6 +311,9 @@ void mrfsOpenDir(char* name, int create, FILE* dout)
         namecpy[strlen(name)-1] = '\0';
         char *fname = splitForLookup(namecpy);
         dout->nameindex = dout->namesize = strlen(fname);
+        union Inode parent = getDirInodeByPath(namecpy);
+        //printf("parent of %s is %s at %h?\n", name, namecpy, parent);
+        dout->parent = parent.node.nodenumber;
         dout->type = 1;
         free(fname);
         free(namecpy);
@@ -526,6 +529,7 @@ int mrfsDeleteDirWithDescriptor(FILE* dd)
         if (childnode.node.info.directory)
         {
             FILE ndd;
+            ndd.parent = dd->inode;
             ndd.inode = childnode.node.nodenumber;
             mrfsDeleteDirWithDescriptor(&ndd);
         }

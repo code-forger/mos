@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code estimate_uptime-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code
+all: init-code name-code banner_left-code time-code estimate_uptime-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -47,3 +47,12 @@ all: init-code name-code banner_left-code time-code estimate_uptime-code joeprog
 
 .PHONY mv-code:
 	$(MAKE) -C mv
+
+.PHONY mkdir-code:
+	$(MAKE) -C mkdir
+
+.PHONY touch-code:
+	$(MAKE) -C touch
+
+.PHONY rm-code:
+	$(MAKE) -C rm

@@ -7,3 +7,5 @@ ata1-master: type=disk, path="/home/m/Documents/OSProject/mos/disk.img", mode=fl
 boot: cdrom
 memory: guest=1024, host=1024
 clock: sync=realtime, rtc_sync=1, time0=local
+
+vga: update_freq=25

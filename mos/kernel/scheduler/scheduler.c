@@ -20,7 +20,6 @@ static uint64_t global_ms;
 
 int32_t fork()
 {
-    //printf("[scheduler.c] CALL : fork() : %d into %d \n", current_pid, next_pid);
     int fork_pid = -1;
     if (next_pid == max_pid)
         fork_pid = scheduler_get_next_process(0, F_DEAD, FS_NONE);
@@ -204,7 +203,6 @@ void scheduler_kill(uint32_t pid)
 
         mrfsDeleteFolderRecursive(procdir);
     }
-
 }
 
 static void write_processes_metric(uint32_t process)

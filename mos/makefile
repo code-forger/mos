@@ -16,6 +16,7 @@
 	./mrfs-write disk.img /bin/ less file programs/less/less
 	./mrfs-write disk.img /bin/ ls file programs/ls/ls
 	./mrfs-write disk.img /bin/ estimate_uptime file programs/estimate_uptime/estimate_uptime
+	./mrfs-write disk.img /bin/ hlt file programs/hlt/hlt
 	./mrfs-write disk.img / user raw "Michael Rochester"
 	./mrfs-write disk.img / todo file todo
 

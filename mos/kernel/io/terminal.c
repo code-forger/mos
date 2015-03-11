@@ -159,7 +159,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
     {
         c = (char)uc;
 
-        if (c == 0x1A)
+        /*if (c == 0x1A)
         {
             pipe_read(io->outpipe, &uc);
             c = (char)uc;
@@ -168,7 +168,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
             c = (char)uc;
             pipe_read(io->outpipe, &y);
             terminal_putchar_at_for_process(c, x, y);
-        }
+        }*/
 
         if (c == '\n')
         {

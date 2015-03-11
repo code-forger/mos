@@ -242,7 +242,7 @@ uint32_t malloc_limits_test(void)
 {
     int failures = 0;
     int* pointer;
-    pointer = malloc(10);
+    pointer = malloc(0);
     free(pointer);
     failures += malloc_test_helper(0xff0);
     return failures;

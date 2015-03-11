@@ -624,7 +624,6 @@ int mrfsDeleteFileWithDescriptor(FILE* fd)
     for(int i = 0; i < numblocks; i++)
         blockFree(pointers[i]);
     blockFree(inode.node.nameblock);
-    printf("deleting %d in %d\n", fd->inode, fd->parent);
 
     union Inode dirinode = inodeRead(fd->parent);
     inodeRemoveEntry(&dirinode, inode.node.nodenumber);
@@ -938,6 +937,24 @@ uint32_t mrfs_behaviour_test()
 }
 
 
+uint32_t mrfs_limits_test()
+{
+    int failures = 0;
+
+    FILE fd;
+
+    mrfsOpenFile("/empty_delete", true, &fd);
+
+    mrfsDeleteFileWithDescriptor(&fd);
+
+    mrfsOpenFile("/empty_delete", false, &fd);
+
+    failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
+
+
+
+    return failures;
+}
 
 
 uint32_t mrfs_stress_test()
@@ -949,7 +966,7 @@ uint32_t mrfs_stress_test()
     char name[50];
     FILE fd;
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
@@ -960,7 +977,7 @@ uint32_t mrfs_stress_test()
 
     mrfsNewFolder("/", "td");
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);
@@ -970,7 +987,7 @@ uint32_t mrfs_stress_test()
     }
 
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
@@ -979,7 +996,7 @@ uint32_t mrfs_stress_test()
         sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
         failures += ktest_assert(str, !strcmp(name, data), ASSERT_HALT);
     }
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);

@@ -35,4 +35,5 @@ int mrfsDefragFolder(char* path, int position);
 int mrfsDefragFile(char* path, char* filename, int position);
 
 uint32_t mrfs_behaviour_test();
+uint32_t mrfs_limits_test();
 uint32_t mrfs_stress_test();

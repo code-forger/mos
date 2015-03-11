@@ -21,10 +21,10 @@ int32_t fgetc(FILE* fd)
     return ret;
 }
 
-int32_t fopendir(char* name, FILE* fd)
+int32_t fopendir(char* name, uint32_t create, FILE* fd)
 {
     uint32_t ret;
-    asm("int $116"::"S"(name), "D"(fd), "a"(&ret):);
+    asm("int $116"::"S"(name), "D"(fd), "a"(&ret), "d"(create):);
     return ret;
 }
 
@@ -46,6 +46,13 @@ int32_t fdelete(FILE* fd)
 {
     int32_t ret;
     asm("int $119":: "a"(&ret), "D"(fd):);
+    return ret;
+}
+
+int32_t fdeletedir(FILE* dd)
+{
+    int32_t ret;
+    asm("int $131":: "a"(&ret), "D"(dd):);
     return ret;
 }
 

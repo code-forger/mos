@@ -150,15 +150,28 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
         return;
     }
 
-    char procdir[7+7];
+    char cpudir[7+7 + 8];
+    char namedir[7+7 + 8];
 
-    sprintf(procdir, "/proc/%d/",current_pid);
+    sprintf(cpudir, "/proc/%d/cputime",current_pid);
+    sprintf(namedir, "/proc/%d/name",current_pid);
 
     //printf("[scheduler.c] INFO : Got names:\n");
     //printf("                   : %s:\n", procdir);
 
-    mrfsWriteFile(procdir, "name", program_name, strlen(program_name));
-    mrfsWriteFile(procdir, "cputime", "0", 1);
+    FILE fd;
+
+    mrfsOpenFile(namedir, true, &fd);
+    mrfsDeleteFileWithDescriptor(&fd);
+    mrfsOpenFile(namedir, true, &fd);
+
+    int len = strlen(program_name);
+    for(int i = 0; i < len;i++)
+        mrfsPutC(&fd, program_name[i]);
+
+    mrfsOpenFile(cpudir, true, &fd);
+
+    mrfsPutC(&fd, '0');
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
@@ -207,17 +220,27 @@ void scheduler_kill(uint32_t pid)
 
         sprintf(procdir, "/proc/%d/", pid);
 
-        mrfsDeleteFolderRecursive(procdir);
+        FILE dd;
+
+        mrfsOpenDir(procdir, false, &dd);
+
+        mrfsDeleteDirWithDescriptor(&dd);
     }
 }
 
 static void write_processes_metric(uint32_t process)
 {
-    char procpath[7 + 7];
+    char procpath[7 + 7 + 9];
     char cputime[11];
-    sprintf(procpath, "/proc/%d/", process);
+    sprintf(procpath, "/proc/%d/%s", process, "cputime");
     sprintf(cputime, "%d", process_table[process].cpu_time);
-    mrfsWriteFile(procpath, "cputime", cputime, strlen(cputime));
+
+    FILE fd;
+    mrfsOpenFile(procpath, false, &fd);
+    fd.index = 0;
+    int len = strlen(cputime);
+    for(int i = 0; i < len;i++)
+        mrfsPutC(&fd, cputime[i]);
 }
 
 static void scheduler_write_metrics(void)
@@ -377,6 +400,7 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
 
     mrfsNewFolder("/proc/", "0");
     mrfsNewFile("/proc/0/", "name", "/init", 5);
+    mrfsNewFile("/proc/0/", "cputime", "0", 1);
 
     mrfsNewFolder("/proc/0/", "env");
     mrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));

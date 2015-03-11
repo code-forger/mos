@@ -106,7 +106,7 @@ void main(void)
         line = 5;
 
         FILE dd;
-        fopendir("/proc/", &dd);
+        fopendir("/proc/", false, &dd);
 
         FILE process_dir;
 

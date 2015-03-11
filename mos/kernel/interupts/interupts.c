@@ -355,10 +355,12 @@ void  c_file_opendir_syscall(void)
 {
     char *dname;
     FILE *dd;
+    int create;
     asm("mov %%esi, %0":"=r"(dname):);
     asm("mov %%edi, %0":"=r"(dd):);
+    asm("mov %%edx, %0":"=r"(create):);
 
-    mrfsOpenDir(dname, dd);
+    mrfsOpenDir(dname, create, dd);
 
     send_byte_to(MASTER_PIC, 0x20);
 }
@@ -393,6 +395,18 @@ void  c_file_delete_syscall(void)
     asm("mov %%edi, %0":"=r"(fd):);
     asm("mov %%eax, %0":"=r"(ret):);
     *ret = mrfsDeleteFileWithDescriptor(fd);
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
+void  c_file_delete_dir_syscall(void)
+{
+    uint32_t *ret;
+    FILE *dd;
+    asm("mov %%edi, %0":"=r"(dd):);
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = mrfsDeleteDirWithDescriptor(dd);
 
     send_byte_to(MASTER_PIC, 0x20);
 }

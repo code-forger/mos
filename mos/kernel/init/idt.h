@@ -78,6 +78,7 @@ void file_opendir_syscall(void);
 void file_getfile_syscall(void);
 void file_getnamec_syscall(void);
 void file_delete_syscall(void);
+void file_delete_dir_syscall(void);
 void file_mv_syscall(void);
 void ticks_ms_syscall(void);
 void seconds_syscall(void);

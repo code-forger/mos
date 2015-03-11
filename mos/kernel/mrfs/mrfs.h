@@ -13,7 +13,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout);
 void mrfsPutC(FILE* fd, char c);
 int mrfsGetC(FILE* fd);
 
-void mrfsOpenDir(char* name, FILE* fout);
+void mrfsOpenDir(char* name, int create, FILE* fout);
 int mrfsGetNameC(FILE* fd);
 int mrfsGetFile(FILE* dd, FILE* fd);
 int mrfsRename(char* old,char* new);
@@ -26,6 +26,7 @@ char** mrfsGetFolderChildren(char* path);
 char* mrfsReadFile(char* path,char* filename);
 int mrfsDeleteFile(char*path,char* filename);
 int mrfsDeleteFileWithDescriptor(FILE* fd);
+int mrfsDeleteDirWithDescriptor(FILE* dd);
 int mrfsDeleteFolder(char* path);
 int mrfsDeleteFolderRecursive(char* path);
 

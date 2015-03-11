@@ -46,15 +46,19 @@ void init_kernel()
 
     mrfsFormatHdd(4*1024, 0);
 
-    mrfsDeleteFolderRecursive("/proc/");
+    FILE dd;
 
-    mrfsNewFolder("/", "proc");
+    mrfsOpenDir("/proc/", true, &dd);
+
+    mrfsDeleteDirWithDescriptor(&dd);
+
+    mrfsOpenDir("/proc/", true, &dd);
 
     kernel_set_pit();
     for(int i = 0 ; i < 3000000; i++);
 
     if(keyboard_get_a_byte() == 't')
-        kernel_test_mode(TEST_BEHAVIOUR, TEST_VERBOSE);
+        kernel_test_mode(TEST_STRESS, TEST_QUIET);
 
     uint32_t esp, ebp;
 

@@ -21,7 +21,7 @@ uint32_t fopen(char* name, FILE* fd, uint32_t create);
 void fputc(char c, FILE* fd);
 int32_t fgetc(FILE* fd);
 
-int32_t fopendir(char* name, FILE* fd);
+int32_t fopendir(char* name, uint32_t create, FILE* fd);
 int32_t fgetfile(FILE* dd, FILE* fd);
 int32_t fgetnamec(FILE* fd);
 int32_t fseek(FILE* fd, int index);

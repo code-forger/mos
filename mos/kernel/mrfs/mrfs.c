@@ -208,7 +208,6 @@ static char* splitForLookup(char* name)
 
 int mrfsRename(char* oldname, char* newname)
 {
-    printf("renaming %s -> %s\n", oldname, newname);
     char* olddir = malloc(strlen(oldname)+1);
     strcpy(olddir, oldname);
     olddir[strlen(oldname)] = '\0';
@@ -263,6 +262,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
+        //printf("EXISTS %s\n", name);
         union Inode parent = getDirInodeByPath(namecpy);
         free(fname);
         free(namecpy);
@@ -275,6 +275,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     }
     else if (create)
     {
+        //printf("CREATING\n");
         mrfsNewFile(namecpy, fname, "", 0);
         union Inode parent = getDirInodeByPath(namecpy);
         file = getInodeByName(namecpy, fname);
@@ -295,7 +296,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     return;
 }
 
-void mrfsOpenDir(char* name, FILE* dout)
+void mrfsOpenDir(char* name, int create, FILE* dout)
 {
 
     char* namecpy = malloc(strlen(name)+1);
@@ -315,10 +316,21 @@ void mrfsOpenDir(char* name, FILE* dout)
         free(namecpy);
         return;
     }
+    if (create)
+    {
+        namecpy[strlen(name)-1] = '\0';
+        char *fname = splitForLookup(namecpy);
+        mrfsNewFolder(namecpy, fname);
+        free(fname);
+        mrfsOpenDir(name, create, dout);
+    }
+    else
+    {
+        dout->inode = -1;
+        dout->index = dout->size = -1;
+        dout->type = 2;
+    }
     free(namecpy);
-    dout->inode = -1;
-    dout->index = dout->size = -1;
-    dout->type = 2;
     return;
 }
 
@@ -474,9 +486,11 @@ int mrfsGetFile(FILE* dd, FILE* fd)
 
 int mrfsDeleteFileWithDescriptor(FILE* fd)
 {
+    //printf("[CALL]\n");
     union Inode inode = inodeRead(fd->inode);
     if (inode.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
+    //printf("[HERE]\n");
     int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
 
     if (inode.node.size == 0)
@@ -496,6 +510,42 @@ int mrfsDeleteFileWithDescriptor(FILE* fd)
     inodeFree(inode.node.nodenumber);
     free(pointers);
     return 0;
+}
+
+int mrfsDeleteDirWithDescriptor(FILE* dd)
+{
+    //printf("DELETING %d\n", dd->inode);
+    union Inode inode = inodeRead(dd->inode);
+    if (inode.node.info.exists == 0)
+        return NOSUCHFILEORDIRECTORY;
+
+    int* pointers = inodeGetPointers(inode);
+    for (int i = 0; i < inode.node.size; i++)
+    {
+        union Inode childnode = inodeRead(pointers[i]);
+        if (childnode.node.info.directory)
+        {
+            FILE ndd;
+            ndd.inode = childnode.node.nodenumber;
+            mrfsDeleteDirWithDescriptor(&ndd);
+        }
+        else
+        {
+            FILE nfd;
+            nfd.inode = childnode.node.nodenumber;
+            nfd.parent = dd->inode;
+            mrfsDeleteFileWithDescriptor(&nfd);
+        }
+    }
+    free(pointers);
+
+    union Inode dirinode = inodeRead(dd->parent);
+    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
+
+    inodeFree(inode.node.nodenumber);
+    blockFree(inode.node.nameblock);
+    return 0;
+
 }
 
 //######## #### ##       ########    ##    ##    ###    ##     ## ########
@@ -568,13 +618,6 @@ int mrfsNewFile(char* path, char* filename, char* contents,int length)
     return 0;
 
 }
-
-void mrfsWriteFile(char* path, char* filename, char* contents,int length)
-{
-    mrfsDeleteFile(path, filename);
-    mrfsNewFile(path, filename, contents, length);
-}
-
 uint32_t mrfsFileExists(char* name)
 {
     char* namecpy = malloc(strlen(name)+1);
@@ -675,85 +718,6 @@ char* mrfsReadFile(char* path,char* filename)
 
 
 //these three functions delete files and folders
-int mrfsDeleteFile(char*path,char* filename)
-{
-    union Inode inode = getInodeByName(path, filename);
-    if (inode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-    int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
-
-    int* pointers = inodeGetPointers(inode);
-
-    for(int i = 0; i < numblocks; i++)
-        blockFree(pointers[i]);
-    blockFree(inode.node.nameblock);
-
-    union Inode dirinode = getDirInodeByPath(path);
-    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
-
-    inodeFree(inode.node.nodenumber);
-    free(pointers);
-    return 0;
-}
-
-int mrfsDeleteFolder(char* path)
-{
-    union Inode inode = getDirInodeByPath(path);
-    if (inode.node.size > 0)
-        return FOLDERNOTEMPTY;
-    else if (inode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-
-    int pathLength;
-    for (pathLength = 0; path[pathLength]; pathLength++);
-    char newPath[pathLength];
-    for (pathLength = 0; (newPath[pathLength] = path[pathLength]); pathLength++);
-    newPath[pathLength-1] = '\0';
-
-    union Inode dirinode = getDirInodeByPath(newPath);
-    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
-
-    inodeFree(inode.node.nodenumber);
-    blockFree(inode.node.nameblock);
-    return 0;
-}
-
-int mrfsDeleteFolderRecursive(char* path)
-{
-    union Inode inode = getDirInodeByPath(path);
-    if (inode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-
-    int* pointers = inodeGetPointers(inode);
-    for (int i = 0; i < inode.node.size; i++)
-    {
-        union Inode childnode = inodeRead(pointers[i]);
-        char* name = inodeGetName(childnode);
-        if (childnode.node.info.directory)
-        {
-            int pathLength = strlen(path);
-            int nameLength = strlen(name);
-            char newPath[pathLength+nameLength+2];
-            for (int i = 0; i < pathLength; i++)
-                newPath[i] = path[i];
-            for (int i = 0; i < nameLength; i++)
-                newPath[i+pathLength] = name[i];
-            newPath[pathLength+nameLength] = '/';
-            newPath[pathLength+nameLength+1] = '\0';
-
-            mrfsDeleteFolderRecursive(newPath);
-        }
-        else
-        {
-            mrfsDeleteFile(path, name);
-        }
-        free(name);
-    }
-    free(pointers);
-    mrfsDeleteFolder(path);
-    return 0;
-}
-
 //this function lists all the childern of a directory (like dir or ls)
 
 char** mrfsGetFolderChildren(char* path)
@@ -989,13 +953,15 @@ uint32_t mrfs_behaviour_test()
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
     mrfsDeleteFileWithDescriptor(&fd);
+    //mrfsDeleteFileWithDescriptor(&fd);
 
     mrfsOpenFile("/test", false, &fd);
 
-    failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening non existant file with no create should not create", (fd.type==2), ASSERT_CONTINUE);
 
 
     mrfsOpenFile("/test", true, &fd);
+
     mrfsDeleteFileWithDescriptor(&fd);
 
     mrfsOpenFile("/test", false, &fd);

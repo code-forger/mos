@@ -63,6 +63,7 @@ void idt_init()
     idt_encode_entry(117, (unsigned)&file_getfile_syscall, 0x08, 0x8E);
     idt_encode_entry(118, (unsigned)&file_getnamec_syscall, 0x08, 0x8E);
     idt_encode_entry(119, (unsigned)&file_delete_syscall, 0x08, 0x8E);
+    idt_encode_entry(130, (unsigned)&file_mv_syscall, 0x08, 0x8E);
 
     idt_encode_entry(120, (unsigned)&ticks_ms_syscall, 0x08, 0x8E);
     idt_encode_entry(121, (unsigned)&seconds_syscall, 0x08, 0x8E);

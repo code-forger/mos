@@ -1,6 +1,5 @@
     #include "process.h"
 #include "stdmem.h"
-#include "stdio.h"
 #include "string.h"
 #include <stdint.h>
 

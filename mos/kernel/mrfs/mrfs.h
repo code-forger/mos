@@ -16,6 +16,7 @@ int mrfsGetC(FILE* fd);
 void mrfsOpenDir(char* name, FILE* fout);
 int mrfsGetNameC(FILE* fd);
 int mrfsGetFile(FILE* dd, FILE* fd);
+int mrfsRename(char* old,char* new);
 
 int mrfsNewFile(char* path,char* filename, char* contents,int length);
 void mrfsWriteFile(char* path, char* filename, char* contents,int length);
@@ -23,8 +24,6 @@ uint32_t mrfsFileExists(char* name);
 int mrfsNewFolder(char* path,char* foldername);
 char** mrfsGetFolderChildren(char* path);
 char* mrfsReadFile(char* path,char* filename);
-int mrfsRename(char*path,char* filename,char* newfilename);
-int mrfsMove(char*filename, char* path,char* newpath);
 int mrfsDeleteFile(char*path,char* filename);
 int mrfsDeleteFileWithDescriptor(FILE* fd);
 int mrfsDeleteFolder(char* path);

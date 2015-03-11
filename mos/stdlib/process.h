@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include "stdio.h"
+#include "file.h"
 
 uint32_t get_pid();
 int32_t fork();

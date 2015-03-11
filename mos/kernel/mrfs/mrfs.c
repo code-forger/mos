@@ -4,6 +4,14 @@
 
 //These three functions  are  helper functions that allow the caller to get inodes off the by name and path, they are used to abstract the name → inode relationship
 
+//##     ## ######## ##       ########  ######## ########   ######
+//##     ## ##       ##       ##     ## ##       ##     ## ##    ##
+//##     ## ##       ##       ##     ## ##       ##     ## ##
+//######### ######   ##       ########  ######   ########   ######
+//##     ## ##       ##       ##        ##       ##   ##         ##
+//##     ## ##       ##       ##        ##       ##    ##  ##    ##
+//##     ## ######## ######## ##        ######## ##     ##  ######
+
 union Inode getDirChildrenByPath(union Inode inode, char* path)
 {
     int foldernamelen = 0;
@@ -91,6 +99,14 @@ union Inode getInodeByName(char* path, char * namein)
     return retnode;
 }
 
+//########  #######  ########  ##     ##    ###    ########
+//##       ##     ## ##     ## ###   ###   ## ##      ##
+//##       ##     ## ##     ## #### ####  ##   ##     ##
+//######   ##     ## ########  ## ### ## ##     ##    ##
+//##       ##     ## ##   ##   ##     ## #########    ##
+//##       ##     ## ##    ##  ##     ## ##     ##    ##
+//##        #######  ##     ## ##     ## ##     ##    ##
+
 //this function formats a hardrive, prepareing the superblock, the free lists, and the root directory
 int mrfsFormatHdd(int _blockSize, int rootDirSize)
 {
@@ -152,6 +168,21 @@ int mrfsFormatHdd(int _blockSize, int rootDirSize)
     return 0;
 }
 
+//######## #### ##       ########    ##     ##    ###    ##    ## ########  ##       ########
+//##        ##  ##       ##          ##     ##   ## ##   ###   ## ##     ## ##       ##
+//##        ##  ##       ##          ##     ##  ##   ##  ####  ## ##     ## ##       ##
+//######    ##  ##       ######      ######### ##     ## ## ## ## ##     ## ##       ######
+//##        ##  ##       ##          ##     ## ######### ##  #### ##     ## ##       ##
+//##        ##  ##       ##          ##     ## ##     ## ##   ### ##     ## ##       ##
+//##       #### ######## ########    ##     ## ##     ## ##    ## ########  ######## ########
+//######## ##     ## ##    ##  ######  ######## ####  #######  ##    ##  ######
+//##       ##     ## ###   ## ##    ##    ##     ##  ##     ## ###   ## ##    ##
+//##       ##     ## ####  ## ##          ##     ##  ##     ## ####  ## ##
+//######   ##     ## ## ## ## ##          ##     ##  ##     ## ## ## ##  ######
+//##       ##     ## ##  #### ##          ##     ##  ##     ## ##  ####       ##
+//##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### ##    ##
+//##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ######
+
 static bool isDirPath(char* path)
 {
     return path[strlen(path)-1] == '/';
@@ -173,6 +204,56 @@ static char* splitForLookup(char* name)
     return buff;
 }
 
+//this function renames the specified inode (file OR directory by name) to the given name
+
+int mrfsRename(char* oldname, char* newname)
+{
+    printf("renaming %s -> %s\n", oldname, newname);
+    char* olddir = malloc(strlen(oldname)+1);
+    strcpy(olddir, oldname);
+    olddir[strlen(oldname)] = '\0';
+
+    char* newdir = malloc(strlen(newname)+1);
+    strcpy(newdir, newname);
+    newdir[strlen(newname)] = '\0';
+
+    char* fold = splitForLookup(olddir);
+    char* fnew = splitForLookup(newdir);
+
+    if (strcmp(newdir, olddir))
+    {
+        union Inode filenode = getInodeByName(olddir, fold);
+        if (filenode.node.info.exists == 0)
+            return NOSUCHFILEORDIRECTORY;
+        union Inode dirnode = getDirInodeByPath(olddir);
+        if (dirnode.node.info.exists == 0)
+            return NOSUCHFILEORDIRECTORY;
+        union Inode newdirnode = getDirInodeByPath(newdir);
+        if (newdirnode.node.info.exists == 0)
+            return NOSUCHFILEORDIRECTORY;
+
+        inodeRemoveEntry(&dirnode, filenode.node.nodenumber);
+
+        newdirnode.node.pointers[newdirnode.node.size++] = filenode.node.nodenumber;
+        inodeRewrite(newdirnode);
+    }
+
+    if(strcmp(fnew, fold))
+    {
+        union Inode inode = getInodeByName(newdir, fold);
+        if (inode.node.info.exists == 0)
+            return NOSUCHFILEORDIRECTORY;
+        union Inode inodecheck = getInodeByName(newdir, fnew);
+        if (inodecheck.node.info.exists == 1)
+            return FILEORDIRECTORYALREADYEXISTS;
+        inodeResetName(inode, fnew);
+    }
+
+    free(fold);
+    free(fnew);
+
+    return 0;
+}
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
     char* namecpy = malloc(strlen(name)+1);
@@ -391,6 +472,47 @@ int mrfsGetFile(FILE* dd, FILE* fd)
     return 0;
 }
 
+int mrfsDeleteFileWithDescriptor(FILE* fd)
+{
+    union Inode inode = inodeRead(fd->inode);
+    if (inode.node.info.exists == 0)
+        return NOSUCHFILEORDIRECTORY;
+    int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
+
+    if (inode.node.size == 0)
+    {
+        numblocks = 0;
+    }
+
+    int* pointers = inodeGetPointers(inode);
+
+    for(int i = 0; i < numblocks; i++)
+        blockFree(pointers[i]);
+    blockFree(inode.node.nameblock);
+
+    union Inode dirinode = inodeRead(fd->parent);
+    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
+
+    inodeFree(inode.node.nodenumber);
+    free(pointers);
+    return 0;
+}
+
+//######## #### ##       ########    ##    ##    ###    ##     ## ########
+//##        ##  ##       ##          ###   ##   ## ##   ###   ### ##
+//##        ##  ##       ##          ####  ##  ##   ##  #### #### ##
+//######    ##  ##       ######      ## ## ## ##     ## ## ### ## ######
+//##        ##  ##       ##          ##  #### ######### ##     ## ##
+//##        ##  ##       ##          ##   ### ##     ## ##     ## ##
+//##       #### ######## ########    ##    ## ##     ## ##     ## ########
+//######## ##     ## ##    ##  ######  ######## ####  #######  ##    ##  ######
+//##       ##     ## ###   ## ##    ##    ##     ##  ##     ## ###   ## ##    ##
+//##       ##     ## ####  ## ##          ##     ##  ##     ## ####  ## ##
+//######   ##     ## ## ## ## ##          ##     ##  ##     ## ## ## ##  ######
+//##       ##     ## ##  #### ##          ##     ##  ##     ## ##  ####       ##
+//##       ##     ## ##   ### ##    ##    ##     ##  ##     ## ##   ### ##    ##
+//##        #######  ##    ##  ######     ##    ####  #######  ##    ##  ######
+
 //this function creates a new file under the specified name and directory with the given data
 
 int mrfsNewFile(char* path, char* filename, char* contents,int length)
@@ -550,40 +672,7 @@ char* mrfsReadFile(char* path,char* filename)
 }
 
 
-//this function renames the specified inode (file OR directory by name) to the given name
 
-int mrfsRename(char*path,char* filename,char* newfilename)
-{
-    union Inode inode = getInodeByName(path, filename);
-    if (inode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-    union Inode inodecheck = getInodeByName(path, newfilename);
-    if (inodecheck.node.info.exists == 1)
-        return FILEORDIRECTORYALREADYEXISTS;
-    inodeResetName(inode, newfilename);
-    return 0;
-
-}
-
-//This function moves the specified inode (file or directory by name) to the specified directory
-int mrfsMove(char*filename,char* path,char* newpath)
-{
-    union Inode filenode = getInodeByName(path, filename);
-    if (filenode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-    union Inode dirnode = getDirInodeByPath(path);
-    if (dirnode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-    union Inode newdirnode = getDirInodeByPath(newpath);
-    if (newdirnode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-
-    inodeRemoveEntry(&dirnode, filenode.node.nodenumber);
-
-    newdirnode.node.pointers[newdirnode.node.size++] = filenode.node.nodenumber;
-    inodeRewrite(newdirnode);
-    return 0;
-}
 
 //these three functions delete files and folders
 int mrfsDeleteFile(char*path,char* filename)
@@ -600,32 +689,6 @@ int mrfsDeleteFile(char*path,char* filename)
     blockFree(inode.node.nameblock);
 
     union Inode dirinode = getDirInodeByPath(path);
-    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
-
-    inodeFree(inode.node.nodenumber);
-    free(pointers);
-    return 0;
-}
-
-int mrfsDeleteFileWithDescriptor(FILE* fd)
-{
-    union Inode inode = inodeRead(fd->inode);
-    if (inode.node.info.exists == 0)
-        return NOSUCHFILEORDIRECTORY;
-    int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
-
-    if (inode.node.size == 0)
-    {
-        numblocks = 0;
-    }
-
-    int* pointers = inodeGetPointers(inode);
-
-    for(int i = 0; i < numblocks; i++)
-        blockFree(pointers[i]);
-    blockFree(inode.node.nameblock);
-
-    union Inode dirinode = inodeRead(fd->parent);
     inodeRemoveEntry(&dirinode, inode.node.nodenumber);
 
     inodeFree(inode.node.nodenumber);
@@ -845,6 +908,13 @@ int mrfsDefragFile(char* path, char* filename, int position)
     return position;
 }
 
+//######## ########  ######  ########  ######
+//   ##    ##       ##    ##    ##    ##    ##
+//   ##    ##       ##          ##    ##
+//   ##    ######    ######     ##     ######
+//   ##    ##             ##    ##          ##
+//   ##    ##       ##    ##    ##    ##    ##
+//   ##    ########  ######     ##     ######
 
 static char* testing_read_file(FILE fd)
 {
@@ -925,12 +995,60 @@ uint32_t mrfs_behaviour_test()
     failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
 
 
-    mrfsOpenFile("/test", false, &fd);
+    mrfsOpenFile("/test", true, &fd);
     mrfsDeleteFileWithDescriptor(&fd);
 
     mrfsOpenFile("/test", false, &fd);
 
     failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
+
+
+    mrfsOpenFile("/test-mv", true, &fd);
+
+    fd.index = 0;
+
+    mrfsPutC(&fd, 'a');
+    mrfsPutC(&fd, 'b');
+    mrfsPutC(&fd, 'c');
+    mrfsPutC(&fd, 'd');
+    mrfsPutC(&fd, 'e');
+
+    mrfsRename("/test-mv", "/moved");
+    hdd_write_cache();
+
+
+    mrfsOpenFile("/test-mv", false, &fd);
+    failures += ktest_assert("[MRFS] : moving file should make old file not exist", fd.type == 2, ASSERT_CONTINUE);
+    mrfsOpenFile("/moved", false, &fd);
+    failures += ktest_assert("[MRFS] : moving file should make new file exist", fd.type == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : moving file should make new file same size as old", fd.size == 5, ASSERT_CONTINUE);
+
+
+    fd.index = 0;
+    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    buff[5] = '\0';
+
+    failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
+
+    mrfsRename("/moved", "/proc/foldermoved");
+    hdd_write_cache();
+
+
+    mrfsOpenFile("/moved", false, &fd);
+    failures += ktest_assert("[MRFS] : moving file should make old file not exist", fd.type == 2, ASSERT_CONTINUE);
+    mrfsOpenFile("/proc/foldermoved", false, &fd);
+    failures += ktest_assert("[MRFS] : moving file should make new file exist", fd.type == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : moving file should make new file same size as old", fd.size == 5, ASSERT_CONTINUE);
+
+
+    fd.index = 0;
+    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    buff[5] = '\0';
+
+    failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
+
+
+    hdd_write_cache();
 
 
     return failures;

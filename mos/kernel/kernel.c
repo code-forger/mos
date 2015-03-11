@@ -54,7 +54,7 @@ void init_kernel()
     for(int i = 0 ; i < 3000000; i++);
 
     if(keyboard_get_a_byte() == 't')
-        kernel_test_mode(TEST_LIMITS, TEST_VERBOSE);
+        kernel_test_mode(TEST_BEHAVIOUR, TEST_VERBOSE);
 
     uint32_t esp, ebp;
 

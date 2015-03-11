@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code estimate_uptime-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code
+all: init-code name-code banner_left-code time-code estimate_uptime-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -44,3 +44,6 @@ all: init-code name-code banner_left-code time-code estimate_uptime-code joeprog
 
 .PHONY pong-code:
 	$(MAKE) -C pong
+
+.PHONY mv-code:
+	$(MAKE) -C mv

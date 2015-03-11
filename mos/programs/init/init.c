@@ -1,4 +1,5 @@
 #include "../../stdlib/stdio.h"
+#include "../../stdlib/file.h"
 
 void main(void)
 {

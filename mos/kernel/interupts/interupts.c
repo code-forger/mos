@@ -398,6 +398,18 @@ void  c_file_delete_syscall(void)
 }
 
 
+void  c_file_mv_syscall(void)
+{
+    char *fnew;
+    char *fold;
+    asm("mov %%esi, %0":"=r"(fold):);
+    asm("mov %%edi, %0":"=r"(fnew):);
+
+    mrfsRename(fold, fnew);
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
 void  c_ticks_ms_syscall(void)
 {
     uint32_t *ret;

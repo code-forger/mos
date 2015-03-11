@@ -46,6 +46,7 @@ extern c_file_opendir_syscall
 extern c_file_getfile_syscall
 extern c_file_getnamec_syscall
 extern c_file_delete_syscall
+extern c_file_mv_syscall
 extern c_ticks_ms_syscall
 extern c_seconds_syscall
 
@@ -97,6 +98,7 @@ global file_opendir_syscall
 global file_getfile_syscall
 global file_getnamec_syscall
 global file_delete_syscall
+global file_mv_syscall
 global ticks_ms_syscall
 global seconds_syscall
 
@@ -399,6 +401,14 @@ file_delete_syscall:
     cli
     pushad
     call c_file_delete_syscall
+    popad
+    sti
+    iret
+
+file_mv_syscall:
+    cli
+    pushad
+    call c_file_mv_syscall
     popad
     sti
     iret

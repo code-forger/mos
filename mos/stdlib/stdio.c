@@ -28,8 +28,6 @@ void exit_io(void)
         relinquish_input();
 }
 
-
-
 static void putint(uint32_t in)
 {
     int i, length;

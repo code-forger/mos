@@ -6,6 +6,7 @@
 #include "../io/hdd.h"
 #include "../ELF/elf.h"
 #include "../mrfs/mrfs.h"
+#include "../io/port.h"
 
 static uint32_t current_pid;
 static uint32_t starting_pid;
@@ -17,6 +18,11 @@ static uint32_t* program_pointers;
 static uint32_t kernel_esp, kernel_ebp;
 
 static uint64_t global_ms;
+
+uint32_t scheduler_ticks_ms()
+{
+    return global_ms;
+}
 
 int32_t fork()
 {
@@ -399,4 +405,39 @@ process_table_entry* scheduler_get_process_table_entry_for_editing(uint32_t pid)
 uint32_t scheduler_get_pid()
 {
     return current_pid;
+}
+
+
+static int cmos_ready() {
+    send_byte_to(0x70, 10);
+    return (get_byte_from(0x71) & 0x80);
+}
+
+static int cmos_read_value(uint32_t val)
+{
+    send_byte_to(0x70, val);
+    return get_byte_from(0x71);
+}
+
+int scheduler_seconds()
+{
+    uint8_t time[3];
+    while (cmos_ready());
+    for(int i = 0; i < 3; i++)
+        time[i] = cmos_read_value(i*2);
+
+    int status = cmos_read_value(0x0b);
+
+    // clock in 12 hours, convert
+    if (!(status & 2) && (time[2] & 0x80)) {
+        time[2] = ((time[2] & ~0x80) + 12) % 24;
+    }
+    // clock in BCD. convert
+    if (!(status & 4)) {
+        time[0] = (time[0] & 0xf) + ((time[0] / 16) * 10);
+        time[1] = (time[1] & 0xf) + ((time[1] / 16) * 10);
+        time[2] = (time[2] & 0xf) + ((time[2] / 16) * 10);
+    }
+
+    return ((((time[2] * 60) + time[1]) * 60) + time[0]);
 }

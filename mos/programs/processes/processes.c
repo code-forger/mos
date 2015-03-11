@@ -148,6 +148,9 @@ void main(void)
 
             this_cycle_ms[line-5] = atoi(cputimestring);
 
+            char fcputimestring[9];
+            format_time( this_cycle_ms[line-5], fcputimestring);
+
             char percent_str[9] = "---%";
             if (last_cycle_ms != 0)
             {
@@ -159,7 +162,7 @@ void main(void)
                     sprintf(percent_str, "%d%%", percent);
             }
 
-            write_metrics(line++, num, namestring, cputimestring, percent_str, "|  |");
+            write_metrics(line++, num, namestring, fcputimestring, percent_str, "|  |");
             free(num);
             free(namestring);
             free(cputimestring);

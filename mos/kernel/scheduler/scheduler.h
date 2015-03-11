@@ -3,6 +3,7 @@
 #include "../memory/memory.h"
 #include "../IPC/pipe.h"
 
+uint32_t scheduler_ticks_ms();
 int32_t fork();
 void scheduler_time_interupt();
 void scheduler_init();
@@ -13,6 +14,7 @@ void scheduler_sleep(uint32_t milliseconds);
 void scheduler_mark_process_as(uint32_t pid, uint32_t flags);
 void scheduler_unmark_process_as(uint32_t pid, uint32_t flags);
 void scheduler_kill();
+int scheduler_seconds();
 
 int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, uint32_t ignore);
 

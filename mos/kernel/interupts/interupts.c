@@ -396,3 +396,23 @@ void  c_file_delete_syscall(void)
 
     send_byte_to(MASTER_PIC, 0x20);
 }
+
+
+void  c_ticks_ms_syscall(void)
+{
+    uint32_t *ret;
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = scheduler_ticks_ms();
+
+    send_byte_to(MASTER_PIC, 0x20);
+}
+
+
+void  c_seconds_syscall(void)
+{
+    uint32_t *ret;
+    asm("mov %%eax, %0":"=r"(ret):);
+    *ret = scheduler_seconds();
+
+    send_byte_to(MASTER_PIC, 0x20);
+}

@@ -1,5 +1,5 @@
-all: stdio.o process.o stdmem.o pipe.o start.o string.o
-	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -r -o  stdlib.o stdio.o process.o stdmem.o pipe.o start.o string.o -ffreestanding -nostdlib -std=gnu99
+all: stdio.o process.o stdmem.o pipe.o start.o string.o time.o
+	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -r -o  stdlib.o stdio.o process.o stdmem.o pipe.o start.o string.o time.o -ffreestanding -nostdlib -std=gnu99
 
 stdio.o: stdio.c
 	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -o stdio.o -c stdio.c -ffreestanding -nostdlib -std=gnu99
@@ -18,3 +18,6 @@ start.o: start.c
 
 string.o: string.c
 	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -o string.o -c string.c -ffreestanding -nostdlib -std=gnu99
+
+time.o: time.c
+	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -o time.o -c time.c -ffreestanding -nostdlib -std=gnu99

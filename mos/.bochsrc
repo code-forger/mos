@@ -8,4 +8,4 @@ boot: cdrom
 memory: guest=1024, host=1024
 clock: sync=realtime, rtc_sync=1, time0=local
 
-vga: update_freq=25
+vga: update_freq=30

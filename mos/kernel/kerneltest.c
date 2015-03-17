@@ -11,6 +11,7 @@ int ktest_assert(char* test, int val, int cont)
         printf("FAILED : %s\n", test);
         if (!cont)
         {
+            printf("Non-continue test Failed, halting now.\n");
             asm("cli");
             asm("hlt");
         }

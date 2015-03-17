@@ -1,5 +1,5 @@
 #include "elf.h"
-#include "../mrfs/mrfs.h"
+#include "../mrfs/kmrfs.h"
 
 static void set_ptb(process_table_entry* ptb)
 {
@@ -49,7 +49,7 @@ static char* load_file(const char* name)
         dn[i] = name[i];
     }
 
-    return mrfsReadFile(dn, fn);
+    return kmrfsReadFile(dn, fn);
 }
 
 int64_t elf_load(const char* name, process_table_entry* ptb)

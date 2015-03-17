@@ -3,7 +3,7 @@ GCC = ~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc
 
 all: mos.bin
 
-mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o io/hdd.o mrfs/inode.o mrfs/block.o mrfs/mrfs.o kstdlib/malloc.o ELF/elf.o kerneltest.o kstdlib/string.o
+mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o io/hdd.o mrfs/inode.o mrfs/block.o mrfs/mrfs.o mrfs/kmrfs.o kstdlib/malloc.o ELF/elf.o kerneltest.o kstdlib/string.o
 	$(GCC) -T linker.ld -o mos.bin -ffreestanding -nostdlib $+ -lgcc
 
 kernel.o: kernel.c kernel.asm
@@ -61,6 +61,9 @@ DS/list.o: DS/list.c DS/list.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 mrfs/mrfs.o: mrfs/mrfs.c
+	$(GCC) -c $< -o $@ $(CPPFLAGS)
+
+mrfs/kmrfs.o: mrfs/kmrfs.c
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 mrfs/inode.o: mrfs/inode.c

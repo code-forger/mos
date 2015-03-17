@@ -211,6 +211,25 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
     return 0;
 }
 
+void malloc_test_reset_memory()
+{
+    top = (header*) KERNEL_HEAP;
+    top->size = (next_heap - KERNEL_HEAP) - HEAD_SIZE - HEAD_SIZE;
+    top->free = true;
+    top->pad1 = 0xDE; top->pad2 = 0xDE; top->pad3 = 0xDE;
+
+    top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
+    top->size = 0;
+    top->free = 3;
+    top->pad1 = 0xDE; top->pad2 = 0xDE; top->pad3 = 0xDE;
+
+    //printf("cap at %h\n", top);
+
+    top = (header*) KERNEL_HEAP;
+
+    next_heap = KERNEL_HEAP + 0x1000;
+}
+
 uint32_t malloc_test_helper(uint32_t target_size)
 {
     int failures = 0;
@@ -224,6 +243,7 @@ uint32_t malloc_test_helper(uint32_t target_size)
 
 uint32_t malloc_behaviour_test(void)
 {
+    malloc_test_reset_memory();
     int failures = 0;
     int* pointer[10];
     for(int i = 0; i < 10; i++)
@@ -240,6 +260,7 @@ uint32_t malloc_behaviour_test(void)
 
 uint32_t malloc_limits_test(void)
 {
+    malloc_test_reset_memory();
     int failures = 0;
     int* pointer;
     pointer = malloc(0);
@@ -250,6 +271,7 @@ uint32_t malloc_limits_test(void)
 
 uint32_t malloc_stress_test(void)
 {
+    malloc_test_reset_memory();
     int failures = 0;
     int *pointer = malloc(2000*sizeof(int));
     int *prev = (int*)pointer;

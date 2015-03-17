@@ -5,6 +5,7 @@
 #include "events.h"
 #include "../io/hdd.h"
 #include "../ELF/elf.h"
+#include "../mrfs/kmrfs.h"
 #include "../mrfs/mrfs.h"
 #include "../io/port.h"
 
@@ -57,22 +58,22 @@ int32_t fork()
 
 
 
-    mrfsNewFolder("/proc/", proc_num_str);
-    char* f = mrfsReadFile(parentprocdir, "name");
-    mrfsNewFile(procdir, "name", f, strlen(f));
+    kmrfsNewFolder("/proc/", proc_num_str);
+    char* f = kmrfsReadFile(parentprocdir, "name");
+    kmrfsNewFile(procdir, "name", f, strlen(f));
 
 
-    mrfsNewFolder(procdir, "env");
+    kmrfsNewFolder(procdir, "env");
     char envdir[18];
     sprintf(envdir, "/proc/%d/env/", fork_pid);
     char parentenvdir[18];
     sprintf(parentenvdir, "/proc/%d/env/", current_pid);
 
-    char* parentPATH = mrfsReadFile(parentenvdir, "PATH");
-    char* parentcwd = mrfsReadFile(parentenvdir, "cwd");
+    char* parentPATH = kmrfsReadFile(parentenvdir, "PATH");
+    char* parentcwd = kmrfsReadFile(parentenvdir, "cwd");
 
-    mrfsNewFile(envdir, "PATH", parentPATH, strlen(parentPATH));
-    mrfsNewFile(envdir, "cwd", parentcwd, strlen(parentcwd));
+    kmrfsNewFile(envdir, "PATH", parentPATH, strlen(parentPATH));
+    kmrfsNewFile(envdir, "cwd", parentcwd, strlen(parentcwd));
 
     free(parentPATH);
     free(parentcwd);
@@ -117,7 +118,7 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
 
     char envdir[19];
     sprintf(envdir, "/proc/%d/env/", current_pid);
-    char* path = mrfsReadFile(envdir, "PATH");
+    char* path = kmrfsReadFile(envdir, "PATH");
 
     char resloved_path_name[strlen(path) + strlen(program_name) + 1];
     sprintf(resloved_path_name, "%s%s",path, program_name);
@@ -125,19 +126,19 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
 
     int64_t jump_target = -1;
 
-    if (mrfsFileExists(resloved_path_name))
+    if (kmrfsFileExists(resloved_path_name))
     {
         jump_target = elf_load(resloved_path_name, &(process_table[current_pid]));
     }
     else
     {
 
-        char* cwd = mrfsReadFile(envdir, "cwd");
+        char* cwd = kmrfsReadFile(envdir, "cwd");
 
         char resloved_cwd_name[strlen(cwd) + strlen(program_name) + 1];
         sprintf(resloved_cwd_name, "%s%s",cwd, program_name);
 
-        if (mrfsFileExists(resloved_cwd_name))
+        if (kmrfsFileExists(resloved_cwd_name))
             jump_target = elf_load(resloved_cwd_name, &(process_table[current_pid]));
         free(cwd);
     }
@@ -398,13 +399,13 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
     process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
 
-    mrfsNewFolder("/proc/", "0");
-    mrfsNewFile("/proc/0/", "name", "/init", 5);
-    mrfsNewFile("/proc/0/", "cputime", "0", 1);
+    kmrfsNewFolder("/proc/", "0");
+    kmrfsNewFile("/proc/0/", "name", "/init", 5);
+    kmrfsNewFile("/proc/0/", "cputime", "0", 1);
 
-    mrfsNewFolder("/proc/0/", "env");
-    mrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));
-    mrfsNewFile("/proc/0/env/", "cwd", "/", strlen("/"));
+    kmrfsNewFolder("/proc/0/", "env");
+    kmrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));
+    kmrfsNewFile("/proc/0/env/", "cwd", "/", strlen("/"));
 
     events_new_event((0&0xFFFF) + (E_METRICS << 16), 1000);
 

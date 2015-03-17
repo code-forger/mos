@@ -7,6 +7,7 @@
 #include "io/hdd.h"
 #include "kstdlib/kstdlib.h"
 #include "mrfs/mrfs.h"
+#include "mrfs/kmrfs.h"
 #include "paging/paging.h"
 #include "io/hdd.h"
 #include "io/port.h"
@@ -44,7 +45,7 @@ void init_kernel()
     init_mem();
     keryboard_init();
 
-    mrfsFormatHdd(4*1024, 0);
+    kmrfsFormatHdd(4*1024, 0);
 
     FILE dd;
 
@@ -57,7 +58,7 @@ void init_kernel()
     kernel_set_pit();
     for(int i = 0 ; i < 3000000; i++);
 
-    if(keyboard_get_a_byte() == 't')
+    if(keyboard_get_a_byte() != 't')
         kernel_test_mode(TEST_STRESS, TEST_QUIET);
 
     uint32_t esp, ebp;

@@ -27,67 +27,89 @@ char *file_read_name(FILE fd)
     return file;
 }
 
+#define MODE_HIDDEN 0b0001
+
+static int mode;
+
 void main(int argc, char** argv)
 {
+    mode = 0;
+    char* target_dir = 0;
     if(argc == 1)
     {
+        target_dir = argv[0];
+        if(argv[0][0] == '-')
+        {
+            for(int i = 1; argv[0][i] != '\0'; i++)
+            {
+                switch(argv[0][i])
+                {
+                    case 'a':
+                        mode |= MODE_HIDDEN;
+                        break;
+                }
+            }
+
+            FILE cwd;
+            get_env("cwd", &cwd);
+            if (cwd.type == 0)
+            {
+                target_dir = file_read_data(cwd);
+            }
+        }
+    }
+    else if(argc == 2)
+    {
+        for(int i = 1; argv[1][i] != '\0'; i++)
+        {
+            switch(argv[1][i])
+            {
+                case 'a':
+                    mode |= MODE_HIDDEN;
+                    break;
+            }
+        }
+        target_dir = argv[2];
+    }
+    else
+    {
+        FILE cwd;
+        get_env("cwd", &cwd);
+        if (cwd.type == 0)
+        {
+            target_dir = file_read_data(cwd);
+        }
+    }
+
+    if(target_dir)
+    {
         FILE dd;
-        fopendir(argv[0], false, &dd);
+
+        fopendir(target_dir, false, &dd);
         if(dd.type == 1)
         {
             setio(0, 1, 79, 22);
             stdin_init();
-            printf("******** ls | %s********\n", argv[0]);
+            printf("******** ls | %s********\n", target_dir);
             FILE process_dir;
 
             fseek(&dd, 0);
             for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
             {
                 char *file_name = file_read_name(process_dir);
-                printf("%s\n", file_name);
-                free(file_name);
 
-            }
-            if (getchar() == 'q')
-                return;
-            pause();
-        }
-    }
-    else
-    {
-        setio(0, 1, 79, 22);
-        stdin_init();
-        sleep(1);
-        FILE cwd;
-        sleep(1);
-        get_env("cwd", &cwd);
-        sleep(1);
-        if (cwd.type == 0)
-        {
-            char* cwd_str = file_read_data(cwd);
-            sleep(1);
-            FILE dd;
-            sleep(1);
-            fopendir(cwd_str, false, &dd);
-            if(dd.type == 1)
-            {
-                printf("******** ls | %s********\n", cwd_str);
-                sleep(1);
-                free(cwd_str);
-                FILE fd;
-
-                fseek(&dd, 0);
-                for (fgetfile(&dd, &fd);fd.type != 2; fgetfile(&dd, &fd))
+                if((mode & MODE_HIDDEN) || file_name[0] != '.')
                 {
-                    char *file_name = file_read_name(fd);
-                    if (fd.type == 0)
+                    if (process_dir.type == 0)
                         printf("%s\n", file_name);
                     else
                         printf("%s/\n", file_name);
-                    sleep(1);
-                    free(file_name);
-
                 }
+            free(file_name);
+
+            }
+            while(1)
+            {
                 if (getchar() == 'q')
                     return;
                 pause();

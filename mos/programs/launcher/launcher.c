@@ -93,27 +93,15 @@ void main(void)
             }
             else if (c == '\n')
             {
-                if (buffer[0] == 'k' &&
-                    buffer[1] == 'i' &&
-                    buffer[2] == 'l' &&
-                    buffer[3] == 'l' &&
-                    buffer[4] == ' ')
+                buffer[caret_loc] = '\0';
+                int id = fork();
+                if (id==get_pid())
                 {
-                    buffer[caret_loc] = '\0';
-                    kill(atoi(buffer+5));
-                }
-                else
-                {
-                    buffer[caret_loc] = '\0';
-                    int id = fork();
-                    if (id==get_pid())
-                    {
-                        char* command;
-                        char** parameters;
-                        split_command(buffer, &command, &parameters);
-                        execp(command, parameters);
-                        return;
-                    }
+                    char* command;
+                    char** parameters;
+                    split_command(buffer, &command, &parameters);
+                    execp(command, parameters);
+                    return;
                 }
                 for (int j = 0; j < 80 -  carret_base; j++)
                 {

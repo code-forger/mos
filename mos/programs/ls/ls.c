@@ -60,16 +60,27 @@ void main(int argc, char** argv)
     }
     else if(argc == 2)
     {
-        for(int i = 1; argv[1][i] != '\0'; i++)
+        int flag, arg;
+        if (argv[0][0] == '-')
         {
-            switch(argv[1][i])
+            flag = 0;
+            arg = 1;
+        }
+        else
+        {
+            flag = 1;
+            arg = 0;
+        }
+        for(int i = 1; argv[flag][i] != '\0'; i++)
+        {
+            switch(argv[flag][i])
             {
                 case 'a':
                     mode |= MODE_HIDDEN;
                     break;
             }
         }
-        target_dir = argv[2];
+        target_dir = argv[arg];
     }
     else
     {

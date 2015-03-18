@@ -242,6 +242,13 @@ static void write_processes_metric(uint32_t process)
     int len = strlen(cputime);
     for(int i = 0; i < len;i++)
         mrfsPutC(&fd, cputime[i]);
+
+
+    sprintf(procpath, "/proc/%d/%s", process, "state");
+    mrfsOpenFile(procpath, true, &fd);
+    fd.index = 0;
+    mrfsPutC(&fd, process_table[process].flags);
+
 }
 
 static void scheduler_write_metrics(void)

@@ -334,11 +334,10 @@ void do_main(char* filename)
     while(1)
     {
         putcharat(caret, caret_x, caret_line+1);
-        if ((caret_counter = (caret_counter + 1) % 15) == 0)
-            caret = (caret == '%')?lines[caret_line][caret_x]:'%';
+        caret = (caret == '%')?lines[caret_line][caret_x]:'%';
 
-        int64_t get = getchar();
-        if (get > 0)
+        int64_t get;
+        while ((get = getchar()) > 0)
         {
             char c = (char)get;
             if (state)
@@ -395,6 +394,7 @@ void do_main(char* filename)
                 print_line_after(caret_line, caret_x - 2);
             }
         }
+        sleep(500);
     }
 }
 

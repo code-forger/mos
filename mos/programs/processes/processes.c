@@ -6,6 +6,14 @@
 #define UP    (char)0x48
 #define DOWN  (char)0x50
 
+#define F_INIT      (uint32_t)0b0000001
+#define F_DEAD      (uint32_t)0b0000010
+#define F_SKIP      (uint32_t)0b0000100
+#define F_PAUSED    (uint32_t)0b0001000
+#define F_WAKE      (uint32_t)0b0010000
+#define F_HAS_INPUT (uint32_t)0b0100000
+#define F_IS_HIDDEN (uint32_t)0b1000000
+
 int table_offset;
 int selected_process;
 
@@ -53,12 +61,13 @@ void write_processes_metric(int line, char*number, int pos, int padding, char* s
     putcharat(sep[3], pos+padding+2, line);
 }
 
-void write_metrics(int line, char*pid, char*command, char*time, char*perc, char* sep)
+void write_metrics(int line, char*pid, char*command, char*time, char*perc, char* state, char* sep)
 {
     write_processes_metric(line, pid, 0, 5, sep);
     write_processes_metric(line, command, 8, 20, sep);
     write_processes_metric(line, time, 31, 8, sep);
-    write_processes_metric(line++, perc, 42, 6, sep);
+    write_processes_metric(line, perc, 42, 6, sep);
+    write_processes_metric(line++, state, 51, 8, sep);
     if (line-6 == selected_process)
         putcharat('>', table_offset, 5 + selected_process);
 }
@@ -82,6 +91,23 @@ char* get_metric(char* num, char* metric)
     return file_read_data(metric_file);
 }
 
+char *get_state_string(char*in)
+{
+    char b = in[0];
+    char* out = malloc(9);
+    out[8] = '\0';
+
+    out[0] = b&F_INIT?'I':'-';
+    out[1] = b&F_DEAD?'D':'-';
+    out[2] = b&F_SKIP?'S':'-';
+    out[3] = b&F_PAUSED?'P':'-';
+    out[4] = b&F_WAKE?'W':'-';
+    out[5] = b&F_HAS_INPUT?'I':'-';
+    out[6] = b&F_IS_HIDDEN?'H':'-';
+    out[7] = '-';
+    return out;
+}
+
 void main(void)
 {
     selected_process = 0;
@@ -97,9 +123,9 @@ void main(void)
 
     printf("    Running Processes:\n\n");
     write_rubertic();
-    write_metrics(line++, "-----", "--------------------", "--------", "------", "#--#");
-    write_metrics(line++, "pid", "command", "cpu time", "cpu %", "|  |");
-    write_metrics(line++, "-----", "--------------------", "--------", "------", "#--#");
+    write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
+    write_metrics(line++, "pid", "command", "cpu time", "cpu %", "state", "|  |");
+    write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
 
     while(1)
     {
@@ -145,6 +171,7 @@ void main(void)
 
             char* namestring = get_metric(num, "name");
             char* cputimestring = get_metric(num, "cputime");
+            char* statestring = get_metric(num, "state");
 
             this_cycle_ms[line-5] = atoi(cputimestring);
 
@@ -162,13 +189,17 @@ void main(void)
                     sprintf(percent_str, "%d%%", percent);
             }
 
-            write_metrics(line++, num, namestring, fcputimestring, percent_str, "|  |");
+            char *stateletterstring = get_state_string(statestring);
+
+            write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "|  |");
             free(num);
             free(namestring);
             free(cputimestring);
+            free(statestring);
+            free(stateletterstring);
         }
 
-        write_metrics(line++, "-----", "--------------------", "--------", "------", "#--#");
+        write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
         write_blank(line);
 
         if (last_cycle_ms != 0)

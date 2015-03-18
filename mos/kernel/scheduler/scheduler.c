@@ -179,7 +179,7 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
         mrfsPutC(&fd, program_name[i]);
 
 
-    printf("LEAVING SCHEDULER to %h\n", jump_target);
+    //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
     asm("movl %0, %%esp"::"r"(0xbfffffff));
 

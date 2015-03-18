@@ -34,8 +34,14 @@ static bool isDir(char* path)
 static char* splitForLookup(char* name)
 {
     int pos = strlen(name),l  = strlen(name);
+    if(pos == 0)
+    {
+        char* buff = malloc(1);
+        buff[0] = '\0';
+        return buff;
+    }
     for (;pos>0 && name[pos]!='/';pos--);
-    char* buff = malloc(l-pos+1);
+    char* buff = malloc(l-pos+2);
     strcpy(buff, name+(++pos));
     buff[l-pos] = '\0';
     name[pos] = '\0';
@@ -165,6 +171,7 @@ void mrfsOpenDir(char* name, int create, FILE* dout)
         dout->type = 1;
         free(fname);
         free(namecpy);
+        //printf("Served Dir -> %d\n", dout->inode);
         return;
     }
     if (create)

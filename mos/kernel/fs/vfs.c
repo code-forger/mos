@@ -50,7 +50,7 @@ uint32_t vfs_open_virtual(char* path, FILE *fd)
             int len = strlen(cputime);
             for(int i = 0; i < len;i++)
                 mrfsPutC(fd, cputime[i]);
-            printf("FULL RETURN %d\n", fd->inode);
+            //printf("FULL RETURN %d\n", fd->inode);
             ret = 0;
         }
         else if(strcmp(name,"state") == 0)
@@ -73,7 +73,7 @@ uint32_t vfs_open_virtual(char* path, FILE *fd)
     }
     else
     {
-        printf("no vfs\n");
+        //printf("no vfs\n");
         fd->type = 2;
         ret = 1;
     }

@@ -21,30 +21,43 @@ int next_heap = 0;
 
 static void check_integrity(header *check)
 {
+    /*char* freee;
+    if (check->free)
+        if ((uint32_t)check == 3)
+            freee = "END!";
+        else
+            freee = "FREE";
+    else
+        freee = "NOTF";
+    printf("CI = Current Node %h : %s, : %h : %h%h%h\n", check, freee, check->size,check->pad1,check->pad2,check->pad3);
+*/
     if (check->pad1 != 0xDE || check->pad2 != 0xDE || check->pad3 != 0xDE)
     {
         printf("MEMORY VIOLATION at %h \n", check);
-        dump_memory((uint32_t)top);
+        //dump_memory((uint32_t)top);
         asm("cli");
         asm("hlt");
     }
 }
 
-static void clean_memory()
+void clean_memory()
 {
     header *current = top;
 
     do
     {
+        check_integrity(current);
         if (current->free && current->free != 3)
         {
-            check_integrity(current);
             header *next_node = (header*)((uint32_t)current + HEAD_SIZE + current->size);
+
+            check_integrity(next_node);
             if (next_node->free && next_node->free != 3)
             {
                 current->size = current->size + next_node->size + HEAD_SIZE;
                 current->free = true;
                 current = top;
+                //printf("to top\n");
                 continue;
             }
         }
@@ -69,6 +82,7 @@ static int get_more_memory()
     current = (header*)(((uint32_t)current) + current->size + HEAD_SIZE);
     current->size = 0;
     current->free = 3;
+    current->pad1 = 0xDE; current->pad2 = 0xDE; current->pad3 = 0xDE;
 
     next_heap = next_heap + 0x1000;
 
@@ -77,7 +91,7 @@ static int get_more_memory()
 }
 
 void *malloc(uint32_t size) {
-    //printf("[malloc.c] CALL : malloc(%d)\n", size);
+    //printf("[malloc.c] CALL : malloc(%d) -> ", size);
     size += size % 4;
     header* current = top;
 
@@ -101,10 +115,16 @@ void *malloc(uint32_t size) {
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 
+    //printf("Getting more\n");
     if (get_more_memory() == 0)
+    {
         return malloc(size);
+    }
     else
+    {
+        //printf("FAIL\n");
         return NULL;
+    }
 }
 
 void dump_memory(uint32_t memory)
@@ -115,17 +135,27 @@ void dump_memory(uint32_t memory)
     {
         char* freee;
         if (current->free)
-            if ((uint32_t)current == 3)
+            if ((uint32_t)current->free == 3)
                 freee = "END!";
             else
                 freee = "FREE";
         else
             freee = "NOTF";
-        printf("Current Node %h : %s, : %h\n", current, freee, current->size);
+        printf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
 
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
         //for(int i = 0;i < 1000000;i++);
     } while (current->free != 3);
+
+    char* freee;
+    if (current->free)
+        if ((uint32_t)current->free == 3)
+            freee = "END!";
+        else
+            freee = "FREE";
+    else
+        freee = "NOTF";
+    printf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
 }
 
 
@@ -141,7 +171,7 @@ void init_mem()
     top->free = 3;
     top->pad1 = 0xDE; top->pad2 = 0xDE; top->pad3 = 0xDE;
 
-    //printf("cap at %h\n", top);
+    ////printf("cap at %h\n", top);
 
     top = (header*) KERNEL_HEAP;
 
@@ -159,6 +189,8 @@ void free(void *memory)
     {
         if ((uint32_t)current + HEAD_SIZE == (uint32_t) memory)
         {
+
+            check_integrity(current);
             if (last != current && last->free)
             {
                 last->size = last->size + HEAD_SIZE + current->size;
@@ -186,7 +218,7 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
     {
         if (size + HEAD_SIZE < current->size && current->free)
         {
-            //printf("Found free node at %h size %d\n", current, current->size);
+            ////printf("Found free node at %h size %d\n", current, current->size);
             uint32_t node_size = current->size;
             uint32_t ret = (uint32_t)current + HEAD_SIZE;
 
@@ -197,7 +229,7 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
 
             current->size = node_size - size - HEAD_SIZE;
             current->free = true;
-            //printf("set next node at %h size %d\n", current, current->size);
+            ////printf("set next node at %h size %d\n", current, current->size);
 
             return (void *) ret;
         }

@@ -5,8 +5,8 @@
 #include "events.h"
 #include "../io/hdd.h"
 #include "../ELF/elf.h"
-#include "../mrfs/kmrfs.h"
-#include "../mrfs/mrfs.h"
+#include "../fs/kmrfs.h"
+#include "../fs/mrfs.h"
 #include "../io/port.h"
 
 static uint32_t current_pid;
@@ -27,6 +27,7 @@ uint32_t scheduler_ticks_ms()
 
 int32_t fork()
 {
+    //printf("[scheduler.c] CALL : fork()\n");
     int fork_pid = -1;
     if (next_pid == max_pid)
         fork_pid = scheduler_get_next_process(0, F_DEAD, FS_NONE);
@@ -46,10 +47,10 @@ int32_t fork()
     sprintf(proc_num_str,"%d",fork_pid);
 
     char procdir[7+7];
-    sprintf(procdir,"/proc/%d/",fork_pid);
+    sprintf(procdir,"/info/%d/",fork_pid);
 
     char parentprocdir[7+7];
-    sprintf(parentprocdir,"/proc/%d/",current_pid);
+    sprintf(parentprocdir,"/info/%d/",current_pid);
 
 //    printf("[scheduler.c] INFO : Got names:\n");
 //    printf("                   : %s:\n", proc_num_str);
@@ -58,16 +59,16 @@ int32_t fork()
 
 
 
-    kmrfsNewFolder("/proc/", proc_num_str);
+    kmrfsNewFolder("/info/", proc_num_str);
     char* f = kmrfsReadFile(parentprocdir, "name");
     kmrfsNewFile(procdir, "name", f, strlen(f));
 
 
     kmrfsNewFolder(procdir, "env");
     char envdir[18];
-    sprintf(envdir, "/proc/%d/env/", fork_pid);
+    sprintf(envdir, "/info/%d/env/", fork_pid);
     char parentenvdir[18];
-    sprintf(parentenvdir, "/proc/%d/env/", current_pid);
+    sprintf(parentenvdir, "/info/%d/env/", current_pid);
 
     char* parentPATH = kmrfsReadFile(parentenvdir, "PATH");
     char* parentcwd = kmrfsReadFile(parentenvdir, "cwd");
@@ -78,7 +79,7 @@ int32_t fork()
     free(parentPATH);
     free(parentcwd);
 
-    //printf("[scheduler.c] RETE : fork = %d\n", pid);
+    //printf("[scheduler.c] RETE : fork = %d\n", fork_pid);
     free(f);
     return fork_pid;
 }
@@ -92,6 +93,7 @@ void scheduler_exec_string(char *program_name)
 
 static void set_parameters(char** parameters)
 {
+    //printf("[scheduler.c] CALL : set_parameters()\n");
     uint32_t* num = (uint32_t*)0x80000000;
     *num = 0;
     for(uint32_t i = 0; parameters[i] != '\0'; i++) (*num)++;
@@ -109,29 +111,33 @@ static void set_parameters(char** parameters)
         sprintf(p, "%s", params[i]);
         p += strlen(p) + 1;
     }
+    //printf("[scheduler.c] RETE : set_parameters()\n");
 }
 
 void scheduler_exec_string_paramters(char *program_name, char** parameters)
 {
-
+    //printf("[scheduler.c] CALL : scheduler_exec_string_paramters(%s)\n", program_name);
     set_parameters(parameters);
 
     char envdir[19];
-    sprintf(envdir, "/proc/%d/env/", current_pid);
+    sprintf(envdir, "/info/%d/env/", current_pid);
     char* path = kmrfsReadFile(envdir, "PATH");
 
     char resloved_path_name[strlen(path) + strlen(program_name) + 1];
     sprintf(resloved_path_name, "%s%s",path, program_name);
-
+    //printf("[scheduler.c] INFO : resloved_path_name = %s\n", resloved_path_name);
 
     int64_t jump_target = -1;
 
     if (kmrfsFileExists(resloved_path_name))
     {
+        //printf("[scheduler.c] INFO : A\n");
         jump_target = elf_load(resloved_path_name, &(process_table[current_pid]));
+        //printf("[scheduler.c] INFO : A.A\n");
     }
     else
     {
+        //printf("[scheduler.c] INFO : B\n");
 
         char* cwd = kmrfsReadFile(envdir, "cwd");
 
@@ -142,8 +148,12 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
             jump_target = elf_load(resloved_cwd_name, &(process_table[current_pid]));
         free(cwd);
     }
-
+    //printf("!\n");
     free(path);
+    //printf("!\n");
+
+
+    //printf("[scheduler.c] INFO : here\n");
 
 
     if (jump_target == -1) // {no such file}
@@ -151,14 +161,12 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
         return;
     }
 
-    char cpudir[7+7 + 8];
     char namedir[7+7 + 8];
 
-    sprintf(cpudir, "/proc/%d/cputime",current_pid);
-    sprintf(namedir, "/proc/%d/name",current_pid);
+    sprintf(namedir, "/info/%d/name",current_pid);
 
     //printf("[scheduler.c] INFO : Got names:\n");
-    //printf("                   : %s:\n", procdir);
+    //printf("                   : %s:\n", namedir);
 
     FILE fd;
 
@@ -170,11 +178,8 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
     for(int i = 0; i < len;i++)
         mrfsPutC(&fd, program_name[i]);
 
-    mrfsOpenFile(cpudir, true, &fd);
 
-    mrfsPutC(&fd, '0');
-
-    //printf("LEAVING SCHEDULER to %h\n", jump_target);
+    printf("LEAVING SCHEDULER to %h\n", jump_target);
 
     asm("movl %0, %%esp"::"r"(0xbfffffff));
 
@@ -217,9 +222,9 @@ void scheduler_kill(uint32_t pid)
 
         terminal_clear_process(pid);
 
-        char procdir[7+7] = "/proc/";
+        char procdir[7+7] = "/info/";
 
-        sprintf(procdir, "/proc/%d/", pid);
+        sprintf(procdir, "/info/%d/", pid);
 
         FILE dd;
 
@@ -227,40 +232,6 @@ void scheduler_kill(uint32_t pid)
 
         mrfsDeleteDirWithDescriptor(&dd);
     }
-}
-
-static void write_processes_metric(uint32_t process)
-{
-    char procpath[7 + 7 + 9];
-    char cputime[11];
-    sprintf(procpath, "/proc/%d/%s", process, "cputime");
-    sprintf(cputime, "%d", process_table[process].cpu_time);
-
-    FILE fd;
-    mrfsOpenFile(procpath, false, &fd);
-    fd.index = 0;
-    int len = strlen(cputime);
-    for(int i = 0; i < len;i++)
-        mrfsPutC(&fd, cputime[i]);
-
-
-    sprintf(procpath, "/proc/%d/%s", process, "state");
-    mrfsOpenFile(procpath, true, &fd);
-    fd.index = 0;
-    mrfsPutC(&fd, process_table[process].flags);
-
-}
-
-static void scheduler_write_metrics(void)
-{
-    int process = 0;
-    do
-    {
-        write_processes_metric(process);
-        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
-    } while (process != 0);
-    events_new_event((0&0xFFFF) + (E_METRICS << 16), global_ms +1000);
-
 }
 
 static void events()
@@ -272,10 +243,6 @@ static void events()
         if ((event >> 16) == E_WAKE)
         {
             scheduler_unmark_process_as(event&0xFFFF, (F_PAUSED | F_SKIP));
-        }
-        if ((event >> 16) == E_METRICS)
-        {
-            scheduler_write_metrics();
         }
     }
 }
@@ -406,15 +373,11 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
     process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
 
-    kmrfsNewFolder("/proc/", "0");
-    kmrfsNewFile("/proc/0/", "name", "/init", 5);
-    kmrfsNewFile("/proc/0/", "cputime", "0", 1);
+    kmrfsNewFolder("/info/", "0");
 
-    kmrfsNewFolder("/proc/0/", "env");
-    kmrfsNewFile("/proc/0/env/", "PATH", "/bin/", strlen("/bin/"));
-    kmrfsNewFile("/proc/0/env/", "cwd", "/", strlen("/"));
-
-    events_new_event((0&0xFFFF) + (E_METRICS << 16), 1000);
+    kmrfsNewFolder("/info/0/", "env");
+    kmrfsNewFile("/info/0/env/", "PATH", "/bin/", strlen("/bin/"));
+    kmrfsNewFile("/info/0/env/", "cwd", "/", strlen("/"));
 
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 

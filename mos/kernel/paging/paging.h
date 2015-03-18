@@ -9,9 +9,9 @@
 
 static const uint32_t DIRECTORY            = 0xFFFFF000;
 static const uint32_t KERNEL_HEAP          = 0xC0010000;
-static const uint32_t HDD_CACHE_TABLE___   = 0xC0009000;
-static const uint32_t HDD_CACHE_TABLE__    = 0xC0009000;
-static const uint32_t HDD_CACHE_TABLE_     = 0xC0009000;
+static const uint32_t HDD_CACHE_TABLE___   = 0xC000C000;
+static const uint32_t HDD_CACHE_TABLE__    = 0xC000B000;
+static const uint32_t HDD_CACHE_TABLE_     = 0xC000A000;
 static const uint32_t HDD_CACHE_TABLE      = 0xC0009000;
 static const uint32_t EVENT_TABLE          = 0xC0008000;
 static const uint32_t PIPE_TABLE           = 0xC0007000;

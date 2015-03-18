@@ -1,3 +1,4 @@
+#pragma once
 #include "../declarations.h"
 #include "../kstdlib/string.h"
 #define SUPERBLOCKSIZE 7*4

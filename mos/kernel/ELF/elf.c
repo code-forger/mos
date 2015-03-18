@@ -1,5 +1,5 @@
 #include "elf.h"
-#include "../mrfs/kmrfs.h"
+#include "../fs/kmrfs.h"
 
 static void set_ptb(process_table_entry* ptb)
 {
@@ -48,17 +48,18 @@ static char* load_file(const char* name)
     {
         dn[i] = name[i];
     }
-
+    printf("READING : %s : %s\n",dn,fn);
     return kmrfsReadFile(dn, fn);
 }
 
 int64_t elf_load(const char* name, process_table_entry* ptb)
 {
+    printf("THIS");
     char* file = load_file(name);
-    //printf("found file %s\n", file);
+    printf("found file %s\n", file);
     if (file[0] == '\0')
     {
-        //printf("FAILED TO FIND FILE %s\n", name);
+        printf("FAILED TO FIND FILE %s\n", name);
         return -1;
     }
 

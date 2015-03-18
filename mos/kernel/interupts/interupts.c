@@ -2,7 +2,7 @@
 #include "../scheduler/scheduler.h"
 #include "../IPC/pipe.h"
 #include "../kstdlib/kstdlib.h"
-#include "../mrfs/mrfs.h"
+#include "../fs/mrfs.h"
 
 void  c_int_zero_division(void)
 {
@@ -112,7 +112,8 @@ void  c_int_page_fault(void)
     uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
     printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
-    //dump_memory(0x80000004);
+    clean_memory();
+    dump_memory(KERNEL_HEAP);
     asm("cli");
     asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);

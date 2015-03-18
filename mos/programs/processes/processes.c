@@ -91,6 +91,16 @@ char* get_metric(char* num, char* metric)
     return file_read_data(metric_file);
 }
 
+char* get_info(char* num, char* metric)
+{
+    char *metric_path = malloc(7 + strlen(num) + strlen(metric));
+    sprintf(metric_path, "/info/%s/%s", num, metric);
+    FILE metric_file;
+    fopen(metric_path, &metric_file, false);
+    free(metric_path);
+    return file_read_data(metric_file);
+}
+
 char *get_state_string(char*in)
 {
     char b = in[0];
@@ -132,7 +142,7 @@ void main(void)
         line = 5;
 
         FILE dd;
-        fopendir("/proc/", false, &dd);
+        fopendir("/info/", false, &dd);
 
         FILE process_dir;
 
@@ -169,10 +179,9 @@ void main(void)
         {
             char *num = file_read_name(process_dir);
 
-            char* namestring = get_metric(num, "name");
+            char* namestring = get_info(num, "name");
             char* cputimestring = get_metric(num, "cputime");
             char* statestring = get_metric(num, "state");
-
             this_cycle_ms[line-5] = atoi(cputimestring);
 
             char fcputimestring[9];

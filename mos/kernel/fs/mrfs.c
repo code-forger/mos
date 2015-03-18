@@ -1,5 +1,6 @@
 #include "mrfs.h"
 #include "kmrfs.h"
+#include "vfs.h"
 //#include "fileexceptions.h"
 #include "../io/terminal.h"
 
@@ -92,6 +93,16 @@ int mrfsRename(char* oldname, char* newname)
 }
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
+    int virtual_type = vfs_open_virtual(name, fout);
+    if (virtual_type == 0)
+        return;
+    else if(virtual_type == 2)
+    {
+        fout->inode = -1;
+        fout->index = fout->size = -1;
+        fout->type = 2;
+        return;
+    }
     char* namecpy = malloc(strlen(name)+1);
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
@@ -509,13 +520,13 @@ uint32_t mrfs_behaviour_test()
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
-    mrfsRename("/moved", "/proc/foldermoved");
+    mrfsRename("/moved", "/temp/foldermoved");
     hdd_write_cache();
 
 
     mrfsOpenFile("/moved", false, &fd);
     failures += ktest_assert("[MRFS] : moving file should make old file not exist", fd.type == 2, ASSERT_CONTINUE);
-    mrfsOpenFile("/proc/foldermoved", false, &fd);
+    mrfsOpenFile("/temp/foldermoved", false, &fd);
     failures += ktest_assert("[MRFS] : moving file should make new file exist", fd.type == 0, ASSERT_CONTINUE);
     failures += ktest_assert("[MRFS] : moving file should make new file same size as old", fd.size == 5, ASSERT_CONTINUE);
 

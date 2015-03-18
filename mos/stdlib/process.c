@@ -77,7 +77,7 @@ void show(uint32_t pid)
 int get_env(char* key, FILE *valuefile)
 {
     char* env_target = malloc(20+strlen(key));
-    sprintf(env_target, "/proc/%d/env/%s", get_pid(), key);
+    sprintf(env_target, "/info/%d/env/%s", get_pid(), key);
 
     fopen(env_target, valuefile, 0);
 

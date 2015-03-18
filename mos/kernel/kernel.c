@@ -6,8 +6,8 @@
 #include "IPC/pipe.h"
 #include "io/hdd.h"
 #include "kstdlib/kstdlib.h"
-#include "mrfs/mrfs.h"
-#include "mrfs/kmrfs.h"
+#include "fs/mrfs.h"
+#include "fs/kmrfs.h"
 #include "paging/paging.h"
 #include "io/hdd.h"
 #include "io/port.h"
@@ -46,14 +46,6 @@ void init_kernel()
     keryboard_init();
 
     kmrfsFormatHdd(4*1024, 0);
-
-    FILE dd;
-
-    mrfsOpenDir("/proc/", true, &dd);
-
-    mrfsDeleteDirWithDescriptor(&dd);
-
-    mrfsOpenDir("/proc/", true, &dd);
 
     kernel_set_pit();
     for(int i = 0 ; i < 0000001; i++);

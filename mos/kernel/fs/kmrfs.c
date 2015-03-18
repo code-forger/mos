@@ -1,6 +1,7 @@
 #include "kmrfs.h"
 //#include "fileexceptions.h"
 #include "../io/terminal.h"
+#include "mrfs.h"
 
 //These three functions  are  helper functions that allow the caller to get inodes off the by name and path, they are used to abstract the name → inode relationship
 
@@ -128,6 +129,19 @@ int kmrfsFormatHdd(int _blockSize, int rootDirSize)
 
     if (sb.data.magic_number == (int32_t)0xADDEADBE)
     {
+        FILE dd;
+
+        mrfsOpenDir("/proc/", true, &dd);
+        mrfsDeleteDirWithDescriptor(&dd);
+        mrfsOpenDir("/proc/", true, &dd);
+
+        mrfsOpenDir("/info/", true, &dd);
+        mrfsDeleteDirWithDescriptor(&dd);
+        mrfsOpenDir("/info/", true, &dd);
+
+        mrfsOpenDir("/temp/", true, &dd);
+        mrfsDeleteDirWithDescriptor(&dd);
+        mrfsOpenDir("/temp/", true, &dd);
         return 0;
     }
     else
@@ -315,18 +329,25 @@ int kmrfsNewFolder(char* path,char* foldername)
 
 char* kmrfsReadFile(char* path,char* filename)
 {
+    printf("KMRFS 1\n");
     union Inode inode = getInodeByName(path, filename);
+    printf("KMRFS 2\n");
 
     if (inode.node.info.exists == 0)
         return "\0";//return NOSUCHFILEORDIRECTORY;
+    printf("KMRFS 3\n");
 
     int numblocks = inode.node.size/(sb.data.blockSize-8)  + 1;
-    char* outputstream = malloc(sizeof(char)*(inode.node.size + 1));
+    char* outputstream = malloc(sizeof(char)*(inode.node.size + 10));
+    printf("KMRFS 4\n");
     int* pointers = inodeGetPointers(inode);
     int length = 0;
+    printf("KMRFS 5\n");
     for(int i = 0; i < numblocks; i++)
     {
+        printf("KMRFS 5.1 %d %h\n",i,pointers[i]);
         char* block = blockRead(pointers[i]);
+        printf("KMRFS 6\n");
 
         union int_char blockfilllevel;
         for (int j = 0; j < 4; j++)
@@ -339,10 +360,12 @@ char* kmrfsReadFile(char* path,char* filename)
         }
         length += blockfilllevel.i;
         free(block);
+        printf("KMRFS 7\n");
     }
 
     outputstream[length] = 0;
     free(pointers);
+    printf("KMRFS 7\n");
     return outputstream;
 }
 

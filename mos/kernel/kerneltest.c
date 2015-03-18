@@ -1,5 +1,5 @@
 #include "kerneltest.h"
-#include "mrfs/mrfs.h"
+#include "fs/mrfs.h"
 #include "kstdlib/kstdlib.h"
 
 int verbosity = 0;

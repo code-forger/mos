@@ -9,3 +9,4 @@ int strlen(const char * str);
 char *strcpy(char *dest, const char *src);
 
 int sprintf(char* s, const char* string, ...);
+int atoi(const char* s);

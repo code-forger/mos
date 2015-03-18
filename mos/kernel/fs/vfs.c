@@ -15,11 +15,10 @@ static uint32_t is_virtual(char*path)
 uint32_t vfs_open_virtual(char* path, FILE *fd)
 {
     int ret;
-    char* path_cpy = malloc(strlen(path));
+    char* path_cpy = malloc(strlen(path)+10);
     strcpy(path_cpy, path);
     if(is_virtual(path_cpy))
     {
-        //printf("Looking up vfs for %s\n", path);
         int pid_pointer = 1;
         int field = 1;
         for(;path_cpy[pid_pointer] != '\0' && path_cpy[pid_pointer] != '/'; pid_pointer++);

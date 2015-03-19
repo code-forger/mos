@@ -97,6 +97,7 @@ int mrfsRename(char* oldname, char* newname)
 
     return 0;
 }
+
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
     int virtual_type = vfs_open_virtual(name, fout);
@@ -439,11 +440,20 @@ uint32_t mrfs_behaviour_test()
 {
     int failures = 0;
 
-    //printf("Starting MRFS Tests.\n");
-
     FILE fd;
 
+    //test mrfsOpenFile
+
     mrfsOpenFile("/test", true, &fd);
+
+    failures += ktest_assert("[MRFS] : opening file should yield of file type 0", fd.type == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield parent of 0", fd.parent == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield size of 0", fd.size == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield index of 0", fd.index == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield namesize of 4 [test]", fd.namesize == 4, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield nameindex of 4 [test]", fd.nameindex == 4, ASSERT_CONTINUE);
+
+    //test mrfsPutC
 
     fd.index = 0;
 
@@ -453,7 +463,9 @@ uint32_t mrfs_behaviour_test()
     mrfsPutC(&fd, 'd');
     mrfsPutC(&fd, 'e');
 
-    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal", fd.index == fd.size, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal and equal 5", (fd.index == fd.size) && (fd.index == 5), ASSERT_CONTINUE);
+
+    //test mrfsPutC
 
     fd.index = 0;
 
@@ -463,8 +475,25 @@ uint32_t mrfs_behaviour_test()
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
+    fd.nameindex = 0;
+    for (int i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
+    buff[4] = '\0';
+
+    failures += ktest_assert("[MRFS] : writing then reading a file name should give identical result", !strcmp("test",buff), ASSERT_CONTINUE);
+
+
+    //repeat test mrfsOpenFile for open file
 
     mrfsOpenFile("/test", true, &fd);
+
+    failures += ktest_assert("[MRFS] : opening file should yield of file type 0", fd.type == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield parent of 0", fd.parent == 0, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield size of 0", fd.size == 5, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield index of 0", fd.index == 5, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield namesize of 4 [test]", fd.namesize == 4, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : opening file should yield nameindex of 4 [test]", fd.nameindex == 4, ASSERT_CONTINUE);
+
+    //repeat test mrfsPutC for open file
 
     fd.index = 0;
 
@@ -474,7 +503,9 @@ uint32_t mrfs_behaviour_test()
     mrfsPutC(&fd, 'd');
     mrfsPutC(&fd, 'e');
 
-    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal", fd.index == fd.size, ASSERT_CONTINUE);
+    failures += ktest_assert("[MRFS] : writing block file should leave index and size equal and equal 5", (fd.index == fd.size) && (fd.index == 5), ASSERT_CONTINUE);
+
+    //repeat test mrfsPutC for open file
 
     fd.index = 0;
 
@@ -483,22 +514,17 @@ uint32_t mrfs_behaviour_test()
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
+    //test deleting a file with a descriptor.
+
     mrfsDeleteFileWithDescriptor(&fd);
-    //mrfsDeleteFileWithDescriptor(&fd);
+
+    //test open file with no create
 
     mrfsOpenFile("/test", false, &fd);
 
     failures += ktest_assert("[MRFS] : opening non existant file with no create should not create", (fd.type==2), ASSERT_CONTINUE);
 
-
-    mrfsOpenFile("/test", true, &fd);
-
-    mrfsDeleteFileWithDescriptor(&fd);
-
-    mrfsOpenFile("/test", false, &fd);
-
-    failures += ktest_assert("[MRFS] : deleting file should leave it deleted", (fd.type==2), ASSERT_CONTINUE);
-
+    //test-setup mrfsRename
 
     mrfsOpenFile("/test-mv", true, &fd);
 
@@ -510,8 +536,9 @@ uint32_t mrfs_behaviour_test()
     mrfsPutC(&fd, 'd');
     mrfsPutC(&fd, 'e');
 
+    //test mrfsRename
+
     mrfsRename("/test-mv", "/moved");
-    hdd_write_cache();
 
 
     mrfsOpenFile("/test-mv", false, &fd);
@@ -527,9 +554,15 @@ uint32_t mrfs_behaviour_test()
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
-    mrfsRename("/moved", "/temp/foldermoved");
-    hdd_write_cache();
+    fd.nameindex = 0;
+    for (int i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
+    buff[5] = '\0';
 
+    failures += ktest_assert("[MRFS] : moving then reading a file name should give identical result", !strcmp("moved",buff), ASSERT_CONTINUE);
+
+    //test mrfsRename into new dir
+
+    mrfsRename("/moved", "/temp/foldermoved");
 
     mrfsOpenFile("/moved", false, &fd);
     failures += ktest_assert("[MRFS] : moving file should make old file not exist", fd.type == 2, ASSERT_CONTINUE);
@@ -543,7 +576,6 @@ uint32_t mrfs_behaviour_test()
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
-
 
     hdd_write_cache();
 

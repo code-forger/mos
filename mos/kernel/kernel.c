@@ -50,7 +50,7 @@ void init_kernel()
     kernel_set_pit();
     for(int i = 0 ; i < 0000001; i++);
 
-    if(keyboard_get_a_byte() == 't')
+    if(keyboard_get_a_byte() != 't')
         kernel_test_mode(TEST_STRESS, TEST_QUIET);
 
     uint32_t esp, ebp;

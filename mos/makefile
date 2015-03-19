@@ -22,6 +22,7 @@
 	./mrfs-write disk.img /bin/ rm file programs/rm/rm
 	./mrfs-write disk.img /bin/ touch file programs/touch/touch
 	./mrfs-write disk.img /bin/ kill file programs/kill/kill
+	./mrfs-write disk.img /bin/ fork_bomb file programs/fork_bomb/fork_bomb
 	./mrfs-write disk.img / user raw "Michael Rochester"
 	./mrfs-write disk.img / todo file todo
 

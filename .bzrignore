@@ -9,3 +9,8 @@ IReport/report.log
 IReport/report.pdf
 IReport/report.toc
 .bzr.retired.0
+*.log
+*.dvi
+*disk.img
+buildtools
+glibc

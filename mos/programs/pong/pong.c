@@ -14,8 +14,11 @@
 #define LCTRL_UP   (char)0x9D
 #define RCTRL_UP   (char)0x00
 
-#define PADDLE_L_RANK 2
-#define PADDLE_R_RANK 77
+static int PADDLE_L_RANK;
+static int PADDLE_R_RANK;
+
+static int incwidth;
+static int incheight;
 
 static int paddle_l;
 static int paddle_r;
@@ -46,7 +49,7 @@ void paddle_r_up()
 
 void paddle_l_down()
 {
-    if (paddle_l != 20)
+    if (paddle_l != incheight-2)
     {
         putcharat(' ', PADDLE_L_RANK, paddle_l-1);
         paddle_l++;
@@ -56,7 +59,7 @@ void paddle_l_down()
 
 void paddle_r_down()
 {
-    if (paddle_r != 20)
+    if (paddle_r != incheight-2)
     {
         putcharat(' ', PADDLE_R_RANK, paddle_r-1);
         paddle_r++;
@@ -75,13 +78,13 @@ void draw_paddles()
 
 void game_loop()
 {
-    paddle_l = paddle_r = 11;
+    paddle_l = paddle_r = incheight / 2;
     draw_paddles();
     int state = 0;
     int ticks = ticks_ms();
     int since_last = 0;
 
-    int ball_x = 70, ball_y = 11, ball_vx = -1, ball_vy = 0;
+    int ball_x = incwidth*2 /3, ball_y = incheight/2, ball_vx = -1, ball_vy = 0;
 
     while(1)
     {
@@ -91,7 +94,7 @@ void game_loop()
         {
             since_last = 0;
             int new_x = ball_x + ball_vx, new_y = ball_y + ball_vy;
-            if(new_y < 1 || new_y > 21)
+            if(new_y < 1 || new_y > incheight-1)
             {
                 ball_vy *= -1;
                 new_y = ball_y + ball_vy;
@@ -146,8 +149,8 @@ void game_loop()
             }
             else if(new_x == PADDLE_L_RANK - 1)
             {
-                 new_x = 70;
-                 new_y = 11;
+                 new_x = incwidth* 2 / 3;
+                 new_y = incheight / 2;
                  ball_vx = -1;
                  ball_vy = 0;
                  rscore += 1;
@@ -155,8 +158,8 @@ void game_loop()
             }
             else if(new_x == PADDLE_R_RANK + 1)
             {
-                 new_x = 70;
-                 new_y = 11;
+                 new_x = incwidth* 2 / 3;
+                 new_y = incheight / 2;
                  ball_vx = -1;
                  ball_vy = 0;
                  lscore += 1;
@@ -206,20 +209,20 @@ void game_loop()
 
 void print_border()
 {
-    for(int i = 1 ; i < 79; i++)
+    for(int i = 1 ; i < incwidth; i++)
     {
         putcharat('-', i, 0);
-        putcharat('-', i, 22);
+        putcharat('-', i, incheight);
     }
-    for(int i = 1 ; i < 22; i++)
+    for(int i = 1 ; i < incheight; i++)
     {
         putcharat('|', 0, i);
-        putcharat('|', 79, i);
+        putcharat('|', incwidth, i);
     }
     putcharat('$', 0, 0);
-    putcharat('$', 79, 0);
-    putcharat('$', 0, 22);
-    putcharat('$', 79, 22);
+    putcharat('$', incwidth, 0);
+    putcharat('$', 0, incheight);
+    putcharat('$', incwidth, incheight);
 }
 
 void print_header()
@@ -229,13 +232,24 @@ void print_header()
     sprintf(header + score1len, "%d  PONG  %d", lscore, rscore);
     for (int i = 0; header[i]; i++)
     {
-        putcharat(header[i], 33+i, 0);
+        putcharat(header[i], (incwidth/2-5)+i, 0);
     }
 }
 
 void main(int argc, char** argv)
 {
-    setio(0, 1, 79, 22);
+    incwidth = 79;
+    incheight = 22;
+    if (argc == 4)
+    {
+        incwidth = atoi(argv[2]);
+        incheight = atoi(argv[3]);
+        setio(atoi(argv[0]), atoi(argv[1]), incwidth, incheight);
+    }
+    else
+        setio(0, 1, incwidth, incheight);
+    PADDLE_L_RANK = 2;
+    PADDLE_R_RANK = incwidth - 2;
     stdin_init();
 
     lscore = rscore = 0;

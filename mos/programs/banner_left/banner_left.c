@@ -25,12 +25,13 @@ void main(void)
     lines[8] = l9;
     lines[9] = l10;
     lines[0] = l11;
-    setio(0, 1, 26, 15);
+    setio(0, 1, 27, 10);
 
     for (int line = 0;;line = ++line % 10)
     {
         printf(lines[line]);
-        sleep(500);
+        sleep(200);
+        printf("\n");
     }
     for (;;);
 }

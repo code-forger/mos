@@ -77,8 +77,8 @@ void write_rubertic()
     char *ruberic = "press k to kill the current [>] processes";
     int rub_len = strlen(ruberic);
 
-    for (int i = 0; i < rub_len; i++)
-        putcharat(ruberic[i], 4+i,21);
+    //for (int i = 0; i < rub_len; i++)
+    //    putcharat(ruberic[i], 4+i,21);
 }
 
 char* get_metric(char* num, char* metric)
@@ -139,7 +139,7 @@ void main(int argc, char** argv)
     setio(0, top, 79, height);
     stdin_init();
 
-    printf("    Running Processes:\n\n");
+    //printf("    Running Processes:\n\n");
     write_rubertic();
     write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
     write_metrics(line++, "pid", "command", "cpu time", "cpu %", "state", "|  |");
@@ -217,7 +217,7 @@ void main(int argc, char** argv)
         }
 
         write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
-        write_blank(line);
+        //write_blank(line);
 
         if (last_cycle_ms != 0)
             free(last_cycle_ms);

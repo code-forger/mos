@@ -118,7 +118,7 @@ char *get_state_string(char*in)
     return out;
 }
 
-void main(void)
+void main(int argc, char** argv)
 {
     selected_process = 0;
     table_offset = 3;
@@ -128,7 +128,15 @@ void main(void)
     int line = 2;
     int* last_cycle_ms = 0;
 
-    setio(0, 1, 79, 22);
+    int top=1, height=22;
+
+    if(argc == 2)
+    {
+        top = atoi(argv[0]);
+        height = atoi(argv[1]);
+    }
+
+    setio(0, top, 79, height);
     stdin_init();
 
     printf("    Running Processes:\n\n");

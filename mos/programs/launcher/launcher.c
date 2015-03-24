@@ -5,6 +5,35 @@
 #define LCTRL_UP   (char)0x9D
 #define RCTRL_UP   (char)0x00
 
+#define UP    (char)0x48
+#define DOWN  (char)0x50
+#define LEFT  (char)0x4B
+#define RIGHT (char)0x4D
+
+typedef struct commandnode
+{
+    struct commandnode* next;
+    struct commandnode* prev;
+    char* command;
+} commandnode;
+
+static commandnode* bottom;
+static commandnode* top;
+
+static void add_command(char* buff)
+{
+    char *command_str = malloc(strlen(buff)+1);
+    strcpy(command_str, buff);
+    commandnode* next = malloc(sizeof(commandnode));
+
+    bottom->prev = next;
+    next->next = bottom;
+    next->command = command_str;
+    next->prev = 0;
+
+    bottom = next;
+}
+
 static void split_command(char* buffer,char ** command,char *** parameters)
 {
     int command_len = 0;
@@ -64,6 +93,12 @@ void main(void)
 
     char *buffer = malloc(80 -  carret_base);
 
+    bottom = top = malloc(sizeof(commandnode));
+
+    commandnode* current = 0;
+
+    bottom->next = 0;
+    bottom->command = "END OF HISTORY";
 
 
     int caret_loc = 0;
@@ -82,7 +117,53 @@ void main(void)
         if (get > 0)
         {
             char c = (char)get;
-            if (special_char) special_char = 0;
+            if (special_char)
+            {
+                special_char = 0;
+                switch(c)
+                {
+                case UP:
+                    if (current == 0)
+                        current = bottom;
+                    else
+                    {
+                        current = current->next;
+                        if (current == 0)
+                            current = bottom;
+                    }
+                    for (int j = 0; j < 80 -  carret_base; j++)
+                    {
+                        putcharat(buffer[j] = ' ', carret_base + j, 0);
+                    }
+                    caret_loc = 0;
+                    for (int j = 0; j < 80 -  carret_base && current->command[j]!='\0'; j++)
+                    {
+                        putcharat(buffer[j] = current->command[j], carret_base + j, 0);
+                        caret_loc++;
+                    }
+                    break;
+                case DOWN:
+                    if (current == 0)
+                        current = top;
+                    else
+                    {
+                        current = current->prev;
+                        if (current == 0)
+                            current = top;
+                    }
+                    for (int j = 0; j < 80 -  carret_base; j++)
+                    {
+                        putcharat(buffer[j] = ' ', carret_base + j, 0);
+                    }
+                    caret_loc = 0;
+                    for (int j = 0; j < 80 -  carret_base && current->command[j]!='\0'; j++)
+                    {
+                        putcharat(buffer[j] = current->command[j], carret_base + j, 0);
+                        caret_loc++;
+                    }
+
+                }
+            }
 
             else if (c == '\b')
             {
@@ -103,6 +184,8 @@ void main(void)
                     execp(command, parameters);
                     return;
                 }
+                add_command(buffer);
+                current = 0;
                 for (int j = 0; j < 80 -  carret_base; j++)
                 {
                     putcharat(buffer[j] = ' ', carret_base + j, 0);

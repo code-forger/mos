@@ -1,0 +1,8 @@
+!!!
+Program : man
+usage : man <program_name>
+
+Output : position = (0, 1) size = 79x22
+Input : 'q' to quit
+
+man will display the man page for the given program if it exists

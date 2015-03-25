@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code estimate_uptime-code joeprogram-code joeprogram2-code joeprogram3-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code
+all: init-code name-code banner_left-code time-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code man-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -11,18 +11,6 @@ all: init-code name-code banner_left-code time-code estimate_uptime-code joeprog
 
 .PHONY time-code:
 	$(MAKE) -C time
-
-.PHONY estimate_uptime-code:
-	$(MAKE) -C estimate_uptime
-
-.PHONY joeprogram-code:
-	$(MAKE) -C joeprogram
-
-.PHONY joeprogram2-code:
-	$(MAKE) -C joeprogram2
-
-.PHONY joeprogram3-code:
-	$(MAKE) -C joeprogram3
 
 .PHONY notes-code:
 	$(MAKE) -C notes
@@ -62,3 +50,6 @@ all: init-code name-code banner_left-code time-code estimate_uptime-code joeprog
 
 .PHONY fork_bomb-code:
 	$(MAKE) -C fork_bomb
+
+.PHONY man-code:
+	$(MAKE) -C man

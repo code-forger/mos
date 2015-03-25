@@ -2,6 +2,7 @@
 #include "../../stdlib/pipe.h"
 #include "../../stdlib/process.h"
 #include "../../stdlib/string.h"
+#include "../../stdlib/time.h"
 
 #define UP    (char)0x48
 #define DOWN  (char)0x50
@@ -128,6 +129,8 @@ void main(int argc, char** argv)
     int line = 2;
     int* last_cycle_ms = 0;
 
+    int last_ticks, this_ticks;
+
     int top=1, height=22;
 
     if(argc == 2)
@@ -183,6 +186,8 @@ void main(int argc, char** argv)
                 return;
         }
 
+        this_ticks = ticks_ms() + 200;
+
         for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
         {
             char *num = file_read_name(process_dir);
@@ -199,7 +204,7 @@ void main(int argc, char** argv)
             if (last_cycle_ms != 0)
             {
                 int ms_this_cycle = this_cycle_ms[line-5] - last_cycle_ms[line-5];
-                int percent = (ms_this_cycle * 100) / 1000;
+                int percent = (ms_this_cycle * 100) / (this_ticks - last_ticks);
                 if (kpress)
                     sprintf(percent_str, "---%%");
                 else
@@ -222,6 +227,7 @@ void main(int argc, char** argv)
         if (last_cycle_ms != 0)
             free(last_cycle_ms);
         last_cycle_ms = this_cycle_ms;
+        last_ticks = ticks_ms();
         kpress = 0;
         sleep(1000);
     }

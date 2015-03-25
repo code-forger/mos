@@ -1,0 +1,9 @@
+Program : name
+usage : name
+
+Output : position = (80 - [var 1], 0) size = [var 1]x1
+Input : N/A
+
+name will display the first line of /user in the top right corner of the screen.
+
+[var 1] is the length of the first line of the file.

@@ -1,0 +1,7 @@
+Program : launcher
+usage : launcher
+
+Output : position = (0, 24) size = 79x1
+Input : full keyboard input
+
+launcher is a shell for executing other programs, you are already using it.

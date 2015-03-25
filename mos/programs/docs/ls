@@ -1,0 +1,9 @@
+Program : ls
+usage : ls </path/to/directoy/> [-a]
+
+Output : position = (0, 1) size = 79x22
+Input : 'q' to quit
+
+ls will print all children of the specified directory.
+
+-a will show hidden files.

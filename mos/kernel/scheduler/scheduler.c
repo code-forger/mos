@@ -236,7 +236,7 @@ void scheduler_kill(uint32_t pid)
 
 static void events()
 {
-    global_ms += 10;
+    global_ms += scheduler_from?0:10;
     int64_t event = 0;
     while ((event = events_get_event(global_ms)) >= 0)
     {
@@ -264,6 +264,9 @@ int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, ui
     return current_input;
 }
 
+static uint32_t process_history[10];
+static uint32_t process_history_count;
+
 void scheduler_time_interupt()
 {
     asm("cli");
@@ -273,8 +276,24 @@ void scheduler_time_interupt()
     asm("movl %0, %%esp"::"r"(kernel_esp):"ebx");
     asm("movl %0, %%ebp"::"r"(kernel_ebp):"ebx");
 
+    if (scheduler_from && scheduler_from != 1)
+        scheduler_from = 0;
 
-    process_table[current_pid].cpu_time += 10;
+    if (scheduler_from)
+        printf("early interupt from %d for val %d\n", current_pid, scheduler_from);
+
+    if (scheduler_from)
+        process_history[process_history_count++] = current_pid;
+    else if (process_history_count)
+    {
+        for(uint32_t i = 0; i < process_history_count; i++)
+            process_table[process_history[i]].cpu_time += 10 / process_history_count;
+        process_history_count = 0;
+    }
+    else
+        process_table[current_pid].cpu_time += 10;
+
+    //interupted = scheduler_from;
 
     if (process_table[current_pid].io.outpipe != 0 && !(process_table[current_pid].flags & F_DEAD))
         terminal_string_for_process(&process_table[current_pid].io);
@@ -355,6 +374,8 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     global_ms = 0;
     current_pid = 0;
     next_pid = 1;
+
+    process_history_count = 0;
 
     process_table = paging_get_process_table();
 

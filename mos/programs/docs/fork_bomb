@@ -1,0 +1,7 @@
+Program : Fork Bomb
+usage : fork_bomb
+
+Output : N/A
+Input : 'N/A
+
+fork bomb will attempt to fork, and exec it's self on both processes, resulting in exponentially more Fork Bombs

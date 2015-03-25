@@ -17,7 +17,7 @@ int32_t fork()
     asm("cli");
     int32_t pid = 0;
     asm("int $90": :"S"(&pid));
-    asm("int $32");
+    asm("int $32": :"D"(1));
     asm("sti");
     return pid;
 }
@@ -25,7 +25,7 @@ void sleep(uint32_t millseconds)
 {
     asm("cli");
     asm("int $93"::"S"(millseconds):);
-    asm("int $32");
+    asm("int $32": :"D"(1));
     asm("sti");
 }
 
@@ -33,7 +33,7 @@ void pause()
 {
     asm("cli");
     asm("int $94");
-    asm("int $32");
+    asm("int $32": :"D"(1));
     asm("sti");
 }
 
@@ -56,7 +56,7 @@ void kill(uint32_t pid)
 {
     asm("cli");
     asm("int $96"::"S"(pid):);
-    asm("int $32");
+    asm("int $32": :"D"(1));
     asm("sti");
 }
 

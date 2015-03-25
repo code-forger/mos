@@ -1,0 +1,7 @@
+Program : banner_left
+usage : banner_left
+
+Output : position = (0, 1) size = 27x10
+Input : N/A
+
+This program will display the MOS logo in a spinning banner

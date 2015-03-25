@@ -64,5 +64,8 @@ typedef struct p_t_entry
     uint8_t padding;
 } __attribute__((packed)) process_table_entry;
 
+
+uint32_t scheduler_from;
+
 process_table_entry scheduler_get_process_table_entry(uint32_t pid);
 process_table_entry* scheduler_get_process_table_entry_for_editing(uint32_t pid);

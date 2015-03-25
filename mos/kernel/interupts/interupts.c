@@ -112,10 +112,13 @@ void  c_int_page_fault(void)
     uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
     printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
-    clean_memory();
-    dump_memory(KERNEL_HEAP);
-    asm("cli");
-    asm("hlt");
+    //clean_memory();
+    //dump_memory(KERNEL_HEAP);
+    scheduler_kill(scheduler_get_pid());
+    scheduler_from = 1;
+    scheduler_time_interupt();
+    //asm("cli");
+    //asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -162,7 +165,10 @@ void  c_default_irq(void)
 
 void  c_timer_irq(void)
 {
+    asm("mov %%edi, %0":"=r"(scheduler_from):);
     scheduler_time_interupt();
+    scheduler_from = 0;
+    asm("mov %0, %%edi":"=r"(scheduler_from):);
     send_byte_to(MASTER_PIC, 0x20);
 }
 

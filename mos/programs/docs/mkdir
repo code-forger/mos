@@ -1,0 +1,7 @@
+Program : mkdir
+usage : mkdir </path/to/directoy/>
+
+Output : N/A
+Input : N/A
+
+mkdir will create a new directory with the given path.

@@ -1,0 +1,7 @@
+Program : kill
+usage : kill <process_id>
+
+Output : N/A
+Input :  N/A
+
+kill will request the kernel kill the process specified. process 0 cannot be killed.

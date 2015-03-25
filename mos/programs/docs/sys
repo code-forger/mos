@@ -1,0 +1,12 @@
+MOS : A simple multitasking OS!
+
+Where to start with mos:
+ - Now that you have found this guide, the next thing to do would be to check
+   on your installed programs:
+
+     programs are located in /bin/. to view them try "ls /bin/" in launcher.
+
+     To get back to launcher from here hit ctrl+tab. ctrl+tab switches between
+     active processes.
+
+     shift+tab is also your friend, it will switch to the next hidden process.

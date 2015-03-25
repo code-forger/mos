@@ -1,0 +1,7 @@
+Program : mv
+usage : mv </path/to/file> </new/path/to/file>
+
+Output : N/A
+Input : N/A
+
+mv will move the specified file from its current location to the new location.

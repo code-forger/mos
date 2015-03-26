@@ -54,6 +54,10 @@ interupts/interupts.o: interupts/interupts.c interupts/interupts.asm
 	nasm -f elf32 interupts/interupts.asm -o interupts/interupts-asm.o
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
+interupts/interupts-asm.o: interupts/interupts.c interupts/interupts.asm
+	nasm -f elf32 interupts/interupts.asm -o interupts/interupts-asm.o
+	$(GCC) -c $< -o $@ $(CPPFLAGS)
+
 IPC/pipe.o: IPC/pipe.c IPC/pipe.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 

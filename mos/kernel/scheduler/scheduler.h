@@ -57,7 +57,7 @@ typedef struct p_t_entry
     uint32_t code_size;
     uint32_t stack_physical;
     uint32_t stack_size;
-    uint32_t heap_physical;
+    uint32_t heap_physical_page;
     uint32_t heap_size;
     uint32_t cpu_time;
     io_part io;

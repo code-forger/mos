@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code man-code
+all: init-code name-code banner_left-code time-code notes-code parameter_test-code launcher-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code memory_bomb-code man-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -50,6 +50,9 @@ all: init-code name-code banner_left-code time-code notes-code parameter_test-co
 
 .PHONY fork_bomb-code:
 	$(MAKE) -C fork_bomb
+
+.PHONY memory_bomb-code:
+	$(MAKE) -C memory_bomb
 
 .PHONY man-code:
 	$(MAKE) -C man

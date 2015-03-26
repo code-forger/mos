@@ -66,7 +66,13 @@ uint32_t pipe_write(uint32_t pipe, uint8_t data_in)
     }
     else
     {
-        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical, SCRATCH);
+        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH);
+
+        uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000;
+
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[1 + (pipe_heap_index)], SCRATCH_TOP);
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[(pipe_heap_index)], SCRATCH);
+
         uint32_t rebased_location = (pipe_table[pipe].location & 0x00000FFF) + SCRATCH;
 
         uint32_t *pipe_actual = (uint32_t*)rebased_location;
@@ -108,7 +114,13 @@ uint32_t pipe_read(uint32_t pipe, uint8_t *data_out)
     }
     else
     {
-        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical, SCRATCH);
+        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH);
+
+        uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000;
+
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[1 + (pipe_heap_index)], SCRATCH_TOP);
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[(pipe_heap_index)], SCRATCH);
+
         uint32_t rebased_location = (pipe_table[pipe].location & 0x00000FFF) + SCRATCH;
 
         uint32_t *pipe_actual = (uint32_t*)rebased_location;

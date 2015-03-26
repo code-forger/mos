@@ -105,20 +105,29 @@ void  c_int_general_protection(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+static uint32_t page;
+//static uint32_t dump_mode;
+
 
 void  c_int_page_fault(void)
 {
-
-    uint32_t page;
     asm("mov %%CR2, %0":"=r"(page):);
-    printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n",page, scheduler_get_pid());
+    //printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d AKA %h\n",page, scheduler_get_pid(), ((page & 0xfffff000) - 0x80000000) / 0x1000);
     //clean_memory();
-    //dump_memory(KERNEL_HEAP);
-    scheduler_kill(scheduler_get_pid());
-    scheduler_from = 1;
-    scheduler_time_interupt();
-    //asm("cli");
-    //asm("hlt");
+    if (((page & 0xfffff000) - 0x80000000) / 0x1000 < 0x1000 && ((page & 0xfffff000) - 0x80000000) / 0x1000 == scheduler_get_process_table_entry(scheduler_get_pid()).heap_size)
+    {
+        (scheduler_get_process_table_entry_for_editing(scheduler_get_pid())->heap_size) += 1;
+        ((uint32_t*)PROCESS_HEAP_TABLE)[((page & 0xfffff000) - 0x80000000) / 0x1000] = paging_map_new_to_virtual(page&0xfffff000);
+    }
+    else
+    {
+        /*asm("cli");
+        asm("hlt");*/
+        send_byte_to(MASTER_PIC, 0x20);
+        scheduler_kill(scheduler_get_pid());
+        scheduler_from = 1;
+        scheduler_time_interupt();
+    }
     send_byte_to(MASTER_PIC, 0x20);
 }
 

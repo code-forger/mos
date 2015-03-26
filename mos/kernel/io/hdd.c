@@ -198,10 +198,10 @@ void hdd_init()
     paging_map_new_page_table(302);
     for(uint32_t i = 0; i < 4; i++)
     {
-        paging_map_new_to_virtual(0xC0009000 + 0x1000*i);
+        paging_map_new_to_virtual(HDD_CACHE_TABLE + 0x1000*i);
     }
 
-    block_table = (block_table_type*)0xC0009000;
+    block_table = (block_table_type*)HDD_CACHE_TABLE;
 
     for(uint32_t i = 0; i < 31; i++)
     {

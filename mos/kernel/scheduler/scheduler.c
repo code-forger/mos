@@ -279,8 +279,8 @@ void scheduler_time_interupt()
     if (scheduler_from && scheduler_from != 1)
         scheduler_from = 0;
 
-    if (scheduler_from)
-        printf("early interupt from %d for val %d\n", current_pid, scheduler_from);
+    //if (scheduler_from)
+    //    printf("early interupt from %d for val %d\n", current_pid, scheduler_from);
 
     if (scheduler_from)
         process_history[process_history_count++] = current_pid;
@@ -327,7 +327,15 @@ void scheduler_time_interupt()
             process_table[i].code_physical[p] = paging_copy_virtual_to_new(0x08048000 + 0x1000 * p);
 
         process_table[i].stack_physical = paging_copy_virtual_to_new(0xbffff000);
-        process_table[i].heap_physical = paging_copy_virtual_to_new(0x80000000);
+
+        process_table[i].heap_physical_page = paging_map_new_to_virtual(PROCESS_HEAP_TABLE);
+
+        //printf("process %d hp = %h\n", i, process_table[i].heap_physical_page);
+        for (uint32_t j = 0; j < process_table[current_pid].heap_size; j++)
+        {
+            ((uint32_t*)PROCESS_HEAP_TABLE)[j] = paging_copy_virtual_to_new(0x80000000 + 0x1000 * j);
+            //printf("process %d hpte = %h\n", j, ((uint32_t*)PROCESS_HEAP_TABLE)[j] );
+        }
     }
 
     uint32_t pass_count = 0;
@@ -356,7 +364,13 @@ void scheduler_time_interupt()
     for (uint32_t i = 0; i < process_table[current_pid].code_size; i++)
         paging_map_phys_to_virtual(process_table[current_pid].code_physical[i], 0x08048000 + 0x1000 * i);
     paging_map_phys_to_virtual(process_table[current_pid].stack_physical, 0xbffff000);
-    paging_map_phys_to_virtual(process_table[current_pid].heap_physical, 0x80000000);
+
+
+    paging_map_phys_to_virtual(process_table[current_pid].heap_physical_page,PROCESS_HEAP_TABLE);
+    for (uint32_t i = 0; i < process_table[current_pid].heap_size; i++)
+    {
+        paging_map_phys_to_virtual(((uint32_t*)PROCESS_HEAP_TABLE)[i],0x80000000 + 0x1000 * i);
+    }
 
     asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");
@@ -392,7 +406,11 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     uint32_t jump_target = elf_load("/bin/init", process_table);
 
     process_table[0].stack_physical = paging_map_new_to_virtual(0xBFFFFFFF);
-    process_table[0].heap_physical = paging_map_new_to_virtual(0x80000000);
+
+    process_table[0].heap_size = 1;
+
+    process_table[0].heap_physical_page = paging_map_new_to_virtual(PROCESS_HEAP_TABLE);
+    ((uint32_t*)PROCESS_HEAP_TABLE)[0] = paging_map_new_to_virtual(0x80000000);
 
     kmrfsNewFolder("/info/", "0");
 

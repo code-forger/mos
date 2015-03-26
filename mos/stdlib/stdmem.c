@@ -11,7 +11,9 @@ typedef struct header_t {
 #define HEAD_SIZE sizeof(header)
 
 header *top;
+header *bottom;
 int heap = 0;
+
 
 static void clean_memory()
 {
@@ -34,6 +36,26 @@ static void clean_memory()
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 }
+
+static int get_more_memory()
+{
+
+    header* oldbot = bottom;
+
+    bottom = (header*)(((uint32_t)bottom) + 0x1000);
+    bottom->free = 3;
+    bottom->size = 0;
+    bottom->pad1 = 0xDE; bottom->pad2 = 0xDE; bottom->pad3 = 0xDE;
+
+
+    oldbot->free = true;
+    oldbot->size = 0x1000 - HEAD_SIZE;
+
+    clean_memory();
+
+    return 0;
+}
+
 
 void *malloc(uint32_t size) {
     size += size % 4;
@@ -59,6 +81,8 @@ void *malloc(uint32_t size) {
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 
+    if(!get_more_memory())
+        return malloc(size);
     return 0;
 }
 
@@ -97,11 +121,12 @@ void create_heap(int start)
     top->size = 0x1000 - (start - 0x80000000) - HEAD_SIZE - HEAD_SIZE;
     top->free = true;
 
-    top = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
-    top->size = 0;
-    top->free = 3;
+    bottom = (header*)(((uint32_t)top) + top->size + HEAD_SIZE);
+    bottom->size = 0;
+    bottom->free = 3;
+    bottom->pad1 = 0xDE; bottom->pad2 = 0xDE; bottom->pad3 = 0xDE;
 
     top = (header*) start;
 
-    heap += top->size;
+    heap = 0x1000;
 }

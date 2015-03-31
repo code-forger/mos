@@ -1,10 +1,9 @@
-ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
-ata0-master: type=cdrom, path="/home/m/Documents/OSProject/mos/mos.iso", status=inserted
+
 
 ata1: enabled=1, ioaddr1=0x170, ioaddr2=0x370, irq=15
-ata1-master: type=disk, path="/home/m/Documents/OSProject/mos/disk.img", mode=flat, cylinders=20, heads=16, spt=63, model="MOS - Drive"
+ata1-master: type=disk, path="/home/m/Documents/OSProject/mos/mos_disk.img", model="MOS - Drive"
 
-boot: cdrom
+boot: disk
 memory: guest=1024, host=1024
 clock: sync=realtime, rtc_sync=1, time0=local
 

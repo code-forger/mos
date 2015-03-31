@@ -129,6 +129,8 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
         head = (lba + 1  - sect) % (16 * 63) / (63);
     }
 
+    //printf("head %d\n", head);
+
     if (lba_mode == 0)
         hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xA0 | (slavebit << 4) | head);
     else
@@ -317,7 +319,7 @@ static uint8_t* find_cached_block(uint32_t dirty)
 {
     for (uint32_t i = 0; i < 31; i++)
     {
-        if ((hdd_index >> 9) == block_table->blocks[i].cache)
+        if (((hdd_index + 0x8000000) >> 9) == block_table->blocks[i].cache)
         {
             if (block_table->blocks[i].dirty == 0)
                 block_table->blocks[i].dirty = dirty;
@@ -342,7 +344,7 @@ void hdd_write_cache()
     {
         if (block_table->blocks[i].dirty == 1)
         {
-            ide_ata_access(1, 1, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
+            ide_ata_access(1, 0, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
             block_table->blocks[i].dirty = 0;
         }
     }
@@ -354,7 +356,7 @@ static uint8_t* find_free_block(uint32_t dirty)
     {
         if (0xDEADBEEF == block_table->blocks[i].cache)
         {
-            block_table->blocks[i].cache = (hdd_index >> 9);
+            block_table->blocks[i].cache = ((hdd_index + 0x8000000) >> 9);
             block_table->blocks[i].dirty = dirty;
             return block_table->block[i].data;
         }
@@ -378,14 +380,14 @@ static uint8_t* request_write()
 
     buffer = find_free_block(1);
 
-    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
+    ide_ata_access(0, 0, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
 
     return buffer;
 }
 
 void hdd_write(uint8_t data)
 {
-    request_write()[hdd_index++ & 0x1FF] = data;
+    request_write()[(hdd_index++ & 0x1FF)] = data;
 }
 
 static uint8_t* request_read()
@@ -399,14 +401,14 @@ static uint8_t* request_read()
 
     buffer = find_free_block(0);
 
-    ide_ata_access(0, 1, hdd_index >> 9, 1, 0, (uint32_t)buffer);
+    ide_ata_access(0, 0, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
 
     return buffer;
 }
 
 uint8_t hdd_read()
 {
-    return request_read()[hdd_index++ & 0x1FF];
+    return request_read()[(hdd_index++ & 0x1FF)];
 }
 
 uint32_t hdd_remaining()

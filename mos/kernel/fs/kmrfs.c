@@ -124,8 +124,15 @@ union Inode getInodeByName(char* path, char * namein)
 int kmrfsFormatHdd(int _blockSize, int rootDirSize)
 {
     hdd_seek(0);
+    //printf("THIS\n");
     for (int i = 0; i < SUPERBLOCKSIZE; i++)
+    {
         sb.bytes[i] = hdd_read();
+        //printf("%d - %c - %h\n", sb.bytes[i], sb.bytes[i], sb.bytes[i]);
+    }
+    //printf("THIS\n");
+    //printf(" %h \n", sb.data.magic_number);
+
 
     if (sb.data.magic_number == (int32_t)0xADDEADBE)
     {

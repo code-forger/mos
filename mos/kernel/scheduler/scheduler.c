@@ -232,6 +232,14 @@ void scheduler_kill(uint32_t pid)
 
         mrfsDeleteDirWithDescriptor(&dd);
     }
+
+    for(uint32_t i = 0; i < process_table[pid].code_size; i++)
+        mark_page_free(process_table[pid].code_physical[i]);
+
+    for(uint32_t i = 0; i < process_table[pid].heap_size; i++)
+        mark_page_free(((uint32_t*)PROCESS_HEAP_TABLE)[i]);
+    mark_page_free(process_table[pid].heap_physical_page);
+    mark_page_free(process_table[pid].stack_physical);
 }
 
 static void events()

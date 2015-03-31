@@ -13,11 +13,12 @@ static void mark_page_allocated(uint32_t page)
     last_page = page;
 }
 
-/*static void mark_page_free(uint32_t page)
+void mark_page_free(uint32_t pagein)
 {
+    uint32_t page = get_page_of_address(pagein);
     memory_free_map[page/8] -= (1 << (page % 8));
     last_page = page;
-}*/
+}
 
 static int64_t find_free_page()
 {

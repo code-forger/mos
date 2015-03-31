@@ -11,5 +11,6 @@ typedef struct mm_entry
 
 void memory_init();
 uint32_t get_free_page_and_allocate();
+void mark_page_free(uint32_t page);
 uint32_t get_address_of_page(uint32_t page);
 uint32_t get_page_of_address(uint32_t address);

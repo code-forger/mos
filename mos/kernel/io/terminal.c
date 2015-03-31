@@ -270,6 +270,10 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
+    if (context != 1 && context != 0)
+    {
+        return;
+    }
     //terminal_switch_context(KERNEL_CONTEXT);
     //asm("cli");
     va_list valist;

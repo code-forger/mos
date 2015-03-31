@@ -285,15 +285,13 @@ int mrfsGetC(FILE* fd)
     if (!file.node.info.exists) return -1;
 
     if (fd->index >= (uint32_t)file.node.size) return -1;
-    int *pointers = inodeGetPointers(file);
 
-    int pointer = fd->index / (sb.data.blockSize-8);
+    int pointerIndex = fd->index / (sb.data.blockSize-8);
     int blockpointer = fd->index % (sb.data.blockSize-8);
 
-    char* block = blockRead(pointers[pointer]);
-    char ret = block[blockpointer+8];
-    free(pointers);
-    free(block);
+    int pointer = inodeGetPointer(file, pointerIndex);
+    char ret = blockReadByte(pointer, blockpointer);
+
     fd->index = (fd->index == fd->size)?fd->size:fd->index+1;
     return ret;
 }
@@ -305,9 +303,7 @@ int mrfsGetNameC(FILE* fd)
 
     if (fd->nameindex >= (uint32_t)fd->namesize) return -1;
 
-    char* block = blockRead(file.node.nameblock);
-    char ret = block[fd->nameindex+8];
-    free(block);
+    char ret = blockReadByte(file.node.nameblock, fd->nameindex);
     fd->nameindex = (fd->nameindex == fd->namesize)?fd->namesize:fd->nameindex+1;
     return ret;
 }

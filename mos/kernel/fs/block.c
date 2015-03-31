@@ -32,6 +32,12 @@ char* blockRead(int blockNumber)
     return block;
 }
 
+char blockReadByte(int blockNumber, int blockOffset)
+{
+    hdd_seek(SUPERBLOCKSIZE + sb.data.freelistreserverd + sb.data.inodereserverd + (blockNumber*sb.data.blockSize) + 8 + blockOffset);
+    return hdd_read();
+}
+
 //this function writes a NEW block, allocating it, and returning the new block number
 
 int blockWrite(char* data, int start, int length, int inodePointer)

@@ -3,6 +3,7 @@
 
 
 char* blockRead(int blockNumber);
+char blockReadByte(int blockNumber, int blockOffset);
 int blockRewrite(char* data, int start, int length, int inodePointer, int blockNumber);
 int blockWrite (char* data, int start, int length, int inodePointer);
 int blockGetNextFree();

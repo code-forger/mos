@@ -22,7 +22,7 @@ static void mark_page_allocated(uint32_t page)
 static int64_t find_free_page()
 {
     for (uint32_t block = last_page/8; block < p_memory_map[0].num_pages/8; block++)
-        for (uint32_t i = last_page%8; i < 8; i++)
+        for (uint32_t i = 0; i < 8; i++)
             if (!(memory_free_map[block] & (1 << i)))
                 return (int64_t)((block*8) + i);
     return -1;
@@ -50,7 +50,7 @@ static int64_t find_free_page()
 void memory_init()
 {
     p_memory_map = paging_get_memory_map();
-    memory_free_map = paging_get_memory_free_map(); // Give the first page to the memory free map 
+    memory_free_map = paging_get_memory_free_map(); // Give the first page to the memory free map
     last_page = 0;
 }
 
@@ -72,6 +72,6 @@ uint32_t get_address_of_page(uint32_t page)
 }
 
 uint32_t get_page_of_address(uint32_t address)
-{    
+{
     return (address - (uint32_t)p_memory_map[0].base) / 0x1000;
 }

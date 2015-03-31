@@ -131,6 +131,37 @@ int* inodeGetPointers(union Inode nodeIn)
     return pointersNew;
 }
 
+int inodeGetPointer(union Inode nodeIn, int pointerIndex)
+{
+    int count = nodeIn.node.info.directory?nodeIn.node.size:nodeIn.node.size / (sb.data.blockSize-8) + 1;
+
+    if (count <= 12)
+    {
+        return nodeIn.node.pointers[pointerIndex];
+    }
+    else
+    {
+        int ret;
+        char* block = blockRead(nodeIn.node.pointerblock);
+        for (int i = 0; i + 12 < count; i++)
+        {
+            union int_char p;
+            for (int j = i*4, k = 0; k < 4; j++)
+            {
+                p.c[k++] = block[j+8];
+            }
+            if (i + 12 == pointerIndex)
+            {
+                ret = p.i;
+                break;
+            }
+        }
+        free(block);
+        return ret;
+    }
+    return 0;
+}
+
 //this function writes a list of pointers to the inode, correctly creating an indriect block.
 
 void inodeWritePointers(union Inode* nodeOut, int* pointersIn, int countIn)

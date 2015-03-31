@@ -7,7 +7,6 @@ char *file_read_data(FILE fd)
 {
     char* file = malloc(fd.size+1);
     fseek(&fd, 0);
-
     int cin;
     for (int i = 0 ; i < fd.size && (cin = fgetc(&fd)) != -1; i++)
         file[i] = cin;
@@ -44,6 +43,4 @@ void main(int argc, char** argv)
             return;
         pause();
     }
-
-    for(;;);
 }

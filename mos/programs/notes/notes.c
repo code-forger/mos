@@ -177,7 +177,6 @@ void save_file(char* path)
 {
     FILE fd;
     fopen(path, &fd, 0);
-    printf("%s\n", path);
 
     if(fd.type == 0)
     {

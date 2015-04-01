@@ -1,0 +1,105 @@
+% hello.tex - our first latex example
+
+\documentclass[a4paper]{report}
+\usepackage{parskip}
+\usepackage{fullpage}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{pdfpages}
+\usepackage{wrapfig}
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+\begin{document}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{titlepage}
+\begin{center}
+
+% Upper part of the page. The '~' is needed because \\
+% only works if a paragraph has started.
+~\\[8cm]
+
+
+\HRule \\[0.4cm]
+{ \huge \bfseries MOS \\[0.4cm] }
+
+\HRule\\[0.8cm]
+
+\textsc{\LARGE User Manual}\\[2cm]
+
+% Title
+
+\vfill
+% Author and supervisor
+\noindent
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+Michael \textsc{Rochester}
+\end{flushleft}
+\end{minipage}%
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Supervisor:} \\
+Dr.~Martin \textsc{Berger}
+\end{flushright}
+\end{minipage}
+
+
+% Bottom of the page
+
+\end{center}
+\end{titlepage}
+
+\chapter*{First Boot}
+
+\includegraphics[width=500px]{images/MOS.png}
+
+\\
+When you first boot your PC you will be presented with a screen similar to the above.
+
+Three programs have been started by the init program.
+
+
+\begin{itemize}
+\item The time program (top centre) displays the current system time
+\item The name program (top right) displays the name of the current user
+\item MASH (bottom row) is the built in shell for launching programs in MOS
+\end{itemize}
+
+\\
+\textbf {MASH:}
+
+To get comfortable with mash, and a few of the built in programs, lets launch a new program; type "processes" into mash and hit return.
+
+A new program should fill the screen. This program tracks running processes. It can tell you the cpu usage, pid, name, and state of each process.
+
+You will also notice that the new process is white, and launcher became grey. This is because the new processes is input capable. The white process is the one that currently has keyboard input from the OS. The OS will automatically switch keyboard input to a new process if the process is input capable.
+
+By pressing ctrl+tab, you can switch between all imputable processes. Do that a few times now, you will notice that the time and name processes never get input. That is because these processes are not input capable.
+
+Next lets launch another program; make sure MASH has keyboard input (make it white using ctrl+tab) then type "banner\_left" and hit return.
+
+You will see the processes program disappear and be replaced by a new program.
+
+This happened because the new program wanted some of the screen that was already being used. The OS paused and hid the overlapping programs.
+
+To switch between hidden programs you can press shift+tab.
+
+Do this now until you can see processes again.
+
+Now lets end some processes. By using the processes program, you can identify the PID of any running program. Then by simply typing "kill pid" into MASH, the selected program will be stopped and all resources cleared.
+
+Now that you have a feel for the OS type "ls /bin/" into MASH
+
+This will show all the files in the /bin/ directory. These are the currently installed programs, you will recognise some of these from the ones we have mentioned so far.
+
+Finally try typing "man man". This should give you all the information you need to start exploring the OS.
+\end{document}

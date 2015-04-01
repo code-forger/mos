@@ -28,7 +28,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ parameter_test file programs/parameter_test/parameter_test
 ./mrfs-write mrfs-disk.img /bin/ name file programs/name/name
 ./mrfs-write mrfs-disk.img /bin/ time file programs/time/time
-./mrfs-write mrfs-disk.img /bin/ launcher file programs/launcher/launcher
+./mrfs-write mrfs-disk.img /bin/ mash file programs/mash/mash
 ./mrfs-write mrfs-disk.img /bin/ processes file programs/processes/processes
 ./mrfs-write mrfs-disk.img /bin/ less file programs/less/less
 ./mrfs-write mrfs-disk.img /bin/ man file programs/man/man
@@ -52,7 +52,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /docs/ fork_bomb file programs/docs/fork_bomb
 ./mrfs-write mrfs-disk.img /docs/ init file programs/docs/init
 ./mrfs-write mrfs-disk.img /docs/ kill file programs/docs/kill
-./mrfs-write mrfs-disk.img /docs/ launcher file programs/docs/launcher
+./mrfs-write mrfs-disk.img /docs/ mash file programs/docs/mash
 ./mrfs-write mrfs-disk.img /docs/ less file programs/docs/less
 ./mrfs-write mrfs-disk.img /docs/ ls file programs/docs/ls
 ./mrfs-write mrfs-disk.img /docs/ mkdir file programs/docs/mkdir
@@ -71,3 +71,7 @@ cp bdisk.img mrfs-disk.img
 
 dd if=grub_disk.img of=mos_disk.img bs=1024 count=131072
 dd if=mrfs-disk.img of=mos_disk.img bs=1024 count=131072 seek=131072
+
+sudo sync
+#sudo dd if=mos_disk.img of=/dev/sdc
+sudo sync

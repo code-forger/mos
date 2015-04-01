@@ -112,7 +112,7 @@ static uint32_t page;
 void  c_int_page_fault(void)
 {
     asm("mov %%CR2, %0":"=r"(page):);
-    printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d AKA %h\n",page, scheduler_get_pid(), ((page & 0xfffff000) - 0x80000000) / 0x1000);
+    //printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d AKA %h\n",page, scheduler_get_pid(), ((page & 0xfffff000) - 0x80000000) / 0x1000);
     //clean_memory();
     if (((page & 0xfffff000) - 0x80000000) / 0x1000 < 0x1000 && ((page & 0xfffff000) - 0x80000000) / 0x1000 == scheduler_get_process_table_entry(scheduler_get_pid()).heap_size)
     {
@@ -121,8 +121,6 @@ void  c_int_page_fault(void)
     }
     else
     {
-        asm("cli");
-        asm("hlt");
         send_byte_to(MASTER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;

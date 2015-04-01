@@ -69,6 +69,11 @@ void terminal_initialize()
 {
     process_terminal = terminal = paging_get_terminal_buffer();
     kernel_terminal = paging_get_kernel_terminal_buffer();
+
+    for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
+        for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
+            kernel_terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
+
     context = PROCESS_CONTEXT;
     last_char_pressed = ' ';
     current_row = 0;

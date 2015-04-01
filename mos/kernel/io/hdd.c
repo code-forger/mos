@@ -4,6 +4,7 @@
 
 static struct channel channels[2];
 static struct hdd drives[4];
+static int drive_selector = -1;
 
 static uint8_t ide_buffer[2048] = {0};
 
@@ -197,6 +198,7 @@ static block_table_type* block_table;
 
 void hdd_init()
 {
+    drive_selector = -1;
     paging_map_new_page_table(302);
     for(uint32_t i = 0; i < 4; i++)
     {
@@ -211,10 +213,10 @@ void hdd_init()
         block_table->blocks[i].dirty = 0xDEADBEEF;
     }
 
-    int count = 0;
+    int count = -1;
 
-    channels[0].addr  = 0x1F0;
-    channels[0].ctrl  = 0x3F0;
+    channels[0].addr  = 0x40b8;
+    channels[0].ctrl  = 0x40cc;
     channels[1].addr  = 0x170;
     channels[1].ctrl  = 0x370;
     channels[0].master = 0;
@@ -227,6 +229,7 @@ void hdd_init()
     {
         for (uint32_t j = 0; j < 2; j++)
         {
+            count++;
             uint8_t err = 0, type = IDE_ATA, status;
             drives[count].reserved = 0; // Assuming that no drive here.
 
@@ -269,6 +272,8 @@ void hdd_init()
 
             // (V) Read Identification Space of the Device:
             hdd_ident_read_buffer(i, HDD_REG_DATA, (uint32_t) ide_buffer, 128);
+            if (drive_selector == -1)
+                drive_selector = count;
 
             // (VI) Read Device Parameters:
             drives[count].reserved     = 1;
@@ -291,8 +296,6 @@ void hdd_init()
                 drives[count].model[k + 1] = ide_buffer[HDD_IDENT_MODEL + k];
             }
             drives[count].model[40] = 0;
-
-            count++;
         }
     }
 
@@ -344,7 +347,7 @@ void hdd_write_cache()
     {
         if (block_table->blocks[i].dirty == 1)
         {
-            ide_ata_access(1, 0, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
+            ide_ata_access(1, drive_selector, block_table->blocks[i].cache, 1, 0, (uint32_t)block_table->block[i].data);
             block_table->blocks[i].dirty = 0;
         }
     }
@@ -380,7 +383,7 @@ static uint8_t* request_write()
 
     buffer = find_free_block(1);
 
-    ide_ata_access(0, 0, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
+    ide_ata_access(0, drive_selector, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
 
     return buffer;
 }
@@ -401,7 +404,7 @@ static uint8_t* request_read()
 
     buffer = find_free_block(0);
 
-    ide_ata_access(0, 0, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
+    ide_ata_access(0, drive_selector, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
 
     return buffer;
 }

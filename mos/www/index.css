@@ -1,0 +1,38 @@
+body
+{
+    margin: auto;
+    width: 768px;
+}
+
+#title_bar
+{
+    text-align: center;
+}
+
+#nav_bar
+{
+    width: 20%;
+    display: inline-block;
+    float: left;
+    padding: 1%;
+}
+
+#nav_bar ul
+{
+    padding-left: 10%;
+    margin-top: -10%;
+}
+
+#nav_bar li
+{
+    list-style: none;
+    padding-top: 7%;
+}
+
+#content
+{
+    width: 75%;
+    display: inline-block;
+    float: left;
+    padding: 1%;
+}

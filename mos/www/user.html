@@ -1,0 +1,74 @@
+<!Doctype HTML>
+    <html>
+        <head>
+            <link rel="stylesheet" type="text/css" href="index.css">
+        </head>
+        <body>
+            <div id="title_bar">
+                <h1>MOS : User Manual</h1>
+            </div>
+            <div id="nav_bar">
+                <h4> Site Navigation </h4>
+                <ul>
+                    <li> <a href="index.html">Home</a> </li>
+                    <li> <a href="user.html">User Manual</a> </li>
+                    <li> <a href="install.html">Installing / Emulating</a> </li>
+                    <li> <a href="dev.html">Developers Manual</a> </li>
+                    <li> <a href="download.html">Downloads</a> </li>
+                    <li> <a href="poster.pdf">Poster</a> </li>
+                </ul>
+            </div>
+            <div id="content">
+                <h2> Contents </h2>
+                    <ul>
+                        <li> <a href="user.html#first">First Boot</a></li>
+                        <li> <a href="user.html#custom">Customising the System</a></li>
+                    </ul>
+                <h2 id="first">First Boot</h2>
+
+                <img src="images/MOS.png" width="100%"></img>
+                <p>When you first boot your PC you will be presented with a screen similar to the above. (screen shot from the emulator, a physical boot will look the same without the white info bars at the top and bottom.)</p>
+
+                <h5>Three programs have been started by the init program.</h5>
+
+
+                <ul>
+                    <li>The time program (top centre) displays the current system time</li>
+                    <li>The name program (top right) displays the name of the current user</li>
+                    <li>MASH (bottom row) is the built in shell for launching programs in MOS</li>
+                </ul>
+
+
+                <p>To get comfortable with mash, and a few of the built in programs, lets launch a new program; type "processes" into mash and hit return.<br/>
+
+                A new program should fill the screen. This program tracks running processes. It can tell you the cpu usage, pid, name, and state of each process. <br/><br/>
+
+                You will also notice that the new process is white, and launcher became grey. This is because the new processes is input capable. The white process is the one that currently has keyboard input from the OS. The OS will automatically switch keyboard input to a new process if the process is input capable. <br/><br/>
+
+                By pressing ctrl+tab, you can switch between all imputable processes. Do that a few times now, you will notice that the time and name processes never get input. That is because these processes are not input capable. <br/><br/>
+
+                Next lets launch another program; make sure MASH has keyboard input (make it white using ctrl+tab) then type "banner\_left" and hit return. <br/><br/>
+
+                You will see the processes program disappear and be replaced by a new program. <br/>
+
+                This happened because the new program wanted some of the screen that was already being used. The OS paused and hid the overlapping programs. <br/>
+
+                To switch between hidden programs you can press shift+tab. <br/>
+
+                Do this now until you can see processes again. <br/><br/>
+
+                Now lets end some processes. By using the processes program, you can identify the PID of any running program. Then by simply typing "kill pid" into MASH, the selected program will be stopped and all resources cleared. <br/><br/>
+
+                Alternatively, with input in 'processes' you can use the up and down arrows to select a program with '>' and press 'k' to kill it. <br/><br/>
+
+                Now that you have a feel for the OS type "ls /bin/" into MASH <br/><br/>
+
+                This will show all the files in the /bin/ directory. These are the currently installed programs, you will recognise some of these from the ones we have mentioned so far. <br/><br/>
+
+                Finally try typing "man man". This should give you all the information you need to start exploring the OS.<p>
+
+                <h2 id="custom">Customising the System</h2>
+            </div>
+
+        </body>
+    </html>

@@ -42,7 +42,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ fork_bomb file programs/fork_bomb/fork_bomb
 ./mrfs-write mrfs-disk.img /bin/ memory_bomb file programs/memory_bomb/memory_bomb
 
-./mrfs-write mrfs-disk.img / user raw "Michael Rochester"
+./mrfs-write mrfs-disk.img / user raw "Default User"
 ./mrfs-write mrfs-disk.img / todo file todo
 
 ./mrfs-write mrfs-disk.img / docs dir unused

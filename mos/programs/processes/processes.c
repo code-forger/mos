@@ -123,9 +123,9 @@ void main(int argc, char** argv)
 {
     selected_process = 0;
     table_offset = 3;
+    int ticks = ticks_ms() - 1000;
 
     int state;
-    int kpress = 0;
     int line = 2;
     int* last_cycle_ms = 0;
 
@@ -148,8 +148,12 @@ void main(int argc, char** argv)
     write_metrics(line++, "pid", "command", "cpu time", "cpu %", "state", "|  |");
     write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
 
+    int* pnum = malloc(1);
     while(1)
     {
+        int delta_ms = ticks_ms() - ticks;
+
+
         line = 5;
 
         FILE dd;
@@ -158,23 +162,25 @@ void main(int argc, char** argv)
         FILE process_dir;
 
         int num_processes = dd.size;
-        int* this_cycle_ms = malloc(num_processes * sizeof(int));
-        fseek(&dd, 0);
+
 
         int c;
         while((c = getchar()) != -1)
         {
-            kpress = 1;
             if (state)
             {
                 state = 0;
                 switch(c)
                 {
                     case UP:
+                        putcharat(' ' , 3, 5 + selected_process);
                         selected_process = (selected_process - 1) < 0?num_processes-1:selected_process-1;
+                        putcharat('>' , 3, 5 + selected_process);
                         break;
                     case DOWN:
+                        putcharat(' ' , 3, 5 + selected_process);
                         selected_process = (selected_process + 1) % num_processes;
+                        putcharat('>' , 3, 5 + selected_process);
                         break;
                 }
             }
@@ -184,52 +190,76 @@ void main(int argc, char** argv)
             }
             else if (c == 'q')
                 return;
+            else if (c == 'k')
+            {
+                if (selected_process <= num_processes)
+                {
+                    kill(pnum[selected_process]);
+                }
+                else
+                {
+                    putcharat(' ' , 3, 5 + selected_process);
+                    selected_process = (selected_process + 1) % num_processes;
+                    putcharat('>' , 3, 5 + selected_process);
+                }
+            }
         }
 
-        this_ticks = ticks_ms() + 200;
-
-        for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
+        if(delta_ms > 990)
         {
-            char *num = file_read_name(process_dir);
+            int* this_cycle_ms = malloc(num_processes * sizeof(int));
+            free(pnum);
+            pnum = malloc(num_processes * sizeof(int));
+            fseek(&dd, 0);
 
-            char* namestring = get_info(num, "name");
-            char* cputimestring = get_metric(num, "cputime");
-            char* statestring = get_metric(num, "state");
-            this_cycle_ms[line-5] = atoi(cputimestring);
+            this_ticks = ticks_ms() + 200;
 
-            char fcputimestring[9];
-            format_time( this_cycle_ms[line-5], fcputimestring);
-
-            char percent_str[9] = "---%";
-            if (last_cycle_ms != 0)
+            for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
             {
-                int ms_this_cycle = this_cycle_ms[line-5] - last_cycle_ms[line-5];
-                int percent = (ms_this_cycle * 100) / (this_ticks - last_ticks);
-                if (kpress)
-                    sprintf(percent_str, "---%%");
-                else
+                char *num = file_read_name(process_dir);
+
+                pnum[line-5] = atoi(num);
+
+                char* namestring = get_info(num, "name");
+                char* cputimestring = get_metric(num, "cputime");
+                char* statestring = get_metric(num, "state");
+                this_cycle_ms[line-5] = atoi(cputimestring);
+
+                char fcputimestring[9];
+                format_time( this_cycle_ms[line-5], fcputimestring);
+
+                char percent_str[9] = "---%";
+                if (last_cycle_ms != 0)
+                {
+                    int ms_this_cycle = this_cycle_ms[line-5] - last_cycle_ms[line-5];
+                    int percent = (ms_this_cycle * 100) / (this_ticks - last_ticks);
                     sprintf(percent_str, "%d%%", percent);
+                }
+
+                char *stateletterstring = get_state_string(statestring);
+
+                write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "|  |");
+                free(num);
+                free(namestring);
+                free(cputimestring);
+                free(statestring);
+                free(stateletterstring);
             }
 
-            char *stateletterstring = get_state_string(statestring);
+            write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
+            write_blank(line);
 
-            write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "|  |");
-            free(num);
-            free(namestring);
-            free(cputimestring);
-            free(statestring);
-            free(stateletterstring);
+            if (last_cycle_ms != 0)
+                free(last_cycle_ms);
+            last_cycle_ms = this_cycle_ms;
+            last_ticks = ticks_ms();
+            ticks += delta_ms;
+            sleep(1000);
         }
-
-        write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
-        write_blank(line);
-
-        if (last_cycle_ms != 0)
-            free(last_cycle_ms);
-        last_cycle_ms = this_cycle_ms;
-        last_ticks = ticks_ms();
-        kpress = 0;
-        sleep(1000);
+        else
+        {
+            sleep(1000-delta_ms);
+        }
     }
 
     for(;;);

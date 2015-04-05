@@ -9,6 +9,6 @@ void main(int argc, char** argv)
     if(argc == 1)
     {
         FILE fd;
-        fopendir(argv[0], true, &fd);
+        fopendir(argv[0], &fd, true);
     }
 }

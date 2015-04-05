@@ -29,7 +29,7 @@ int atoi(const char* s)
 }
 
 
-int putcharinstr(char c, char* s, int i)
+static int putcharinstr(char c, char* s, int i)
 {
     s[i] = c;
     return ++i;

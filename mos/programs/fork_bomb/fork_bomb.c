@@ -4,7 +4,7 @@
 void main(void)
 {
     FILE fd;
-    fopendir("/info/10/", false, &fd);
+    fopendir("/info/10/", &fd, false);
     if(fd.type == 2)
     {
         fork();

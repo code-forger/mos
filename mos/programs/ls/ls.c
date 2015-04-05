@@ -96,7 +96,7 @@ void main(int argc, char** argv)
     {
         FILE dd;
 
-        fopendir(target_dir, false, &dd);
+        fopendir(target_dir, &dd, false);
         if(dd.type == 1)
         {
             setio(0, 1, 79, 22);

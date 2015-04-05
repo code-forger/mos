@@ -1,7 +1,7 @@
 #include <stdint.h>
 extern void main();
 
-int get_params(char*** params, int* num)
+static int get_params(char*** params, int* num)
 {
     *num = *((uint32_t*)0x80000000);
     if (*num != 0)
@@ -28,7 +28,7 @@ int get_params(char*** params, int* num)
     }
 }
 
-void std_init()
+static void std_init()
 {
     char** params;
     int num;

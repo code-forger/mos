@@ -153,7 +153,7 @@ void main(int argc, char** argv)
         line = 5;
 
         FILE dd;
-        fopendir("/info/", false, &dd);
+        fopendir("/info/", &dd, false);
 
         FILE process_dir;
 

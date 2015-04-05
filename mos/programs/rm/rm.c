@@ -15,7 +15,7 @@ void main(int argc, char** argv)
         else
         {
             FILE fd;
-            fopendir(argv[0], false, &fd);
+            fopendir(argv[0], &fd, false);
             if(fd.type == 1)
                 fdeletedir(&fd);
         }

@@ -68,6 +68,11 @@
                 Finally try typing "man man". This should give you all the information you need to start exploring the OS.<p>
 
                 <h2 id="custom">Customising the System</h2>
+                <p>
+                In the top left corner you will see the 'name' program has printed 'default user'. It reads this information from the '/user' file. You can edit this file by typing 'notes /user' into mash. ctrl+s saves in the notes program.<br/><br/>
+
+                Secondly, the init program (the one called by the kernel) reads the list of programs to run from /init-files. Editing this file and rebooting will result in your specified programs to be run.<br/><br/>
+                Note: The last program specified in /init-files is make un-killable. It is advisable to have a shell in this position, the default is mash.
             </div>
 
         </body>

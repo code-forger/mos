@@ -426,6 +426,10 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
     kmrfsNewFile("/info/0/env/", "PATH", "/bin/", strlen("/bin/"));
     kmrfsNewFile("/info/0/env/", "cwd", "/", strlen("/"));
 
+    kmrfsNewFile("/info/0/", "name", "System Idle", 11);
+
+    process_table[0].cpu_time = 0;
+
     //printf("LEAVING SCHEDULER to %h\n", jump_target);
 
     asm("movl %0, %%esp"::"r"(0xbfffffff));

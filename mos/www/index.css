@@ -6,7 +6,49 @@ body
 
 #title_bar
 {
+    background-color: #1f525f;
     text-align: center;
+    height: 20px;
+    margin-top: 40px;
+}
+
+#title_bar h1
+{
+    position: relative;
+    background-color: #ffffff;
+    text-align: center;
+    display: inline;
+    padding: 15px;
+    top: -10px;
+}
+
+#title_bar h1
+{
+    position: relative;
+    background-color: #ffffff;
+    text-align: center;
+    display: inline;
+    padding: 15px;
+    top: -10px;
+}
+
+.hd
+{
+    background-color: #a7d9d9;
+    text-align: center;
+    height: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.hd *
+{
+    position: relative;
+    background-color: #ffffff;
+    display: inline;
+    padding: 15px;
+    top: -7px;
+
 }
 
 #nav_bar

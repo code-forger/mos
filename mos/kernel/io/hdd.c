@@ -411,8 +411,6 @@ static uint8_t* request_read()
 
 uint8_t hdd_read()
 {
-    if (hdd_index > 928000)
-        printf("%dr",hdd_index);
     return request_read()[(hdd_index++ & 0x1FF)];
 }
 

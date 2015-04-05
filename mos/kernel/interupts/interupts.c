@@ -7,6 +7,8 @@
 void  c_int_zero_division(void)
 {
     printf("ZERO_DIVISION_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -18,6 +20,8 @@ void  c_int_zero_division(void)
 void  c_int_debugger(void)
 {
     printf("DEBUGGER_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -29,6 +33,8 @@ void  c_int_debugger(void)
 void  c_int_nmi(void)
 {
     printf("NMI_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -40,6 +46,8 @@ void  c_int_nmi(void)
 void  c_int_breakpoint(void)
 {
     printf("BREAKPOINT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -51,6 +59,8 @@ void  c_int_breakpoint(void)
 void  c_int_overflow(void)
 {
     printf("OVERFLOW_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -62,6 +72,8 @@ void  c_int_overflow(void)
 void  c_int_bounds(void)
 {
     printf("BOUNDS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -73,6 +85,8 @@ void  c_int_bounds(void)
 void  c_int_invalid_opcode(void)
 {
     printf("INVALID_OPCODE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -84,6 +98,8 @@ void  c_int_invalid_opcode(void)
 void  c_int_coprocessor_not_available(void)
 {
     printf("COPROCERROR_NOT_AVAILABLE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -95,6 +111,8 @@ void  c_int_coprocessor_not_available(void)
 void  c_int_double_fault(void)
 {
     printf("DOUBLEFAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -106,6 +124,8 @@ void  c_int_double_fault(void)
 void  c_int_coprocessor_segment_overrun(void)
 {
     printf("COPROCESSOR_SEGMENT_OVERRUN_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -117,6 +137,8 @@ void  c_int_coprocessor_segment_overrun(void)
 void  c_int_invalid_tss(void)
 {
     printf("INVALID_TSS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -128,6 +150,8 @@ void  c_int_invalid_tss(void)
 void  c_int_segment_not_present(void)
 {
     printf("SEGMENT_NOT_PRESENT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -139,6 +163,8 @@ void  c_int_segment_not_present(void)
 void  c_int_stack_fault(void)
 {
     printf("STACK_FAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -150,6 +176,8 @@ void  c_int_stack_fault(void)
 void  c_int_general_protection(void)
 {
     printf("GENERAL_PROTECTION_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    asm("cli");
+    asm("hlt");
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -174,6 +202,8 @@ void  c_int_page_fault(void)
     else
     {
         printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
+        asm("cli");
+        asm("hlt");
         send_byte_to(MASTER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;
@@ -261,7 +291,9 @@ void  c_terminal_init_syscall(void)
 
 void  c_relinquish_input_syscall(void)
 {
-    terminal_set_active_input(scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD));
+    int next_input = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD);
+    if (next_input != -1)
+        terminal_set_active_input(next_input);
     send_byte_to(MASTER_PIC, 0x20);
 }
 

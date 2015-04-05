@@ -100,7 +100,7 @@ int mrfsRename(char* oldname, char* newname)
 
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
-    printf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
+    //printf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
     int virtual_type = vfs_open_virtual(name, fout);
     if (virtual_type == 0)
         return;
@@ -257,7 +257,6 @@ static void mrfsPutCEnd(int file_num, char c)
 
 void mrfsPutC(FILE* fd, char c)
 {
-    printf("mrfsPutC(%h, %c)-", fd, c);
     union Inode file = inodeRead(fd->inode);
     if (!file.node.info.exists) return;
 
@@ -281,7 +280,6 @@ void mrfsPutC(FILE* fd, char c)
         inodeUnlockForWrite(&file);
     }
     fd->index++;
-    printf("\nn");
 }
 
 int mrfsGetC(FILE* fd)

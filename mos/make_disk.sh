@@ -3,9 +3,9 @@
 cp blank_fat_disk.img grub_disk.img
 sudo losetup /dev/loop0 grub_disk.img
 sudo losetup /dev/loop1 grub_disk.img -o 1048576
-sudo mkdosfs -F32 -f 2 /dev/loop1
+#sudo mkdosfs -F32 -f 2 /dev/loop1
 sudo mount /dev/loop1 /mnt-mos
-sudo grub-install --target=i386-pc --root-directory=/mnt-mos --no-floppy --modules="normal part_msdos ext2 multiboot" /dev/loop0
+#sudo grub-install --target=i386-pc --root-directory=/mnt-mos --no-floppy --modules="normal part_msdos ext2 multiboot" /dev/loop0
 
 
 sudo cp grub.cfg /mnt-mos/boot/grub

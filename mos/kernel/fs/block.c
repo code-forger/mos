@@ -65,6 +65,24 @@ int blockWrite(char* data, int start, int length, int inodePointer)
     return blockNumber;
 }
 
+void blockWriteByte(int blockNumber, int offsett, char c)
+{
+    hdd_seek(SUPERBLOCKSIZE + sb.data.freelistreserverd + sb.data.inodereserverd + (blockNumber*sb.data.blockSize) + 8 + offsett);
+    hdd_write(c);
+}
+
+void blockWriteLength(int blockNumber, int len)
+{
+    hdd_seek(SUPERBLOCKSIZE + sb.data.freelistreserverd + sb.data.inodereserverd + (blockNumber*sb.data.blockSize));
+
+    union int_char blockfilllevel;
+    blockfilllevel.i = len;
+    for (int i = 0; i < 4; i++)
+    {
+        hdd_write(blockfilllevel.c[i]);
+    }
+}
+
 /*This function writes a block to the location indicated, you pass it a data stream and can specify where in that data stream the block should coppy from, this is usefull when writing more than one block from one data stream*/
 
 int blockRewrite(char* data, int start, int length, int inodePointer, int blockNumber)

@@ -100,6 +100,7 @@ int mrfsRename(char* oldname, char* newname)
 
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
+    printf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
     int virtual_type = vfs_open_virtual(name, fout);
     if (virtual_type == 0)
         return;
@@ -199,15 +200,21 @@ static void mrfsPutCEnd(int file_num, char c)
     union Inode file = inodeRead(file_num);
     if (!file.node.info.exists) return;
     while(inodeLockForWrite(&file));
-    int *pointers = inodeGetPointers(file);
-
-    int count = file.node.size / (sb.data.blockSize-8) + 1;
-
-    char* block = blockRead(pointers[count-1]);
+    int count;
+    int *pointers;
+    char* block;
     union int_char length;
-    for (int i = 0; i < 4; i++)
+    if (file.node.size != 0)
     {
-        length.c[i] = block[i];
+        pointers = inodeGetPointers(file);
+
+        count = file.node.size / (sb.data.blockSize-8) + 1;
+
+        block = blockRead(pointers[count-1]);
+        for (int i = 0; i < 4; i++)
+        {
+            length.c[i] = block[i];
+        }
     }
     if (length.i == sb.data.blockSize-8 || file.node.size == 0)
     {
@@ -217,6 +224,11 @@ static void mrfsPutCEnd(int file_num, char c)
         for (int i = 0; i < count; i++)
         {
             newPointers[i] = pointers[i];
+        }
+        if (file.node.size != 0)
+        {
+            free(pointers);
+            free(block);
         }
         newPointers[count] = blockWrite(&c, 0, 1, file.node.nodenumber);
         inodeWritePointers(&file, newPointers, count+1);
@@ -231,19 +243,21 @@ static void mrfsPutCEnd(int file_num, char c)
             block_data[i] = block[i+8];
         block_data[length.i] = c;
         block_data[length.i+1] = '\0';
-        blockRewrite(block_data, 0, length.i + 1, file.node.nodenumber, pointers[count-1]);
+        blockWriteByte(pointers[count-1], length.i, c);
+        blockWriteByte(pointers[count-1], length.i + 1, '\0');
+        blockWriteLength(pointers[count-1], length.i + 1);
         file.node.size += 1;
         inodeRewrite(file);
         free(block_data);
+        free(pointers);
+        free(block);
     }
-    free(pointers);
-    free(block);
     inodeUnlockForWrite(&file);
 }
 
 void mrfsPutC(FILE* fd, char c)
 {
-    //printf("%c", c);
+    printf("mrfsPutC(%h, %c)-", fd, c);
     union Inode file = inodeRead(fd->inode);
     if (!file.node.info.exists) return;
 
@@ -256,27 +270,18 @@ void mrfsPutC(FILE* fd, char c)
     {
 
         while(inodeLockForWrite(&file));
-        int *pointers = inodeGetPointers(file);
 
-        int pointer = fd->index / (sb.data.blockSize-8);
+        int pointer_index = fd->index / (sb.data.blockSize-8);
         int blockpointer = fd->index % (sb.data.blockSize-8);
 
-        char* block = blockRead(pointers[pointer]);
-        block[blockpointer+8] = c;
+        int pointer = inodeGetPointer(file,pointer_index);
 
-        union int_char length;
-        for (int i = 0; i < 4; i++)
-        {
-            length.c[i] = block[i];
-        }
+        blockWriteByte(pointer, blockpointer, c);
 
-        blockRewrite(block, 8, length.i, file.node.nodenumber, pointers[pointer]);
-
-        free(pointers);
-        free(block);
         inodeUnlockForWrite(&file);
     }
     fd->index++;
+    printf("\nn");
 }
 
 int mrfsGetC(FILE* fd)

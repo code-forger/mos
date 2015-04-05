@@ -213,29 +213,41 @@
                     <li> <a href="dev.html#sprintf">int sprintf(char* s, const char* string, ...)</a></li>
                 </ul>
                 <h4 id="strlen">int strlen(const char * str)</h4>
-                <p>STUB</p>
+                <p>Will return the length of the null terminated string.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp const char * str : The string to be measured.<br/>
+                </p>
+                <p>
+                    return: The length of the string.
                 </p>
                 <h4 id="strcpy">char *strcpy(char *dest, const char *src)</h4>
-                <p>STUB</p>
+                <p>Copy one string into another.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp const char *dest : The string to receive the content of the source. Must be at least as long as strlen(src). <br/>
+                    &nbsp&nbsp&nbsp&nbsp const const char *src : The string to copy into the destiation. <br/>
+                </p>
+                <p>
+                    return: The pointer to the destination string.
                 </p>
 
                 <h4 id="atoi">int atoi(const char* s)</h4>
-                <p>STUB</p>
+                <p>Convert a String into a base 10 Integer.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp const char* s : The string to be converted.<br/>
+                </p>
+                <p>
+                    return: The integer converted from the string.
                 </p>
                 <h4 id="sprintf">int sprintf(char* s, const char* string, ...)</h4>
-                <p>STUB</p>
+                <p>Format a string into a destination string. For format rules, see <a href="dev.html#printf">printf</a>.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* s : The string to receiver the formatted data.<br/>
+                    &nbsp&nbsp&nbsp&nbsp const char* string : The format string.<br/>
+                    &nbsp&nbsp&nbsp&nbsp ... : See <a href="dev.html#printf">printf</a>.<br/>
                 </p>
 
                 <!-- IPC -->
@@ -249,22 +261,26 @@
                     <li> <a href="dev.html#read">int64_t read(PIPE pipe)</a></li>
                 </ul>
                 <h4 id="pipe">uint32_t pipe(PIPE[2])</h4>
-                <p>STUB</p>
+                <p>Creates a one directional pipe and sets the write, read handles to the array passed.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp PIPE[2] : The array to be filled with the write, read handles.<br/>
                 </p>
                 <h4 id="write">uint32_t write(PIPE pipe, uint8_t data)</h4>
-                <p>STUB</p>
+                <p>Write a byte to a pipe.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp PIPE pipe : A WRITE pipe handle.<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint8_t data : The data to be written into the pipe.<br/>
                 </p>
                 <h4 id="read">int64_t read(PIPE pipe)</h4>
-                <p>STUB</p>
+                <p>Read a byte from a pipe.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp PIPE pipe : A READ pipe handle.<br/>
+                </p>
+                <p>
+                    return: A byte from the pipe or a negative number if the pipe is empty.
                 </p>
 
                 <!-- process -->
@@ -361,16 +377,19 @@
                     <li> <a href="dev.html#free">void free(void *address)</a></li>
                 </ul>
                 <h4 id="malloc">void *malloc(uint32_t size)</h4>
-                <p>STUB</p>
+                <p>Malloc allocates memory on the heap.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t size : The <u>size</u> of the memory needed.<br/>
+                </p>
+                <p>
+                    return: The address of the allocated memory or 0 if no memory available.
                 </p>
                 <h4 id="free">void free(void *address)</h4>
-                <p>STUB</p>
+                <p>Free deallocates memory that was allocated by malloc.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp void *address : The address returned from malloc.<br/>
                 </p>
 
                 <!-- time -->
@@ -384,22 +403,21 @@
                     <li> <a href="dev.html#format_time">void format_time(uint32_t ms, char* in)</a></li>
                 </ul>
                 <h4 id="ticks_ms">uint32_t ticks_ms()</h4>
-                <p>STUB</p>
+                <p>Ticks MS will return the number of milliseconds since the scheduler initialized.</p>
                 <p>
-                    parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    return: The number of milliseconds.
                 </p>
                 <h4 id="seconds">uint32_t seconds()</h4>
-                <p>STUB</p>
+                <p>Seconds will return the number of seconds since the first of January 1970</p>
                 <p>
-                    parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    return: The number of seconds.
                 </p>
                 <h4 id="format_time">void format_time(uint32_t ms, char* in)</h4>
-                <p>STUB</p>
+                <p>Will format time into "HH:MM:SS".</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t ms : The time to be converted.<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* in : The string to be filled with the formatted time. it must be at least 8 long.<br/>
                 </p>
             </div>
 

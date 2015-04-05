@@ -17,20 +17,20 @@ typedef struct FILE_type
 
 } __attribute__((packed)) FILE;
 
-uint32_t fopen(char* name, FILE* fd, uint32_t create);
+unsigned int fopen(char* name, FILE* fd, unsigned int create);
 void fputc(char c, FILE* fd);
 
-int32_t fgetc(FILE* fd);
-int32_t fseek(FILE* fd, int index);
+int fgetc(FILE* fd);
+int fseek(FILE* fd, int index);
 
-int32_t fgetnamec(FILE* fd);
-int32_t fseekname(FILE* fd, int index);
+int fgetnamec(FILE* fd);
+int fseekname(FILE* fd, int index);
 
-int32_t fdelete(FILE* fd);
+int fdelete(FILE* fd);
 
-int32_t fopendir(char* name, FILE* fd, uint32_t create);
-int32_t fgetfile(FILE* dd, FILE* fd);
+int fopendir(char* name, FILE* fd, unsigned int create);
+int fgetfile(FILE* dd, FILE* fd);
 
-int32_t fdeletedir(FILE* dd);
+int fdeletedir(FILE* dd);
 
 void frename(char* old, char* new);

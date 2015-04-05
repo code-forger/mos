@@ -32,7 +32,12 @@
                         <li> <a href="dev.html#output">Output Functions</a></li>
                         <li> <a href="dev.html#input">Input Functions</a></li>
                     </ul>
-                    <li> <a href="dev.html#file">File Access</a></li>
+                    <li> <a href="dev.html#file">File and directory Access</a></li>
+                    <li> <a href="dev.html#string">String Helpers</a></li>
+                    <li> <a href="dev.html#ipc">IPC</a></li>
+                    <li> <a href="dev.html#process">Process Control</a></li>
+                    <li> <a href="dev.html#memory">Memory Management</a></li>
+                    <li> <a href="dev.html#time">Time Services</a></li>
                 </ul>
 
                 <!-- INPUT OUTPUT -->
@@ -42,12 +47,12 @@
                 <p>The stdlib has 4 output related functions</p>
                 <h4> stdio.h </h4>
                 <ul>
-                    <li> <a href="dev.html#setio">setio(int px, int py, int wx, int wy)</a></li>
-                    <li> <a href="dev.html#putchar">putchar(char c)</a></li>
-                    <li> <a href="dev.html#printf">printf(const char* string, ...)</a></li>
-                    <li> <a href="dev.html#putcharat">putcharat(char c, uint32_t x, uint32_t y)</a></li>
+                    <li> <a href="dev.html#setio">void setio(int px, int py, int wx, int wy)</a></li>
+                    <li> <a href="dev.html#putchar">void putchar(char c)</a></li>
+                    <li> <a href="dev.html#printf">void printf(const char* string, ...)</a></li>
+                    <li> <a href="dev.html#putcharat">void putcharat(char c, uint32_t x, uint32_t y)</a></li>
                 </ul>
-                <h4 id="setio">setio(int px, int py, int wx, int wy)</h4>
+                <h4 id="setio">void setio(int px, int py, int wx, int wy)</h4>
                 <p>If you wish your application to be able to output to a portion of the terminal screen, you must call setio before any other output functions. setio must only be called once.</p>
                 <p>This function reserves a portion of the screen for your application to print onto.</p>
                 <p>
@@ -57,21 +62,21 @@
                     &nbsp&nbsp&nbsp&nbsp int wx : the <u>w</u>idth in the <u>w</u> dimention.. Bounds: 0-79<br/>
                     &nbsp&nbsp&nbsp&nbsp int wy : the <u>w</u>idth in the <u>y</u> dimention. Bounds: 0-24<br/>
                 </p>
-                <h4 id="putchar">putchar(char c)</h4>
+                <h4 id="putchar">void putchar(char c)</h4>
                 <p>You must call <a href="dev.html#setio">setio</a> before this function.</p>
                 <p>This function puts the passed character onto the screen and increments the position. The terminal maintains the current position and automatically wraps at the end of the line. printing the '\n' character will cause the current position to skip to the next line. If the position is at the bottom of your programs screen space when the position jumps to the next line, your entire screen will be shifted up one, loosing the top line of your screen.</p>
                 <p>
                     parameters:<br/>
                     &nbsp&nbsp&nbsp&nbsp char c : the <u>c</u>haracter to be printed<br/>
                 </p>
-                <h4 id="printf">printf(const char* string, ...)</h4>
+                <h4 id="printf">void printf(const char* string, ...)</h4>
                 <p>You must call <a href="dev.html#setio">setio</a> before this function.</p>
                 <p>STUB</p>
                 <p>
                     parameters:<br/>
                     &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
                 </p>
-                <h4 id="putcharat">putcharat(char c, uint32_t x, uint32_t y)</h4>
+                <h4 id="putcharat">void putcharat(char c, uint32_t x, uint32_t y)</h4>
                 <p>You must call <a href="dev.html#setio">setio</a> before this function.</p>
                 <p>This function allows you to draw a character in a specific location in your programs screen space.</p>
                 <p>The coordinates are in your program space coordinates, that is, 0,0 will print in the top left corner of your programs screen space. If the coordinates are outside of your programs screen space the command will be ignored.</p>
@@ -82,17 +87,17 @@
                     &nbsp&nbsp&nbsp&nbsp unsigned int y : the <u>y</u> coordinate to place the character<br/>
                 </p>
                 <h2 id="input">Input Functions</h2>
-                <p>The stdlib has 2 inpur related functions</p>
+                <p>The stdlib has 2 input related functions</p>
                 <h4> stdio.h </h4>
                 <ul>
-                    <li> <a href="dev.html#stdin_init">stdin_init()</a></li>
-                    <li> <a href="dev.html#getchar">getchar()</a></li>
+                    <li> <a href="dev.html#stdin_init">void stdin_init()</a></li>
+                    <li> <a href="dev.html#getchar">int64_t getchar()</a></li>
                 </ul>
-                <h4 id="stdin_init">stdin_init()</h4>
+                <h4 id="stdin_init">void stdin_init()</h4>
                 <p>If you wish your application to be able to receive keyboard input, you must call stdin_init before any other input functions. stdin_init must only be called once.</p>
                 <p>This function declares that your program can receive keyboard input</p>
 
-                <h4 id="getchar">getchar()</h4>
+                <h4 id="getchar">int64_t getchar()</h4>
                 <p>This function returns the character in the input buffer or -1 if the buffer is empty</p>
                 <p>Note: if the buffer is empty and returns -1, it does not mean input is done forever, if the user presses a key with your program selected, the keyboard buffer will start to fill again.</p>
                 <p>Note: If your program is asleep when a user presses a key in your program, your program will be woken up. This means you can use <a href="dev.html#pause">pause</a> to fully sleep your program to save CPU.</p>
@@ -101,7 +106,301 @@
                 <!-- File Access -->
 
                 <h1 id="file">File Access</h1>
+                <p>The stdlib has 11 file related functions</p>
+                <h4> file.h </h4>
+                <ul>
+                    <li> <a href="dev.html#fopen">unsigned int fopen(char* name, FILE* fd, unsigned int create)</a></li>
+                    <li> <a href="dev.html#fputc">void fputc(char c, FILE* fd)</a></li>
 
+                    <li> <a href="dev.html#fgetc">int fgetc(FILE* fd)</a></li>
+                    <li> <a href="dev.html#fseek">int fseek(FILE* fd, int index)</a></li>
+
+                    <li> <a href="dev.html#fgetnamec">int fgetnamec(FILE* fd)</a></li>
+                    <li> <a href="dev.html#fseekname">int fseekname(FILE* fd, int index)</a></li>
+
+                    <li> <a href="dev.html#fdelete">int fdelete(FILE* fd)</a></li>
+
+                    <li> <a href="dev.html#fopendir">int fopendir(char* name, FILE* fd, unsigned int create)</a></li>
+                    <li> <a href="dev.html#fgetfile">int fgetfile(FILE* dd, FILE* fd)</a></li>
+
+                    <li> <a href="dev.html#fdeletedir">int fdeletedir(FILE* dd)</a></li>
+
+                    <li> <a href="dev.html#frename">void frename(char* old, char* new)</a></li>
+                </ul>
+                <h4 id="fopen">unsigned int fopen(char* name, FILE* fd, unsigned int create)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="fputc">void fputc(char c, FILE* fd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="fgetc">int fgetc(FILE* fd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="fseek">int fseek(FILE* fd, int index)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="fgetnamec">int fgetnamec(FILE* fd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="fseekname">int fseekname(FILE* fd, int index)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="fdelete">int fdelete(FILE* fd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="fopendir">int fopendir(char* name, FILE* fd, unsigned int create)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="fgetfile">int fgetfile(FILE* dd, FILE* fd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="fdeletedir">int fdeletedir(FILE* dd)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="frename">void frename(char* old, char* new)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <!-- String Helpers -->
+
+                <h1 id="string">String Helpers</h1>
+                <p>The stdlib has 4 string related functions</p>
+                <h4> string.h </h4>
+                <ul>
+                    <li> <a href="dev.html#strlen">int strlen(const char * str)</a></li>
+                    <li> <a href="dev.html#strcpy">char *strcpy(char *dest, const char *src)</a></li>
+
+                    <li> <a href="dev.html#atoi">int atoi(const char* s)</a></li>
+                    <li> <a href="dev.html#sprintf">int sprintf(char* s, const char* string, ...)</a></li>
+                </ul>
+                <h4 id="strlen">int strlen(const char * str)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="strcpy">char *strcpy(char *dest, const char *src)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="atoi">int atoi(const char* s)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="sprintf">int sprintf(char* s, const char* string, ...)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <!-- IPC -->
+
+                <h1 id="ipc">IPC</h1>
+                <p>The stdlib has 3 IPC related functions</p>
+                <h4> pipe.h </h4>
+                <ul>
+                    <li> <a href="dev.html#pipe">uint32_t pipe(PIPE[2])</a></li>
+                    <li> <a href="dev.html#write">uint32_t write(PIPE pipe, uint8_t data)</a></li>
+                    <li> <a href="dev.html#read">int64_t read(PIPE pipe)</a></li>
+                </ul>
+                <h4 id="pipe">uint32_t pipe(PIPE[2])</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="write">uint32_t write(PIPE pipe, uint8_t data)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="read">int64_t read(PIPE pipe)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <!-- process -->
+
+                <h1 id="process">Process Control</h1>
+                <p>The stdlib has 10 process control related functions</p>
+                <h4> process.h </h4>
+                <ul>
+                    <li> <a href="dev.html#get_pid">uint32_t get_pid()</a></li>
+                    <li> <a href="dev.html#fork">int32_t fork()</a></li>
+
+                    <li> <a href="dev.html#exec">void exec(char* program_name)</a></li>
+                    <li> <a href="dev.html#execp">void execp(char* program_name, char** parameters)</a></li>
+
+                    <li> <a href="dev.html#sleep">void sleep(uint32_t millseconds)</a></li>
+                    <li> <a href="dev.html#kill">void kill(uint32_t pid)</a></li>
+                    <li> <a href="dev.html#pause">void pause()</a></li>
+                    <li> <a href="dev.html#hide">void hide(uint32_t pid)</a></li>
+                    <li> <a href="dev.html#show">void show(uint32_t pid)</a></li>
+
+                    <li> <a href="dev.html#get_env">int get_env(char* key, FILE *valuefile)</a></li>
+                </ul>
+                <h4 id="get_pid">uint32_t get_pid()</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="fork">int32_t fork()</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="exec">void exec(char* program_name)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="execp">void execp(char* program_name, char** parameters)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="sleep">void sleep(uint32_t millseconds)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="kill">void kill(uint32_t pid)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="pause">void pause()</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="hide">void hide(uint32_t pid)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="show">void show(uint32_t pid)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <h4 id="get_env">int get_env(char* key, FILE *valuefile)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <!-- memory -->
+
+                <h1 id="memory">Memory Management</h1>
+                <p>The stdlib has 2 memory management related functions</p>
+                <h4> stdmem.h </h4>
+                <ul>
+                    <li> <a href="dev.html#malloc">void *malloc(uint32_t size)</a></li>
+                    <li> <a href="dev.html#free">void free(void *address)</a></li>
+                </ul>
+                <h4 id="malloc">void *malloc(uint32_t size)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="free">void free(void *address)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+
+                <!-- time -->
+
+                <h1 id="time">Time Services</h1>
+                <p>The stdlib has 2 memory management related functions</p>
+                <h4> stdmem.h </h4>
+                <ul>
+                    <li> <a href="dev.html#ticks_ms">uint32_t ticks_ms()</a></li>
+                    <li> <a href="dev.html#seconds">uint32_t seconds()</a></li>
+                    <li> <a href="dev.html#format_time">void format_time(uint32_t ms, char* in)</a></li>
+                </ul>
+                <h4 id="ticks_ms">uint32_t ticks_ms()</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="seconds">uint32_t seconds()</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
+                <h4 id="format_time">void format_time(uint32_t ms, char* in)</h4>
+                <p>STUB</p>
+                <p>
+                    parameters:<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                </p>
             </div>
 
         </body>

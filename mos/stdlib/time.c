@@ -1,18 +1,32 @@
 #include "time.h"
 
-uint32_t mstos(uint32_t ms)
+static uint32_t mstos(uint32_t ms)
 {
     return (ms/1000) % 60;
 }
 
-uint32_t mstom(uint32_t ms)
+static uint32_t mstom(uint32_t ms)
 {
     return (ms/1000/60) % 60;
 }
 
-uint32_t mstoh(uint32_t ms)
+static uint32_t mstoh(uint32_t ms)
 {
     return (ms/1000/60/60) % 24;
+}
+
+uint32_t ticks_ms()
+{
+    uint32_t ret;
+    asm("int $120"::"a"(&ret):);
+    return ret;
+}
+
+uint32_t seconds()
+{
+    uint32_t ret;
+    asm("int $121"::"a"(&ret):);
+    return ret;
 }
 
 void format_time(uint32_t ms, char* in)
@@ -38,18 +52,4 @@ void format_time(uint32_t ms, char* in)
         sprintf(in, "0%d", s);
     else
         sprintf(in, "%d", s);
-}
-
-uint32_t ticks_ms()
-{
-    uint32_t ret;
-    asm("int $120"::"a"(&ret):);
-    return ret;
-}
-
-uint32_t seconds()
-{
-    uint32_t ret;
-    asm("int $121"::"a"(&ret):);
-    return ret;
 }

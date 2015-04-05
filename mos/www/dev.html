@@ -128,76 +128,93 @@
                     <li> <a href="dev.html#frename">void frename(char* old, char* new)</a></li>
                 </ul>
                 <h4 id="fopen">unsigned int fopen(char* name, FILE* fd, unsigned int create)</h4>
-                <p>STUB</p>
+                <p>Open a file with the option to create the file if it doesn't exist.</p>
+                <p>Note: if fd.type == 2, this file could not be opened.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* name : The fill path to the file wanted.<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The file descriptor to be used with other file functions.<br/>
+                    &nbsp&nbsp&nbsp&nbsp unsigned int create : Weather or not to create the file if it does not exist.<br/>
                 </p>
                 <h4 id="fputc">void fputc(char c, FILE* fd)</h4>
-                <p>STUB</p>
+                <p>Put a character into a file.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char c : The character to be written into.<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
                 </p>
 
                 <h4 id="fgetc">int fgetc(FILE* fd)</h4>
-                <p>STUB</p>
+                <p>Get a character out of a file.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
+                </p>
+                <p>
+                    return: the character from the file or -1 if the index is at the end of the file.
                 </p>
                 <h4 id="fseek">int fseek(FILE* fd, int index)</h4>
-                <p>STUB</p>
+                <p>Seek the read_write index of the file.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
+                    &nbsp&nbsp&nbsp&nbsp int index : The index of the file. It will be capped to 0->fd.size.<br/>
                 </p>
 
                 <h4 id="fgetnamec">int fgetnamec(FILE* fd)</h4>
-                <p>STUB</p>
+                <p>Get a character from the name of the file.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
+                </p>
+                <p>
+                    return: the character from the name of the file or -1 if the name index is at the end of the file.
                 </p>
                 <h4 id="fseekname">int fseekname(FILE* fd, int index)</h4>
-                <p>STUB</p>
+                <p>Seek the read index of the file name.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
+                    &nbsp&nbsp&nbsp&nbsp int index : The index of the file. It will be capped to 0->fd.namesize.<br/>
                 </p>
 
                 <h4 id="fdelete">int fdelete(FILE* fd)</h4>
-                <p>STUB</p>
+                <p>Delete a file of the disk.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The valid file descriptor for the target file.<br/>
                 </p>
 
                 <h4 id="fopendir">int fopendir(char* name, FILE* fd, unsigned int create)</h4>
-                <p>STUB</p>
+                <p>Open a directory.</p>
+                <p>Note: if fd.type == 2 the directory could not be opened</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* name : The directory path to the directory wanted.<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The directory descriptor to be used with other directory functions.<br/>
+                    &nbsp&nbsp&nbsp&nbsp unsigned int create : Weather or not to create the directory if it does not exist.<br/>
                 </p>
                 <h4 id="fgetfile">int fgetfile(FILE* dd, FILE* fd)</h4>
-                <p>STUB</p>
+                <p>Get the file currently at the directories dd.index</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* dd : The valid directory descriptor for the target directory.<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* fd : The file descriptor to be used with other file functions.<br/>
                 </p>
 
                 <h4 id="fdeletedir">int fdeletedir(FILE* dd)</h4>
-                <p>STUB</p>
+                <p>Remove the directory recursively from disk.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE* dd : The valid directory descriptor for the target directory.<br/>
                 </p>
 
                 <h4 id="frename">void frename(char* old, char* new)</h4>
-                <p>STUB</p>
+                <p>Rename/move a node in the file system.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* old : The fill path to the node you want to move.<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* new : The fill path to the target node. it will create the path and file if needed.<br/>
                 </p>
 
                 <!-- String Helpers -->

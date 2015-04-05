@@ -73,13 +73,13 @@ void write_metrics(int line, char*pid, char*command, char*time, char*perc, char*
         putcharat('>', table_offset, 5 + selected_process);
 }
 
-void write_rubertic()
+void write_rubertic(int height)
 {
     char *ruberic = "press k to kill the current [>] processes";
     int rub_len = strlen(ruberic);
 
-    //for (int i = 0; i < rub_len; i++)
-    //    putcharat(ruberic[i], 4+i,21);
+    for (int i = 0; i < rub_len; i++)
+        putcharat(ruberic[i], 4+i,height-1);
 }
 
 char* get_metric(char* num, char* metric)
@@ -143,7 +143,7 @@ void main(int argc, char** argv)
     stdin_init();
 
     //printf("    Running Processes:\n\n");
-    write_rubertic();
+    write_rubertic(height);
     write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
     write_metrics(line++, "pid", "command", "cpu time", "cpu %", "state", "|  |");
     write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
@@ -222,7 +222,7 @@ void main(int argc, char** argv)
         }
 
         write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
-        //write_blank(line);
+        write_blank(line);
 
         if (last_cycle_ms != 0)
             free(last_cycle_ms);

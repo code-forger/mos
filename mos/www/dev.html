@@ -304,67 +304,63 @@
                     <li> <a href="dev.html#get_env">int get_env(char* key, FILE *valuefile)</a></li>
                 </ul>
                 <h4 id="get_pid">uint32_t get_pid()</h4>
-                <p>STUB</p>
-                <p>
-                    parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
-                </p>
+                <p>Returns the PID of the calling process.</p>
                 <h4 id="fork">int32_t fork()</h4>
-                <p>STUB</p>
+                <p>Fork the process into two processes.</p>
                 <p>
-                    parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    return: The child pid from the fork to both processes (the caller and the new).<br/>
                 </p>
 
                 <h4 id="exec">void exec(char* program_name)</h4>
-                <p>STUB</p>
+                <p>Transfers control to a new executable.</p>
+                <p> NOTE: This function does not return. It wipes all memory from the calling processes and frees it. Then REPLACES the calling process with the new binary, calling the 'main' function in the new binary.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* program_name : The file system string pointing to the target binary.<br/>
                 </p>
                 <h4 id="execp">void execp(char* program_name, char** parameters)</h4>
-                <p>STUB</p>
+                <p>Transfers control to a new executable, passing the specified parameters to the new process.</p>
+                <p> NOTE: This function does not return. It wipes all memory from the calling processes and frees it. Then REPLACES the calling process with the new binary, calling the 'main' function in the new binary.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* program_name : The file system string pointing to the target binary.<br/>
+                    &nbsp&nbsp&nbsp&nbsp char** parameters : The parameters to pass to the new process.<br/>
                 </p>
 
                 <h4 id="sleep">void sleep(uint32_t millseconds)</h4>
-                <p>STUB</p>
+                <p>Will pause the calling processes for the specified milliseconds.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t millseconds : The number of milliseconds to pause the process for.<br/>
                 </p>
                 <h4 id="kill">void kill(uint32_t pid)</h4>
-                <p>STUB</p>
+                <p>Kill the specified process and free all its resources.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t pid : The process id to kill<br/>
                 </p>
                 <h4 id="pause">void pause()</h4>
-                <p>STUB</p>
-                <p>
-                    parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
-                </p>
+                <p>Indefinitely pause the calling process.</p>
+                <p> NOTE: if your processes is input enabled it will be woken back up if the user types into your window.
                 <h4 id="hide">void hide(uint32_t pid)</h4>
-                <p>STUB</p>
+                <p>Hide the target process of the screen.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t pid : The process to hide. If the process specified does not have screen space, this command is ignored.<br/>
                 </p>
                 <h4 id="show">void show(uint32_t pid)</h4>
-                <p>STUB</p>
+                <p>Show the target process on the screen.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp uint32_t pid : The process to show. If the process specified does not have screen space, this command is ignored.<br/>
                 </p>
 
                 <h4 id="get_env">int get_env(char* key, FILE *valuefile)</h4>
-                <p>STUB</p>
+                <p>Get an environment variable as an editable <a href="dev.html#file">file</a>.</p>
                 <p>
                     parameters:<br/>
-                    &nbsp&nbsp&nbsp&nbsp char c : STUB<br/>
+                    &nbsp&nbsp&nbsp&nbsp char* key : The name of the env variable.<br/>
+                    &nbsp&nbsp&nbsp&nbsp FILE *valuefile : The file descriptor to be filled with the env file.<br/>
                 </p>
 
                 <!-- memory -->

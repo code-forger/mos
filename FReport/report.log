@@ -1,0 +1,449 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.2.25)  6 APR 2015 16:43
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**report.tex
+(./report.tex
+LaTeX2e <2014/05/01>
+Babel <3.9l> and hyphenation patterns for 79 languages loaded.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/titlesec/titlesec.sty
+Package: titlesec 2011/12/15 v2.10.0 Sectioning titles
+\ttl@box=\box26
+\beforetitleunit=\skip43
+\aftertitleunit=\skip44
+\ttl@plus=\dimen103
+\ttl@minus=\dimen104
+\ttl@toksa=\toks14
+\titlewidth=\dimen105
+\titlewidthlast=\dimen106
+\titlewidthfirst=\dimen107
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks15
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2014/10/28 v1.0p Standard LaTeX Graphics (DPC,SPQR)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+) (/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count88
+))
+\Gin@req@height=\dimen108
+\Gin@req@width=\dimen109
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/framed/framed.sty
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip45
+\fb@frw=\dimen110
+\fb@frh=\dimen111
+\FrameRule=\dimen112
+\FrameSep=\dimen113
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+Package: pdfpages 2013/08/25 v0.4v Insert pages of external PDF documents (AM)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2014/10/28 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count89
+\calc@Bcount=\count90
+\calc@Adimen=\dimen114
+\calc@Bdimen=\dimen115
+\calc@Askip=\skip46
+\calc@Bskip=\skip47
+LaTeX Info: Redefining \setlength on input line 75.
+LaTeX Info: Redefining \addtolength on input line 76.
+\calc@Ccount=\count91
+\calc@Cskip=\skip48
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2013/10/06 v2.0d eso-pic (RN)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)) (/usr/local/texlive/2014/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+)) (/usr/local/texlive/2014/texmf-dist/tex/latex/pdfpages/pppdftex.def
+File: pppdftex.def 2013/08/25 v0.4v Pdfpages driver for pdfTeX (AM)
+)
+\AM@pagebox=\box27
+\AM@toc@title=\toks16
+\c@AM@survey=\count92
+\AM@templatesizebox=\box28
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen116
+\WF@size=\dimen117
+\c@WF@wrappedlines=\count93
+\WF@box=\box29
+\WF@everypar=\toks17
+Package: wrapfig 2003/01/31  v 3.6
+) (./report.aux)
+\openout1 = `report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+(/usr/local/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count94
+\scratchdimen=\dimen118
+\scratchbox=\box30
+\nofMPsegments=\count95
+\nofMParguments=\count96
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count97
+\MPscratchDim=\dimen119
+\MPnumerator=\count98
+\makeMPintoPDFobject=\count99
+\everyMPtoPDFconversion=\toks19
+) (/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+) (/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+(/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+)) (/usr/local/texlive/2014/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+(/usr/local/texlive/2014/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\AtBeginShipoutBox=\box31
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 29.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 29.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 29.
+[1
+
+{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (./repo
+rt.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 3.
+[1
+
+])
+\tf@toc=\write3
+\openout3 = `report.toc'.
+
+[2] (./report.lof)
+\tf@lof=\write4
+\openout4 = `report.lof'.
+
+[3
+
+]
+Chapter 1.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 45.
+(/usr/local/texlive/2014/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 45.
+[4
+
+]
+Chapter 2.
+! Too many }'s.
+l.98 ...sional Competence and Integrity}Integrity}
+                                                  
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+[5
+
+]
+Missing character: There is no â in font cmti10!
+Missing character: There is no € in font cmti10!
+Missing character: There is no ™ in font cmti10!
+[6] [7]
+Chapter 3.
+<images/bootProcess.png, id=35, 676.5275pt x 242.9075pt>
+File: images/bootProcess.png Graphic file (type png)
+<use images/bootProcess.png>
+Package pdftex.def Info: images/bootProcess.png used on input line 176.
+(pdftex.def)             Requested size: 0.0pt x 0.0pt.
+<images/kernel.png, id=36, 383.4325pt x 303.1325pt>
+File: images/kernel.png Graphic file (type png)
+<use images/kernel.png>
+Package pdftex.def Info: images/kernel.png used on input line 194.
+(pdftex.def)             Requested size: 150.56305pt x 119.03064pt.
+[8
+
+
+ <./images/bootProcess.png> <./images/kernel.png>] <images/windowing.png, id=42
+, 2007.5pt x 1505.625pt>
+File: images/windowing.png Graphic file (type png)
+<use images/windowing.png>
+Package pdftex.def Info: images/windowing.png used on input line 209.
+(pdftex.def)             Requested size: 250.93842pt x 188.20267pt.
+[9 <./images/windowing.png>]
+Chapter 4.
+[10
+
+] <images/Windows_Program_Launcher_Screenshot.png, id=50, 1606.0pt x 903.375pt>
+File: images/Windows_Program_Launcher_Screenshot.png Graphic file (type png)
+<use images/Windows_Program_Launcher_Screenshot.png>
+Package pdftex.def Info: images/Windows_Program_Launcher_Screenshot.png used on
+ input line 258.
+(pdftex.def)             Requested size: 200.75073pt x 112.9216pt.
+<images/Linux_Program_Launcher_Screenshot.png, id=51, 1445.4pt x 903.375pt>
+File: images/Linux_Program_Launcher_Screenshot.png Graphic file (type png)
+<use images/Linux_Program_Launcher_Screenshot.png>
+Package pdftex.def Info: images/Linux_Program_Launcher_Screenshot.png used on i
+nput line 264.
+(pdftex.def)             Requested size: 200.75073pt x 125.46538pt.
+[11
+
+ <./images/Windows_Program_Launcher_Screenshot.png> <./images/Linux_Program_Lau
+ncher_Screenshot.png>] <images/Windows_Program_Manager_Screenshot.png, id=56, 6
+02.25pt x 385.44pt>
+File: images/Windows_Program_Manager_Screenshot.png Graphic file (type png)
+<use images/Windows_Program_Manager_Screenshot.png>
+Package pdftex.def Info: images/Windows_Program_Manager_Screenshot.png used on 
+input line 289.
+(pdftex.def)             Requested size: 200.75073pt x 128.47772pt.
+
+<images/Linux_Program_Manager_Screenshot.png, id=57, 715.67375pt x 452.69125pt>
+File: images/Linux_Program_Manager_Screenshot.png Graphic file (type png)
+<use images/Linux_Program_Manager_Screenshot.png>
+Package pdftex.def Info: images/Linux_Program_Manager_Screenshot.png used on in
+put line 295.
+(pdftex.def)             Requested size: 200.75073pt x 126.98062pt.
+[12 <./images/Windows_Program_Manager_Screenshot.png> <./images/Linux_Program_M
+anager_Screenshot.png>] <images/Windows_title_bar_screenshot.PNG, id=64, 508.14
+844pt x 24.09pt>
+File: images/Windows_title_bar_screenshot.PNG Graphic file (type png)
+<use images/Windows_title_bar_screenshot.PNG>
+Package pdftex.def Info: images/Windows_title_bar_screenshot.PNG used on input 
+line 316.
+(pdftex.def)             Requested size: 200.75073pt x 9.51709pt.
+<images/Linux_title_bar_screenshot.png, id=65, 720.6925pt x 36.135pt>
+File: images/Linux_title_bar_screenshot.png Graphic file (type png)
+<use images/Linux_title_bar_screenshot.png>
+Package pdftex.def Info: images/Linux_title_bar_screenshot.png used on input li
+ne 323.
+(pdftex.def)             Requested size: 200.75073pt x 10.06534pt.
+
+<images/Windows_Window_Navigation_Screenshot.png, id=66, 1606.0pt x 903.375pt>
+File: images/Windows_Window_Navigation_Screenshot.png Graphic file (type png)
+<use images/Windows_Window_Navigation_Screenshot.png>
+Package pdftex.def Info: images/Windows_Window_Navigation_Screenshot.png used o
+n input line 340.
+(pdftex.def)             Requested size: 200.75073pt x 112.9216pt.
+<images/Linux_Window_Navigation_Screenshot.png, id=67, 1445.4pt x 903.375pt>
+File: images/Linux_Window_Navigation_Screenshot.png Graphic file (type png)
+<use images/Linux_Window_Navigation_Screenshot.png>
+Package pdftex.def Info: images/Linux_Window_Navigation_Screenshot.png used on 
+input line 346.
+(pdftex.def)             Requested size: 200.75073pt x 125.46538pt.
+[13 <./images/Windows_title_bar_screenshot.PNG> <./images/Linux_title_bar_scree
+nshot.png> <./images/Windows_Window_Navigation_Screenshot.png> <./images/Linux_
+Window_Navigation_Screenshot.png>] [14
+
+] [15] [16
+
+] [17] [18] [19]
+Chapter 5.
+<images/schedule_screenshot.png, id=94, 1245.65375pt x 705.63625pt>
+File: images/schedule_screenshot.png Graphic file (type png)
+<use images/schedule_screenshot.png>
+Package pdftex.def Info: images/schedule_screenshot.png used on input line 627.
+
+(pdftex.def)             Requested size: 451.68915pt x 255.87003pt.
+
+Overfull \hbox (34.41916pt too wide) in paragraph at lines 627--628
+ [][] 
+ []
+
+[20
+
+ <./images/schedule_screenshot.png>]
+Chapter 6.
+[21
+
+] [22]
+Chapter 7.
+<images/proposal_doc.pdf, id=105, 597.23125pt x 845.1575pt>
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf>
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 690.
+(pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf>
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 690.
+(pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
+[23
+
+] <images/proposal_doc.pdf, id=111, page=1, 597.23125pt x 845.1575pt>
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 1>
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 690.
+
+(pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 1>
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 1>
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 1>
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 1>
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+[24 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=153, page=2, 597.
+23125pt x 845.1575pt>
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 2>
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 2>
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 2>
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+[25 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=158, page=3, 597.
+23125pt x 845.1575pt>
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 3>
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 3>
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+File: images/proposal_doc.pdf Graphic file (type pdf)
+<use images/proposal_doc.pdf, page 3>
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 690.
+
+(pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
+[26 <./images/proposal_doc.pdf>] (./report.bbl
+Underfull \hbox (badness 10000) in paragraph at lines 4--7
+[]\OT1/cmr/m/n/10 Code of con-duct | mem-ber-ship | bcs - the char-tered in-sti
+-tute for it.
+ []
+
+) [27
+
+] (./report.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 3268 strings out of 493109
+ 47925 string characters out of 6135010
+ 122152 words of memory out of 5000000
+ 6668 multiletter control sequences out of 15000+600000
+ 9788 words of font info for 35 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 40i,18n,46p,716b,416s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
+></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
+usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></us
+r/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/
+local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
+ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/lo
+cal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on report.pdf (28 pages, 4295982 bytes).
+PDF statistics:
+ 194 PDF objects out of 1000 (max. 8388607)
+ 112 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 91 words of extra memory for PDF output out of 10000 (max. 10000000)
+

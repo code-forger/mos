@@ -1,0 +1,19 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces An Example of a boot cycle. The bootloader is in control while the CPU is in Real Mode.}}{8}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces The Kernels Role is to make using the hardware easier for programs.}}{8}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces An example windowing server architecture.}}{9}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Windows Program Launcher Interface}}{11}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Linux Program Launcher Interface}}{11}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Windows Program Manager Interface}}{12}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Linux Program Manager Interface}}{12}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Windows Title Bar Example}}{13}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Linux Title Bar Example}}{13}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Windows Program Navigation Interface}}{13}
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Linux Program Navigation Interface}}{13}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Weekly Schedule. Project work shown in Blue, Extra project time shown in Purple.}}{20}
+\addvspace {10\p@ }
+\addvspace {10\p@ }

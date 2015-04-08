@@ -284,9 +284,12 @@ void  c_terminal_init_syscall(void)
 // Bound checking : No input parameters
 void  c_relinquish_input_syscall(void)
 {
-    int next_input = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD);
-    if (next_input != -1)
-        terminal_set_active_input(next_input);
+    if (!(scheduler_get_process_table_entry(scheduler_get_pid()).flags & F_FORKED))
+    {
+        int next_input = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD);
+        if (next_input != -1)
+            terminal_set_active_input(next_input);
+    }
     send_byte_to(MASTER_PIC, 0x20);
 }
 

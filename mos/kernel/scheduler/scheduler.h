@@ -18,15 +18,16 @@ int scheduler_seconds();
 
 int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, uint32_t ignore);
 
-#define F_INIT      (uint32_t)0b0000001
-#define F_DEAD      (uint32_t)0b0000010
-#define F_SKIP      (uint32_t)0b0000100
-#define F_PAUSED    (uint32_t)0b0001000
-#define F_WAKE      (uint32_t)0b0010000
-#define F_HAS_INPUT (uint32_t)0b0100000
-#define F_IS_HIDDEN (uint32_t)0b1000000
+#define F_INIT      (uint32_t)0b00000001
+#define F_DEAD      (uint32_t)0b00000010
+#define F_SKIP      (uint32_t)0b00000100
+#define F_PAUSED    (uint32_t)0b00001000
+#define F_WAKE      (uint32_t)0b00010000
+#define F_HAS_INPUT (uint32_t)0b00100000
+#define F_IS_HIDDEN (uint32_t)0b01000000
+#define F_FORKED (uint32_t)0b10000000
 
-#define FS_ALL       (uint32_t)0b1111111
+#define FS_ALL       (uint32_t)0b11111111
 #define FS_NONE      (uint32_t)0
 
 #define FS_DONT_SCHEDULE (F_DEAD | F_PAUSED | F_IS_HIDDEN)
@@ -50,7 +51,7 @@ typedef struct io_part
 
 typedef struct p_t_entry
 {
-    uint32_t flags; //[...has_input, paused, skip, dead, init]
+    uint32_t flags; //[.., forked, is_hidden, has_input, wake, paused, skip, dead, init]
     uint32_t esp;
     uint32_t ebp;
     uint32_t code_physical[8];

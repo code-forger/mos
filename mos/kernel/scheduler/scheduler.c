@@ -314,7 +314,7 @@ void scheduler_time_interupt()
     {
         source_pid = process_table[i].code_physical[0];
 
-        process_table[i].flags = 0;
+        process_table[i].flags = F_FORKED;
         process_table[i].esp = process_table[source_pid].esp;
         process_table[i].ebp = process_table[source_pid].ebp;
         process_table[i].code_size = process_table[source_pid].code_size;

@@ -224,8 +224,8 @@ void main(int argc, char** argv)
             fseek(&dd, 0);
 
             this_ticks = ticks_ms() + 200;
-
-            for (fgetfile(&dd, &process_dir);process_dir.type != 2; fgetfile(&dd, &process_dir))
+            int i = 0;
+            for (fgetfile(&dd, &process_dir);process_dir.type != 2 && i < num_processes; fgetfile(&dd, &process_dir))
             {
                 char *num = file_read_name(process_dir);
 
@@ -255,6 +255,7 @@ void main(int argc, char** argv)
                 free(cputimestring);
                 free(statestring);
                 free(stateletterstring);
+                i++;
             }
 
             //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");

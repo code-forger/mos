@@ -174,8 +174,6 @@ void  c_int_page_fault(void)
     else
     {
         printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
-        asm("cli");
-        asm("hlt");
         send_byte_to(MASTER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;

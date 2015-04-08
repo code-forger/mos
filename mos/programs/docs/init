@@ -4,4 +4,4 @@ usage : N/A
 Output : N/A
 Input : N/A
 
-init is the only process that the kernel will call at boot time. I will read /init-files and fork-exec every like in that file.
+init is the only process that the kernel will call at boot time. I will read /init-files and fork-exec every line in that file.

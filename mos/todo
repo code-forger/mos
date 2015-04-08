@@ -1,7 +1,9 @@
 Todo:
     Programs:
-        kill : check parameter as int.
+        processes, size violation when creating a process.
 
     Kernel:
+        launcher looses focus when launching dead process.
+        ctlr+tab witches to hidden processes
 
     Poster:

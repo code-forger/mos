@@ -5,19 +5,4 @@ Code of conduct | membership | bcs - the chartered institute for it.
 \newblock http://www.bcs.org/category/6030.
 \newblock Accessed: 2014-11-5.
 
-\bibitem{manPipe}
-pipe(2): create pipe - linux man page.
-\newblock http://linux.die.net/man/2/pipe.
-\newblock Accessed: 2014-11-5.
-
-\bibitem{manWrite}
-write(2): to file descriptor - linux man page.
-\newblock http://linux.die.net/man/2/write.
-\newblock Accessed: 2014-11-5.
-
-\bibitem{manRead}
-read(2): read from file descriptor - linux man page.
-\newblock http://linux.die.net/man/2/read.
-\newblock Accessed: 2014-11-5.
-
 \end{thebibliography}

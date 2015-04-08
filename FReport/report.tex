@@ -32,12 +32,100 @@
 \listoffigures
 
 \chapter{Introduction}
+
+The overall aim for this project is to produce a simple Multitasking Operating System (herein called MOS), following 5 key tenants, to study structure, allocation, and management of different classes of resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach take.
+
 We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviours by providing simple high level abstractions over the intricate low level hardware.
 
-The project goal is to understand the mechanisms and technologies involved in running an x86 computer and allowing for dynamic memory allocation, pseudo concurrent execution of code, and co-operative usage of the screen in user space applications.
 
-The project has been split into a number of discrete `goals' as listed below.
 
+
+
+
+
+
+
+\clearpage
+\section{Understanding Operating Systems}
+
+
+Before this project can even begin, an understanding of what a Operating System is and does is required.
+
+Operating Systems come in all different shapes and sizes, however usually they contain three distinct parts:
+
+The kernel is the software that drives the hardware. It provides nice abstractions and interfaces to control the very fiddly underlying machine.
+
+The Bootloader is the code that is run first. It gets things that the kernel might need set up, for example, getting the CPU into the correct operation mode.
+
+The Final part is a collection of programs and other software that come with the Operating System. Although some people would argue this is not so much part of the Operating System, on some systems (namely Microsoft's Windows) a huge number of these programs are built right in, and seem from the outside to be part of the kernel.
+
+\subsection{The Bootloader}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=415px]{images/bootProcess.png}
+\caption{An Example of a boot cycle. The bootloader is in control while the CPU is in Real Mode.}
+\label{fig:theloader}
+\end{figure}
+
+The bootloader's job is to load the kernel. First off, the CPU has to begin executing code somewhere, most of the time this is done by the BIOS, which detects our bootloader and starts it running.
+
+The majority of the rest of the bootloader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the bootloader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
+
+The final steps of the bootloader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
+
+Finally the bootloader can jump to the start of the kernel and it's job is finished.
+
+\clearpage
+\subsection{The Kernel}
+
+\begin{wrapfigure}{r}{150px}
+\centering
+\includegraphics[width=150px]{images/kernel}
+\caption{The Kernels Role is to make using the hardware easier for programs.}
+\vspace{-10pt}
+\label{fig:thekernel}
+\end{wrapfigure}
+
+Once the bootloader has passed control to the kernel, the kernel begins to prepare for executing programs. It will create tables of information, most of which will be empty to begin with, but they will quickly be filled. Some of the more important tasks are keeping track of which processes are currently executing and deciding which should go next, as well as ensuring that all processes think they have enough memory to operate correctly.
+
+Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes are pieces of code that perform some form of task, each having a unique environment. As far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
+
+
+\subsection{The Built in Programs}
+
+\begin{wrapfigure}{r}{250px}
+\centering
+\includegraphics[width=250px]{images/windowing}
+\caption{An example windowing server architecture.}
+\label{fig:theserver}
+\end{wrapfigure}
+
+After the kernel starts process 0, process 0 is free to spawn many other programs. Many of these programs will come `built in' to an Operating System to create a richer platform for users.
+
+Some would argue that these programs are not part of the Operating System its self. For example, in the Linux terminology, a kernel plus a collection of programs is referred to as a `Distro' or distribution of Linux. In Windows however, many of these programs are well integrated into the kernel and are considered part of the Operating System.
+
+Figure \ref{fig:theserver} shows how even showing simple windows on the screen requires many levels of different programs interacting with each other. This architecture is favored amongst some computer users as it is more flexible and customizable to their own needs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\section {Project Aims}
+
+The project was begun with a number of Primary and Extended Objectives, however as the project progressed, new objectives were discovered. These new objectives were prioritised over other extended objectives. This lead to some of the original extended objectives being left incomplete.
 
 \textbf {Primary Objectives:}
 
@@ -61,165 +149,64 @@ The project has been split into a number of discrete `goals' as listed below.
 
 
 \begin{itemize}
-\item Add some hardware drivers to load programs off disk and have some persistence.
+\item \lbrack Complete\rbrack Add some hardware drivers to load programs off disk and have some persistence.
+\item \lbrack Partially Complete \rbrack Implement the entire c standard library.
 \item Move into pixel graphics mode.
 \item Use Multiple core's to have `true' concurrency.
-\item Implement the entire c standard library.
 \item Port the `Python' runtime to my OS (here I have chosen Python simply because there is a well documented `todo' list for porting python to new OS's).
+\end{itemize}
+
+\textbf {New Objectives:}
+
+
+\begin{itemize}
+\item \lbrack Complete\rbrack Create A user manual.
+\item \lbrack Complete\rbrack Create A Developers manual.
+\item \lbrack Complete\rbrack Create set of scripts for getting the source code, Building the project, and deploying it to a computer.
 \end{itemize}
 
 
 
-This report will outline the requirements for the project and the plan for creating an Operating System.
+
+
+
+
 
 \chapter{Professional Considerations}
 
-As this project falls within the bound of Computer Science, It will comply with the British Society of Computing (BSC) Code of Conduct. Although there is no contractual obligation to follow this code, it is important to recognize and comply with them to ensure the integrity of the project.
+As this project falls within the bound of Computer Science, It will comply with the British Society of Computing (BSC) Code of Conduct \cite{CoC}. Although there is no contractual obligation to follow this code, it is important to recognize and comply with them to ensure the integrity of the project.
 
 Each of the four main sections of the Code of Conduct will be discussed in order;
 
 \section{Public Interest}
 
-From the Code of Conduct: \cite{CoC}
-
-\textit{You shall:}
-\begin{itemize}
-\item \textit{have due regard for public health, privacy, security and wellbeing of others and the environment.}
-\item \textit{have due regard for the legitimate rights of Third Parties*.}
-\item \textit{conduct your professional activities without discrimination on the grounds of sex, sexual orientation, marital status, nationality, colour, race, ethnic origin, religion, age or disability, or of any other condition or requirement }
-\item \textit{promote equal access to the benefits of IT and seek to promote the inclusion of all sectors in society wherever opportunities arise.}
-\end{itemize}
-
-The project complies with this section of the Code of Conduct. No user information is gathered and the project poses no risk to a users health, privacy, or wellbeing.
+For this project no user information is gathered and the project poses no risk to a users health, privacy, or well-being.
 
 The project makes use of third party material, however only within the licenses set out by those third parties that have been implicitly agreed to by all project members. Furthermore, it is explicitly marked where third party technologies were used.
 
 
-\section{Professional Competence and Integrity}Integrity}
+\section{Professional Competence and Integrity}
 
-From the Code of Conduct: \cite{CoC}
+The project was created as an undergraduate Final Year Project for a computer science course. It pulls knowledge from many of the modules taught as part of this course.
 
-\textit{You shall:}
-\begin{itemize}
-\item \textit{only undertake to do work or provide a service that is within your professional competence.}
-\item \textit{NOT claim any level of competence that you do not possess.}
-\item \textit{develop your professional knowledge, skills and competence on a continuing basis, maintaining awareness of technological developments, procedures, and standards that are relevant to your field.}
-\item \textit{ensure that you have the knowledge and understanding of Legislation* and that you comply with such Legislation, in carrying out your professional responsibilities. }
-\item \textit{respect and value alternative viewpoints and, seek, accept and offer honest criticisms of work.}
-\item \textit{avoid injuring others, their property, reputation, or employment by false or malicious or negligent action or inaction.}
-\item \textit{reject and will not make any offer of bribery or unethical inducement.}
-\end{itemize}
-
-The members of this project each comply with this section of the Code of Conduct.
-
-The level of competence of each member of the project was assessed and found fit to carryout this project tasks.
-
-During the completion of the project each member will meet with a higher supervisor to ensure that they maintain professional competence and discuss viewpoints and criticisms they may not have considered.
+During the completion of the project The project engineer, Michael Rochester, will meet with a supervisor to ensure that he maintains professional competence and considers ideas and viewpoints he may not have considered.
 
 \section{Duty to Relevant Authority}
 
-From the Code of Conduct: \cite{CoC}
-
-\textit{You shall:}
-\begin{itemize}
-\item \textit{carry out your professional responsibilities with due care and diligence in accordance with the Relevant Authority’s requirements whilst exercising your professional judgement at all times.}
-\item \textit{seek to avoid any situation that may give rise to a conflict of interest between you and your Relevant Authority.}
-\item \textit{accept professional responsibility for your work and for the work of colleagues who are defined in a given context as working under your supervision.}
-\item \textit{NOT disclose or authorise to be disclosed, or use for personal gain or to benefit a third party, confidential information except with the permission of your Relevant Authority, or as required by Legislation}
-\item \textit{NOT misrepresent or withhold information on the performance of products, systems or services (unless lawfully bound by a duty of confidentiality not to disclose such information), or take advantage of the lack of relevant knowledge or inexperience of others. }
-\end{itemize}
-
-The members of this project each comply with this section of the Code of Conduct.
-
-A structure of meetings and other feedback channels have been established between the project members and their relevant supervisors to ensure each member is working within the bounds of their relevant authority.
+A structure of meetings, and other feedback channels have been established between the project engineer, Michael Rochester, and the supervisors to ensure he is working in accordance with the University of Sussex guidelines.
 
 \section{Duty to the Profession}
 
-From the Code of Conduct: \cite{CoC}
-
-\textit{You shall:}
-\begin{itemize}
-\item \textit{accept your personal duty to uphold the reputation of the profession and not take any action which could bring the profession into disrepute.}
-\item \textit{seek to improve professional standards through participation in their development, use and enforcement.}
-\item \textit{uphold the reputation and good standing of BCS, the Chartered Institute for IT.}
-\item \textit{act with integrity and respect in your professional relationships with all members of BCS and with members of other professions with whom you work in a professional capacity.}
-\item \textit{notify BCS if convicted of a criminal offence or upon becoming bankrupt or disqualified as a Company Director and in each case give details of the relevant jurisdiction.}
-\item \textit{encourage and support fellow members in their professional development}
-\end{itemize}
-
-The members of this project each comply with this section of the Code of Conduct.
-
-
+The project engineer, Michael Rochester, will carry out this project to the highest standard possible to maintain the reputation of the profession, furthermore all materials produced as part of this project will be freely available to any member of the profession to help further the understanding of the project domain.
 
 \section{Requirement for ethical review}
 
 This Project is a technical exercise in understanding the low level relationship between hardware and software, due to this, the project does not require human participation, testing, or feedback. As such, The Project does not require an ethical review, and there are no ethical concerns with this project.
 
 \clearpage
-\chapter{Understanding Operating Systems}
-
-
-Before this project can even begin, an understanding of what a Operating System is and does is required.
-
-Operating Systems come in all different shapes and sizes, however usually they contain three distinct parts:
-
-The kernel is the software that drives the hardware. It provides nice abstractions and interfaces to control the very fiddly underlying machine.
-
-The Bootloader is the code that is run first. It gets things that the kernel might need set up, for example, getting the CPU into the correct operation mode.
-
-The Final part is a collection of programs and other software that come with the Operating System. Although some people would argue this is not so much part of the Operating System, on some systems (namely Microsoft's Windows) a huge number of these programs are built right in, and seem from the outside to be part of the kernel.
-
-\section{The Bootloader}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=415px]{images/bootProcess.png}
-\caption{An Example of a boot cycle. The bootloader is in control while the CPU is in Real Mode.}
-\label{fig:theloader}
-\end{figure}
-
-The bootloader's job is to load the kernel. First off, the CPU has to begin executing code somewhere, most of the time this is done by the BIOS, which detects our bootloader and starts it running.
-
-The majority of the rest of the bootloader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the bootloader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
-
-The final steps of the bootloader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
-
-Finally the bootloader can jump to the start of the kernel and it's job is finished.
-
-
-\section{The Kernel}
-
-\begin{wrapfigure}{r}{150px}
-\centering
-\includegraphics[width=150px]{images/kernel}
-\caption{The Kernels Role is to make using the hardware easier for programs.}
-\vspace{-10pt}
-\label{fig:thekernel}
-\end{wrapfigure}
-
-Once the bootloader has passed control to the kernel, the kernel begins to prepare for executing programs. It will create tables of information, most of which will be empty to begin with, but they will quickly be filled. Some of the more important tasks are keeping track of which processes are currently executing and deciding which should go next, as well as ensuring that all processes think they have enough memory to operate correctly.
-
-Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes are pieces of code that perform some form of task, each having a unique environment. As far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
-
-
-\section{The Built in Programs}
-
-\begin{wrapfigure}{r}{250px}
-\centering
-\includegraphics[width=250px]{images/windowing}
-\caption{An example windowing server architecture.}
-\label{fig:theserver}
-\end{wrapfigure}
-
-After the kernel starts process 0, process 0 is free to spawn many other programs. Many of these programs will come `built in' to an Operating System to create a richer platform for users.
-
-Some would argue that these programs are not part of the Operating System its self. For example, in the Linux terminology, a kernel plus a collection of programs is referred to as a `Distro' or distribution of Linux. In Windows however, many of these programs are well integrated into the kernel and are considered part of the Operating System.
-
-Figure \ref{fig:theserver} shows how even showing simple windows on the screen requires many levels of different programs interacting with each other. This architecture is favored amongst some computer users as it is more flexible and customizable to their own needs.
-
 \chapter{Requirements Analysis}
 
-In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the MOS. Although It was known in advanced that the MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
+In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
 
 Modern Operating Systems are such that there are two user groups.
 
@@ -404,82 +391,93 @@ Free is passed a pointer to memory that was received from malloc, it frees this 
 
 The screen space is not managed by the Linux kernel and so is not useful as a study for MOS.
 
-\subsection{Inter Process Comunication in Linux}
+\subsection{Inter Process Communication in Linux}
 
-Communication between processes is an important part of creating complex behaviours in user space programs. Linux provides some simple calls to create chanels of communication between processes. The main call is `pipe'.
+Communication between processes is an important part of creating complex behaviours in user space programs. Linux provides some simple calls to create channels of communication between processes.
 
-From the man page:
+\noindent
+\textbf{Creating a pipe.}
 
-\textit{pipe() creates a pipe, a unidirectional data channel that can be used for interprocess communication. The array pipefd is used to return two file descriptors referring to the ends of the pipe. pipefd[0] refers to the read end of the pipe. pipefd[1] refers to the write end of the pipe. Data written to the write end of the pipe is buffered by the kernel until it is read from the read end of the pipe.} \cite{manPipe}
+Linux provides the `pipe' system call to create pipes.
 
-Here pipe is used to create a channel of communication. To use this channel, Linux provides `write' and `read':
+`pipe' created a one directional communication channel and provides the user a handle to this channel.
 
-From the man pages:
+\noindent
+\textbf{Reading and Writing to a pipe.}
 
-\textit{write(pipe, data, size) writes up to size bytes from the buffer pointed data to the file referred to by openpipe.} \cite{manWrite}
+To use this channel, Linux provides `write' and `read':
 
-\textit{read(pipe, data, size) attempts to read up to size bytes from pipe into the buffer data.} \cite{manRead}
-
-These system calls will read and write using the pipe, allowing process to send data to each other. Note, it is by design that the pipe only transmits bytes, it is down to the user space program to define any communication protocalls for transmitting more complex data.
+These system calls will read and write using the pipe, allowing process to send data to each other. Note, it is by design that the pipe only transmits bytes, it is down to the user space program to define any communication protocols for transmitting more complex data.
 
 \section{Analysis conclusion}
 
-It was found that in end user design, many systems share similar design features. The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works.
+It was found that in end user design, many systems share similar design features. These features are very rich and operate do to a wide collection of tool, utilities, and applications The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works, However due to time constraints MOS will target much simpler versions of these features.
 
-From the programmers perspective. The system API's or modern Operating Systems have been well thought out and so new systems would do well to start from modern systems ideas and work from there.
+From the programmers perspective. The system API's or modern Operating Systems have been well thought out and have stood the test of time, however sometimes represent behaviours far more complex than that which MOS targets. The studied API's will be mimicked both to follow tried and tested ideas, and also so that program developers feel at home developing for MOS.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \clearpage
 \chapter{User Design}
 
-As with the Analysis, the Design phase waas seperated into End User and Program Developer sections. The designs presented here are the final designs for the system, some earlyer versions can be found in XXXXX.
+As with the Analysis, the Design phase was separated into End User and Program Developer sections. The designs presented here are the final designs for the system, some earlier versions can be found in XXXXX.
 
 \section{The End User}
 
-The End Users interaction with The Operating System will be limited, as the majority of their time will be spent interacting with the user space programs running on the system. However the Operating System will provide a number of system level tools to the user.
+The End Users interaction directly with MOS will be limited, as the majority of their time will be spent interacting with the user space programs running on the system. Because of this, MOS will ship with a number of user space tools for managing the system
 
-The following tools will be provided.
+The following actions will be possible using the built in tools.
 \begin{itemize}
 \item Process Creation.
 \item Process Management.
-\item Process Interaction.
+\item File/directory Creation.
+\item File/directory Management.
+\item File editing.
 \end{itemize}
 
-These tools will be provided with three contexts:
+\subsection {Process Creations : MASH}
 
-\subsection{Process Creation Context}
+MASH will be MOS' built in shell. Using MASH, users can launch any other process.
 
-The process creation context will allow the user to view installed programs and run them from a command line interface.
+MASH will support passing parameters to launched processes, and a persistent file history. It will be displayed to the user as a single line at the bottom of the screen, with a \> prompt where the user can enter their command.
 
-The proposed design for this context is given by the following example screen.
-{\ttfamily \small
-  \begin{framed}
-    \begin{verbatim}
+Since MASH will cover Process Creation. All other actions that user can perform with build in tools are achieved through different built in programs. The user can use MASH to launch these programs passing any desired parameters.
 
-      Installed Programs:
-        1 | Notes Application
-        2 | Pong Game
-        3 | Name Application
-        4 | Time Application
+\subsection{Process Management : processes}
 
-     Please type an application number followed by a <return> to launch a program:
-        >
+The program called processes will serve as the users tool for killing processes.
 
-    \end{verbatim}
-  \end{framed}
-}
-
-
-This context will expand as more programs are installed, and may support scrolling or a second column of programs if the number of programs exceeds the size of the screen.
-
-This context was influence by the designs of modern Operating Systems analysed earlier in this document. As the Operating System does not support pixel graphics or mouse pointers, no icons can be used and pointing and clicking on a program to launch it is impossible. This lead the design to be more refined and text based.
-
-
-\subsection{Process Management Context}
-
-This context will allow the user to view currently running programs and manage them by pausing or stopping execution.
-
-The proposed design for this context is given by the following example screen.
+The proposed design for this program is given by the following example screen.
 
 {\ttfamily \small
   \begin{framed}
@@ -494,46 +492,25 @@ The proposed design for this context is given by the following example screen.
         5       | pong     |          80 % |       102 KB  | Running    |
         12      | name     |           0 % |         1 KB  | Paused     |
 
-     '>' Indicates the 'selected' program.
-     'f1' will pause the selected program.
-     'f2' will unpause the delected program.
-     'f3' will kill the selected program.
+     Press k to kill the current [>] process.
 
     \end{verbatim}
   \end{framed}
 }
 
-This context will allow the user to modify the state of programs. This can be useful if a program is using two many system resources or is not responding. It will expand into a scrollable area when the cursor gets to the bottom of the screen if there are too many applications.
+As shown, this tool will show the user information about each running processes and afford them the ability to kill these processes.
 
-This context was also influenced heavily by the analysed systems however once again with out mouse pointer support it was impossible to mimic it direct. The columns of information however were chosen from the analysed systems.
+\subsection{File/Directory creation: mkdir and touch}
 
-\subsection{Process Interaction Context}
+MOS will provide two programs for creating files and directories. touch will create empty files and mkdir will create directories. Both programs will operate in a similar way, taking an absolute path as their only parameter. Neither will create anything unless the parent directory of the wanted object exists, and the parameter is well formed (with a training / for directories).
 
-Here the user will use the programs that are running on the system. They can view the output of programs and send input to the programs using the keyboard.
+\subsection{File/Directory Management: rm and mv}
 
-The proposed design for this context is given by the following example screen.
+For file and directory management MOS will provide two functions.
 
-{\ttfamily \small
-  \begin{framed}
-    \begin{verbatim}
-    Joe Bloggs                           12:24
-    ***********004****-PONG-****014*********                   Notes
-    *                                      *          |
-    *                                      *          | Shopping list
-    *  \#                00                *          | - Eggs 12
-    *  \#                00                *          | - milk 2 Pints
-    *  \#                                  *          | - bread (kingsmill)
-    *                                   \# *          |
-    *                                   \# *          |
-    *                                   \# *          |
-    ****************************************
-    \end{verbatim}
-  \end{framed}
-}
+The first is rm. rm will try to delete the object at the obsolete path path passed as its only parameter. This path must be will formed and the object must exist however rm does not mind if the object is a file or directory and will delete either. If a directory is selected, all child nodes of that directory will be delete recursively.
 
-Here the context differers the most form the analysed systems as the MOS will not allow the overlapping of program areas.
-
-
+The second is mv. mv will take two parameters, the first will be the path to an existing file system object (file or directory) and the second will be the path to an existing directory. mv will move the specified object (and all of its children in the case of a directory) into the target directory.
 
 \section{The Program Developers}
 
@@ -541,13 +518,13 @@ As program developers are very familiar with how to create programs for other sy
 
 \subsection{Managing processes}
 
-The MOS will provide a very similar set of system calls to Linux, however their behavior may be simpler.
+MOS will provide a very similar set of system calls to Linux, however their behavior may be simpler.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together.
 
 \textbf{Creating a new process}
 
-Similar to Linux the process creation pattern the MOS was designed to follow the `fork and exec' pattern. Therefore the MOS provides two system calls:
+Similar to Linux the process creation pattern MOS was designed to follow the `fork and exec' pattern. Therefore MOS provides two system calls:
 
 `fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish them selfs by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
 
@@ -555,13 +532,13 @@ Similar to Linux the process creation pattern the MOS was designed to follow the
 
 \textbf{Destroying processes}
 
-Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, the MOS will use three separate calls.
+Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, MOS will use three separate calls.
 
 `kill(pid)' will kill the target process, freeing all its memory and removing it from the scheduler.
 
 \textbf{Pausing and Restarting programs}
 
-Pausing programs is important for efficiency, therefore the MOS provides the following calls.
+Pausing programs is important for efficiency, therefore MOS provides the following calls.
 
 `pause()' and `pause(pid)' will pause the target process until `wake()' is called. With `pause()' the current process will be paused and immediately revoke controls to the scheduler.
 
@@ -569,7 +546,7 @@ Pausing programs is important for efficiency, therefore the MOS provides the fol
 
 \subsection{Managing memory}
 
-The memory managemnt API will be Identical to that of Linux. Therefore the MOS will provide two system calls:
+The memory managemnt API will be Identical to that of Linux. Therefore MOS will provide two system calls:
 
 `malloc(size)' will allocate a memory locations of size, and return a pointer to that location.
 

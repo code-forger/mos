@@ -417,14 +417,14 @@ char terminal_get_last_char_pressed()
 
 void terminal_hide_process(uint32_t pid)
 {
-    printf("[CALL] : terminal_hide_process(%d)\n", pid);
+    //printf("[CALL] : terminal_hide_process(%d)\n", pid);
     if (scheduler_get_process_table_entry_for_editing(pid) != 0)
     {
         process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
 
         if (ptb->io.snapshot)
         {
-            printf("PROCESS ALREADY HIDDEN\n");
+            //printf("PROCESS ALREADY HIDDEN\n");
             return;
         }
 
@@ -443,13 +443,13 @@ void terminal_hide_process(uint32_t pid)
     }
     else
     {
-        printf("FAILED TO GET PTB\n");
+        //printf("FAILED TO GET PTB\n");
     }
 }
 
 static int overlaps(uint32_t pid, uint32_t process)
 {
-    printf("[CALL] : overlaps(%d, %d)", pid, process);
+    //printf("[CALL] : overlaps(%d, %d)", pid, process);
     process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
     process_table_entry ptb2 = scheduler_get_process_table_entry(process);
 
@@ -461,20 +461,13 @@ static int overlaps(uint32_t pid, uint32_t process)
 
 static void terminal_hide_overlapping(uint32_t pid)
 {
-    printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
+    //printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
     uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
     while (process != 0)
     {
-        printf("check for %d - ", process);
+        //printf("check for %d - ", process);
         if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
-        {
-            printf(" > true\n");
             terminal_hide_process(process);
-        }
-        else
-        {
-            printf(" > false\n");
-        }
 
         process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
     }

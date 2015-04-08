@@ -79,7 +79,7 @@ void write_metrics(int line, char*pid, char*command, char*time, char*perc, char*
 
 void write_rubertic(int height)
 {
-    char *ruberic = "press k to kill the current [>] processes";
+    char *ruberic = "press k to kill the current [>] process";
     int rub_len = strlen(ruberic);
 
     for (int i = 0; i < rub_len; i++)

@@ -317,7 +317,7 @@ void move_caret(char c)
 
 void do_main(char* filename)
 {
-    setio(0, 1, 79, 22);
+    setio(0, 1, 80, 23);
     stdin_init();
 
     sprintf(header, "/*** notes | %s ***\\", filename);

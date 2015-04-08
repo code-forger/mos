@@ -32,7 +32,7 @@ void main(void)
     name[fd.index] = '\0';
 
     int width = strlen(name);
-    setio(80-width, 0, width, 0);
+    setio(80-width, 0, width, 1);
     printf(name);
     pause();
 }

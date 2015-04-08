@@ -22,7 +22,7 @@ void main(int argc, char** argv)
     fopen(argv[0], &fd, false);
     if(fd.type == 0)
     {
-        setio(0, 1, 79, 22);
+        setio(0, 1, 80, 23);
         stdin_init();
         printf("******** less | %s ********\n\n", argv[0]);
         char* file = file_read_data(fd);

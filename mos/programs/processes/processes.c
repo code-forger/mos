@@ -83,7 +83,7 @@ void write_rubertic(int height)
     int rub_len = strlen(ruberic);
 
     for (int i = 0; i < rub_len; i++)
-        putcharat(ruberic[i], 4+i,height-1);
+        putcharat(ruberic[i], 4+i,height-2);
 }
 
 char* get_metric(char* num, char* metric)
@@ -135,7 +135,7 @@ void main(int argc, char** argv)
 
     int last_ticks, this_ticks;
 
-    int top=1, height=22;
+    int top=1, height=23;
 
     if(argc == 2)
     {
@@ -143,7 +143,7 @@ void main(int argc, char** argv)
         height = atoi(argv[1]);
     }
 
-    setio(0, top, 79, height);
+    setio(0, top, 80, height);
     stdin_init();
 
     printf("\n  Running Programs:");

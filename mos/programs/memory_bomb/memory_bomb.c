@@ -3,7 +3,7 @@
 
 void main(void)
 {
-    setio(0, 1, 79, 22);
+    setio(0, 1, 80, 23);
     for(int i = 0;;i++)
     {
         char* m = malloc(4000);

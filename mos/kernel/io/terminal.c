@@ -46,11 +46,11 @@ static void push_terminal_up()
 
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 {
-    for (uint32_t y = py; y < (py + wy); y++ )
-        for (uint32_t x = px; x <= (px + wx); x++ )
+    for (uint32_t y = py; y < (py + wy - 1); y++ )
+        for (uint32_t x = px; x < (px + wx); x++ )
             process_terminal[y * VGA_WIDTH + x] = process_terminal[(y + 1) * VGA_WIDTH + x];
-    for (uint32_t x = px; x <= (px + wx); x++)
-        process_terminal[(py + wy) * VGA_WIDTH + x] = terminal_make_character(' ', (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+    for (uint32_t x = px; x < (px + wx); x++)
+        process_terminal[(py + wy - 1) * VGA_WIDTH + x] = terminal_make_character(' ', (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
@@ -62,7 +62,7 @@ void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(scheduler_get_pid());
-    if (x <= ptb.io.wx && y <= ptb.io.wy)
+    if (x < ptb.io.wx && y < ptb.io.wy)
         process_terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
@@ -179,7 +179,7 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
         if (c == '\n')
         {
             io->column = 0;
-            if ( ++io->row == io->wy  + 1)
+            if ( ++io->row == io->wy)
             {
                 push_terminal_up_at(io->px, io->py, io->wx, io->wy);
                 io->row--;
@@ -187,16 +187,17 @@ void terminal_string_for_process(io_part* io) // for keyboard.c
         }
         else
         {
-            terminal_putchar_at_for_process(c, io->column, io->row);
-            if ( ++io->column == io->wx + 1)
+            if (io->column == io->wx)
             {
                 io->column = 0;
-                if ( ++io->row == io->wy + 1)
+                if ( ++io->row == io->wy )
                 {
                     push_terminal_up_at(io->px, io->py, io->wx, io->wy);
                     io->row--;
                 }
             }
+            terminal_putchar_at_for_process(c, io->column, io->row);
+            ++io->column;
         }
     }
 }
@@ -347,9 +348,9 @@ void terminal_setin(PIPE* pipes)
 void terminal_set_active_input(int32_t pid)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(active_process);
-    for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
+    for (uint32_t y = ptb.io.py; y < ptb.io.py + ptb.io.wy; y++)
     {
-        for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
+        for (uint32_t x = ptb.io.px; x < ptb.io.px + ptb.io.wx; x++)
         {
             char c = process_terminal[y* VGA_WIDTH + x];
             process_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, inactive_color);
@@ -364,9 +365,9 @@ void terminal_set_active_input(int32_t pid)
     }
 
     ptb = scheduler_get_process_table_entry(active_process);
-    for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
+    for (uint32_t y = ptb.io.py; y < ptb.io.py + ptb.io.wy; y++)
     {
-        for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
+        for (uint32_t x = ptb.io.px; x < ptb.io.px + ptb.io.wx; x++)
         {
             char c = process_terminal[y * VGA_WIDTH + x];
             process_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
@@ -379,9 +380,9 @@ void terminal_clear_process(uint32_t pid)
     process_table_entry ptb = scheduler_get_process_table_entry(pid);
     if(!(ptb.flags & F_IS_HIDDEN))
     {
-        for (uint32_t y = ptb.io.py; y <= ptb.io.py + ptb.io.wy; y++)
+        for (uint32_t y = ptb.io.py; y < ptb.io.py + ptb.io.wy; y++)
         {
-            for (uint32_t x = ptb.io.px; x <= ptb.io.px + ptb.io.wx; x++)
+            for (uint32_t x = ptb.io.px; x < ptb.io.px + ptb.io.wx; x++)
             {
                 process_terminal[y * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
             }
@@ -430,9 +431,9 @@ void terminal_hide_process(uint32_t pid)
 
         ptb->io.snapshot = (uint16_t*)malloc(sizeof(uint16_t) * (ptb->io.wx+1) * (ptb->io.wy+1));
 
-        for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
+        for (uint32_t y = ptb->io.py; y < ptb->io.py + ptb->io.wy; y++)
         {
-            for (uint32_t x = ptb->io.px; x <= ptb->io.px + ptb->io.wx; x++)
+            for (uint32_t x = ptb->io.px; x < ptb->io.px + ptb->io.wx; x++)
             {
                 ptb->io.snapshot[(x - ptb->io.px) + ((y - ptb->io.py) * ptb->io.wx)] = process_terminal[y * VGA_WIDTH + x];
                 process_terminal[y * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
@@ -453,9 +454,9 @@ static int overlaps(uint32_t pid, uint32_t process)
     process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
     process_table_entry ptb2 = scheduler_get_process_table_entry(process);
 
-    return (ptb1.io.px <= ptb2.io.px + ptb2.io.wx &&
+    return (ptb1.io.px < ptb2.io.px + ptb2.io.wx &&
         ptb2.io.px < ptb1.io.px + ptb1.io.wx &&
-        ptb1.io.py <= ptb2.io.py + ptb2.io.wy &&
+        ptb1.io.py < ptb2.io.py + ptb2.io.wy &&
         ptb2.io.py < ptb1.io.py + ptb1.io.wy);
 }
 
@@ -485,9 +486,9 @@ void terminal_show_process(uint32_t pid)
 
         process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
 
-        for (uint32_t y = ptb->io.py; y <= ptb->io.py + ptb->io.wy; y++)
+        for (uint32_t y = ptb->io.py; y < ptb->io.py + ptb->io.wy; y++)
         {
-            for (uint32_t x = ptb->io.px; x <= ptb->io.px + ptb->io.wx; x++)
+            for (uint32_t x = ptb->io.px; x < ptb->io.px + ptb->io.wx; x++)
             {
                 process_terminal[y * VGA_WIDTH + x] = ptb->io.snapshot[(x - ptb->io.px) + ((y - ptb->io.py) * ptb->io.wx)];
             }

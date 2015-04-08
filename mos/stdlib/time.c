@@ -40,7 +40,7 @@ void format_time(uint32_t ms, char* in)
         else
             sprintf(in, "%d:", h);
     in += 3;
-    if (m==0)
+    if (m==0 && h==0)
         sprintf(in, "   ", m);
     else
         if (m < 10)

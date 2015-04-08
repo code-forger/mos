@@ -124,7 +124,7 @@ void main(void)
 {
     setio(0,24,80,1);
     stdin_init();
-    printf("Launcher >> \n");
+    printf("Launcher >> ");
 
     int carret_base = 12;
 

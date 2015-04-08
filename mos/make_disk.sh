@@ -73,5 +73,5 @@ dd if=grub_disk.img of=mos_disk.img bs=1024 count=131072
 dd if=mrfs-disk.img of=mos_disk.img bs=1024 count=131072 seek=131072
 
 sudo sync
-sudo dd if=mos_disk.img of=/dev/sdc
+#sudo dd if=mos_disk.img of=/dev/sdc
 sudo sync

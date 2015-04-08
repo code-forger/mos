@@ -99,7 +99,7 @@ void main(int argc, char** argv)
         fopendir(target_dir, &dd, false);
         if(dd.type == 1)
         {
-            setio(0, 1, 79, 22);
+            setio(0, 1, 80, 23);
             stdin_init();
             printf("******** ls | %s********\n", target_dir);
             FILE process_dir;

@@ -110,7 +110,11 @@ static void set_parameters(char** parameters)
     {
         sprintf(p, "%s", params[i]);
         p += strlen(p) + 1;
+        free(params[i]);
     }
+
+    free(params);
+
     //printf("[scheduler.c] RETE : set_parameters()\n");
 }
 
@@ -148,13 +152,8 @@ void scheduler_exec_string_paramters(char *program_name, char** parameters)
             jump_target = elf_load(resloved_cwd_name, &(process_table[current_pid]));
         free(cwd);
     }
-    //printf("!\n");
+
     free(path);
-    //printf("!\n");
-
-
-    //printf("[scheduler.c] INFO : here\n");
-
 
     if (jump_target == -1) // {no such file}
     {
@@ -231,15 +230,15 @@ void scheduler_kill(uint32_t pid)
         mrfsOpenDir(procdir, false, &dd);
 
         mrfsDeleteDirWithDescriptor(&dd);
+
+        for(uint32_t i = 0; i < process_table[pid].code_size; i++)
+            mark_page_free(process_table[pid].code_physical[i]);
+
+        for(uint32_t i = 0; i < process_table[pid].heap_size; i++)
+            mark_page_free(((uint32_t*)PROCESS_HEAP_TABLE)[i]);
+        mark_page_free(process_table[pid].heap_physical_page);
+        mark_page_free(process_table[pid].stack_physical);
     }
-
-    for(uint32_t i = 0; i < process_table[pid].code_size; i++)
-        mark_page_free(process_table[pid].code_physical[i]);
-
-    for(uint32_t i = 0; i < process_table[pid].heap_size; i++)
-        mark_page_free(((uint32_t*)PROCESS_HEAP_TABLE)[i]);
-    mark_page_free(process_table[pid].heap_physical_page);
-    mark_page_free(process_table[pid].stack_physical);
 }
 
 static void events()
@@ -439,12 +438,16 @@ void scheduler_init(uint32_t esp, uint32_t ebp)
 
 process_table_entry scheduler_get_process_table_entry(uint32_t pid)
 {
-    return process_table[pid];
+    if (pid < next_pid && !(process_table[pid].flags & F_DEAD))
+        return process_table[pid];
+    return process_table[0];
 }
 
 process_table_entry* scheduler_get_process_table_entry_for_editing(uint32_t pid)
 {
-    return &(process_table[pid]);
+    if (pid < next_pid && !(process_table[pid].flags & F_DEAD))
+        return &(process_table[pid]);
+    return 0;
 }
 
 

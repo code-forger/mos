@@ -163,6 +163,12 @@ void main(int argc, char** argv)
 
         int num_processes = dd.size;
 
+        if (selected_process >= num_processes)
+        {
+            putcharat(' ' , 3, 5 + selected_process);
+            selected_process = num_processes-1;
+            putcharat('>' , 3, 5 + selected_process);
+        }
 
         int c;
         while((c = getchar()) != -1)

@@ -173,7 +173,7 @@ The Final part is a collection of programs and other software that come with the
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=00px]{images/bootProcess.png}
+\includegraphics[width=415px]{images/bootProcess.png}
 \caption{An Example of a boot cycle. The bootloader is in control while the CPU is in Real Mode.}
 \label{fig:theloader}
 \end{figure}
@@ -408,10 +408,7 @@ Free is passed a pointer to memory that was received from malloc, it frees this 
 
 \subsection{Managing screen space in Linux}
 
-Managing screen space in Linux is a little different from managing other resources as the screen manager is a user space application, and technically speaking the screen cannot be `consumed'. That is to say, if a program is using on part of the screen, that does not exclude anther program from thinking its occupying the same space. This means that the system can never `run out' of screen space, as all windows can `occupy' the same space.
-
-As this is not how the project Operating System will be structured, there is not much we can take from the way Linux (or any other major modern Operating System) manages its screen.
-
+The screen space is not managed by the Linux kernel and so is not useful as a study for MOS.
 
 \subsection{Inter Process Comunication in Linux}
 

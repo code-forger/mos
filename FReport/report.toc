@@ -7,7 +7,7 @@
 \contentsline {section}{\numberline {2.5}Requirement for ethical review}{7}
 \contentsline {chapter}{\numberline {3}Understanding Operating Systems}{8}
 \contentsline {section}{\numberline {3.1}The Bootloader}{8}
-\contentsline {section}{\numberline {3.2}The Kernel}{8}
+\contentsline {section}{\numberline {3.2}The Kernel}{9}
 \contentsline {section}{\numberline {3.3}The Built in Programs}{9}
 \contentsline {chapter}{\numberline {4}Requirements Analysis}{10}
 \contentsline {section}{\numberline {4.1}Modern Operating Systems}{11}

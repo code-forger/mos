@@ -1,9 +1,7 @@
 Todo:
     Programs:
-        MASH: Make Michael's Awesome SHell (replaceing launcher)
+        kill : check parameter as int.
 
     Kernel:
-        write behavioural, limit, and stress tests for all modules.
 
     Poster:
-        Ask Martin about poster presentation.

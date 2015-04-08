@@ -174,6 +174,8 @@ void  c_int_page_fault(void)
     else
     {
         printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
+        asm("cli");
+        asm("hlt");
         send_byte_to(MASTER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;
@@ -258,6 +260,7 @@ void  c_keyboard_irq(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : Bounds Through checked
 void  c_terminal_putchar_syscall(void)
 {
     uint32_t c32;
@@ -271,6 +274,7 @@ void  c_terminal_putchar_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : No input parameters
 void  c_terminal_init_syscall(void)
 {
     PIPE* pipes;
@@ -279,6 +283,7 @@ void  c_terminal_init_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : No input parameters
 void  c_relinquish_input_syscall(void)
 {
     int next_input = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD);
@@ -287,6 +292,7 @@ void  c_relinquish_input_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : No input parameters
 void  c_stdin_init_syscall(void)
 {
     PIPE* pipes;
@@ -295,6 +301,7 @@ void  c_stdin_init_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : No input parameters
 void  c_scheduler_fork_syscall(void)
 {
     int32_t *pid;
@@ -303,6 +310,7 @@ void  c_scheduler_fork_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : No input parameters
 void  c_scheduler_pid_syscall(void)
 {
     uint32_t *pid;
@@ -311,6 +319,7 @@ void  c_scheduler_pid_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : Bounds Through checked
 void  c_scheduler_exec_string_syscall(void)
 {
     char *program_name;
@@ -320,6 +329,7 @@ void  c_scheduler_exec_string_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : Bounds checked : (cant detect for invalid string pattern in second parameter)
 void  c_scheduler_exec_string_parameters_syscall(void)
 {
     char *program_name;
@@ -331,6 +341,7 @@ void  c_scheduler_exec_string_parameters_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : no parameter bound.
 void  c_scheduler_sleep_syscall(void)
 {
     uint32_t milliseconds;
@@ -339,12 +350,14 @@ void  c_scheduler_sleep_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : no input parameters.
 void  c_scheduler_pause_syscall(void)
 {
     scheduler_mark_process_as(scheduler_get_pid(), F_PAUSED);
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : Bounds Through checked
 void  c_scheduler_kill_syscall(void)
 {
     uint32_t pid;
@@ -353,6 +366,7 @@ void  c_scheduler_kill_syscall(void)
     send_byte_to(MASTER_PIC, 0x20);
 }
 
+// Bound checking : Bounds Through checked
 void  c_scheduler_hide_syscall(void)
 {
     uint32_t pid;
@@ -362,6 +376,7 @@ void  c_scheduler_hide_syscall(void)
 }
 
 
+// Bound checking : Bounds Through checked
 void  c_scheduler_show_syscall(void)
 {
     uint32_t pid;

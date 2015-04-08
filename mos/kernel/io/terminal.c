@@ -55,7 +55,7 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
-    terminal_switch_context(KERNEL_CONTEXT);
+    //terminal_switch_context(KERNEL_CONTEXT);
     kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
 }
 
@@ -417,12 +417,16 @@ char terminal_get_last_char_pressed()
 
 void terminal_hide_process(uint32_t pid)
 {
+    printf("[CALL] : terminal_hide_process(%d)\n", pid);
     if (scheduler_get_process_table_entry_for_editing(pid) != 0)
     {
         process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(pid);
 
         if (ptb->io.snapshot)
+        {
+            printf("PROCESS ALREADY HIDDEN\n");
             return;
+        }
 
         ptb->io.snapshot = (uint16_t*)malloc(sizeof(uint16_t) * (ptb->io.wx+1) * (ptb->io.wy+1));
 
@@ -437,11 +441,15 @@ void terminal_hide_process(uint32_t pid)
 
         scheduler_mark_process_as(pid, F_IS_HIDDEN);
     }
+    else
+    {
+        printf("FAILED TO GET PTB\n");
+    }
 }
 
 static int overlaps(uint32_t pid, uint32_t process)
 {
-
+    printf("[CALL] : overlaps(%d, %d)", pid, process);
     process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
     process_table_entry ptb2 = scheduler_get_process_table_entry(process);
 
@@ -453,11 +461,21 @@ static int overlaps(uint32_t pid, uint32_t process)
 
 static void terminal_hide_overlapping(uint32_t pid)
 {
+    printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
     uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
     while (process != 0)
     {
+        printf("check for %d - ", process);
         if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
+        {
+            printf(" > true\n");
             terminal_hide_process(process);
+        }
+        else
+        {
+            printf(" > false\n");
+        }
+
         process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
     }
 }

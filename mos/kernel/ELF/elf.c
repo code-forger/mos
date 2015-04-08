@@ -18,6 +18,7 @@ static void set_ptb(process_table_entry* ptb)
     ptb->io.wy = 0;
     ptb->io.column = 0;
     ptb->io.row = 0;
+    ptb->io.snapshot = 0;
 }
 
 static char* load_file(const char* name)

@@ -12,7 +12,7 @@
 \addtolength{\textwidth}{1in}
 
 
-\title{A Multitasking Operating System}
+\title{MOS : A Multitasking Operating System}
 \date{\today}
 \author{Michael Rochester\\ Candidate: 23344\\ University of Sussex
         \and Supervisor:\\ Martin Berger}
@@ -219,27 +219,21 @@ Figure \ref{fig:theserver} shows how even showing simple windows on the screen r
 
 \chapter{Requirements Analysis}
 
-In this chapter the Requirements Analysis will be discussed. The Requirements were decided upon by analyzing other modern Operating Systems and then designing the project Operating System to mimic the most useful and needed components. Therefore this chapter will first discuss the analysis of modern Operating Systems, and then the design of the project system.
+In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the MOS. Although It was known in advanced that the MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
+
+Modern Operating Systems are such that there are two user groups.
 
 
-The nature of an Operating Systems is such that there are two `user groups'.
+The End Users are the people using the Operating System and its programs to assist in achieving an assortment of tasks. To them, the Operating System provides a few simple mechanisms to interact with the system, E.G. Launching programs, closing programs, and switching between the `focused' program. Most of the inner workings of the Operating System are hidden from the end user, and they mainly interact with the `User space programs', which are not defined by the Operating System Developer.
 
 
-The `End Users' are the people using the Operating System and its programs to assist in achieving an assortment of tasks. To them, the Operating System provides a few simple mechanisms to interact with the system, E.G. Launching programs, closing programs, and switching between the `focused' program. Most of the inner workings of the Operating System are hidden from the end user, and they mainly interact with the `User space programs', which are not defined by the Operating System Developer.
-
-
-The `Program Developers' use an Operating System as a platform to create the programs the `End User' will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviours like creating new processes, Allocating dynamic memory, and allocating screen space to the programs. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
-
+The Program Developers use an Operating System as a platform to create the programs the End User will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviours like creating new processes, Allocating dynamic memory, allocating screen space to the programs, and accesing the hard drive. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
 
 \clearpage
-\section{Modern Operating Systems}
-
-In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the project Operating System. Although It was known in advanced that the project Operating System was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
-
 \section{The End User}
 The reference systems that were studied with the End Users in mind are: The Linux distribution remix `Gnomebuntu' and the Microsoft Operating System `Windows 8'. These systems were chosen to get a spread in our sample. The systems are both popular desktop systems, however: One, (Linux) is stemmed from an open source mentality, where the source code is freely available and the system is free, and the other (Windows) is produced by a company with the aim to provide paying business, and home customers with a usable system.
 
-The parts of the reference systems that were analysed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the project Operating System.
+The parts of the reference systems that were analysed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the MOS.
 
 \subsection{Launching programs in Linux and Windows}
 
@@ -436,9 +430,9 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 
 \clearpage
-\section{User Design}
+\chapter{User Design}
 
-This section discuses the considerations of designing the system from the users perspective.
+As with the Analysis, the Design phase waas seperated into End User and Program Developer sections. The designs presented here are the final designs for the system, some earlyer versions can be found in XXXXX.
 
 \section{The End User}
 
@@ -537,7 +531,7 @@ The proposed design for this context is given by the following example screen.
   \end{framed}
 }
 
-Here the context differers the most form the analysed systems as the project Operating System will not allow the overlapping of program areas.
+Here the context differers the most form the analysed systems as the MOS will not allow the overlapping of program areas.
 
 
 
@@ -547,13 +541,13 @@ As program developers are very familiar with how to create programs for other sy
 
 \subsection{Managing processes}
 
-The project Operating System will provide a very similar set of system calls to Linux, however their behavior may be simpler.
+The MOS will provide a very similar set of system calls to Linux, however their behavior may be simpler.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together.
 
 \textbf{Creating a new process}
 
-Similar to Linux the process creation pattern the project Operating System was designed to follow the `fork and exec' pattern. Therefore the project Operating System provides two system calls:
+Similar to Linux the process creation pattern the MOS was designed to follow the `fork and exec' pattern. Therefore the MOS provides two system calls:
 
 `fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish them selfs by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
 
@@ -561,13 +555,13 @@ Similar to Linux the process creation pattern the project Operating System was d
 
 \textbf{Destroying processes}
 
-Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, the project Operating System will use three separate calls.
+Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, the MOS will use three separate calls.
 
 `kill(pid)' will kill the target process, freeing all its memory and removing it from the scheduler.
 
 \textbf{Pausing and Restarting programs}
 
-Pausing programs is important for efficiency, therefore the project Operating System provides the following calls.
+Pausing programs is important for efficiency, therefore the MOS provides the following calls.
 
 `pause()' and `pause(pid)' will pause the target process until `wake()' is called. With `pause()' the current process will be paused and immediately revoke controls to the scheduler.
 
@@ -575,7 +569,7 @@ Pausing programs is important for efficiency, therefore the project Operating Sy
 
 \subsection{Managing memory}
 
-The memory managemnt API will be Identical to that of Linux. Therefore the project Operating System will provide two system calls:
+The memory managemnt API will be Identical to that of Linux. Therefore the MOS will provide two system calls:
 
 `malloc(size)' will allocate a memory locations of size, and return a pointer to that location.
 
@@ -583,7 +577,7 @@ The memory managemnt API will be Identical to that of Linux. Therefore the proje
 
 \subsection{Managing screen space}
 
-As the Linux screen management system cannot be mimicked in the project Operating System, a new one entirely was invented. This lead to one system call:
+As the Linux screen management system cannot be mimicked in the MOS, a new one entirely was invented. This lead to one system call:
 
 `setio(px,py,wx,wy)' will attempt to allocate the portion of the screen using the starting coordinate (px,py) and the size (wx,wy). If this failed (that portion of the screen is already allocated) the call will block. Otherwise it will reserve this portion of the screen for this process.
 

@@ -10,10 +10,10 @@
 \contentsline {section}{\numberline {3.2}The Kernel}{9}
 \contentsline {section}{\numberline {3.3}The Built in Programs}{9}
 \contentsline {chapter}{\numberline {4}Requirements Analysis}{10}
-\contentsline {section}{\numberline {4.1}Modern Operating Systems}{11}
+\contentsline {section}{\numberline {4.1}Modern Operating Systems}{10}
 \contentsline {section}{\numberline {4.2}The End User}{11}
 \contentsline {subsection}{\numberline {4.2.1}Launching programs in Linux and Windows}{11}
-\contentsline {subsection}{\numberline {4.2.2}Managing running programs in Linux and Windows}{12}
+\contentsline {subsection}{\numberline {4.2.2}Managing running programs in Linux and Windows}{11}
 \contentsline {subsection}{\numberline {4.2.3}Using programs in Linux and Windows}{12}
 \contentsline {section}{\numberline {4.3}The Program Developers}{14}
 \contentsline {subsection}{\numberline {4.3.1}Managing processes in Linux}{14}
@@ -21,23 +21,23 @@
 \contentsline {subsection}{\numberline {4.3.3}Managing screen space in Linux}{14}
 \contentsline {subsection}{\numberline {4.3.4}Inter Process Comunication in Linux}{15}
 \contentsline {section}{\numberline {4.4}Analysis conclusion}{15}
-\contentsline {section}{\numberline {4.5}User Design}{16}
-\contentsline {section}{\numberline {4.6}The End User}{16}
-\contentsline {subsection}{\numberline {4.6.1}Process Creation Context}{16}
-\contentsline {subsection}{\numberline {4.6.2}Process Management Context}{16}
-\contentsline {subsection}{\numberline {4.6.3}Process Interaction Context}{17}
-\contentsline {section}{\numberline {4.7}The Program Developers}{18}
-\contentsline {subsection}{\numberline {4.7.1}Managing processes}{18}
-\contentsline {subsection}{\numberline {4.7.2}Managing memory}{18}
-\contentsline {subsection}{\numberline {4.7.3}Managing screen space}{18}
-\contentsline {subsection}{\numberline {4.7.4}Inter Process Communication}{19}
-\contentsline {chapter}{\numberline {5}Project Plan}{20}
-\contentsline {chapter}{\numberline {6}Log}{21}
-\contentsline {section}{\numberline {6.1}Week 1}{21}
-\contentsline {section}{\numberline {6.2}Week 2}{21}
-\contentsline {section}{\numberline {6.3}Week 3}{21}
-\contentsline {section}{\numberline {6.4}Week 4}{21}
-\contentsline {section}{\numberline {6.5}Week 5}{21}
-\contentsline {section}{\numberline {6.6}Week 6}{22}
-\contentsline {section}{\numberline {6.7}Week 7}{22}
-\contentsline {chapter}{\numberline {7}Appendices}{23}
+\contentsline {chapter}{\numberline {5}User Design}{16}
+\contentsline {section}{\numberline {5.1}The End User}{16}
+\contentsline {subsection}{\numberline {5.1.1}Process Creation Context}{16}
+\contentsline {subsection}{\numberline {5.1.2}Process Management Context}{17}
+\contentsline {subsection}{\numberline {5.1.3}Process Interaction Context}{17}
+\contentsline {section}{\numberline {5.2}The Program Developers}{18}
+\contentsline {subsection}{\numberline {5.2.1}Managing processes}{18}
+\contentsline {subsection}{\numberline {5.2.2}Managing memory}{18}
+\contentsline {subsection}{\numberline {5.2.3}Managing screen space}{18}
+\contentsline {subsection}{\numberline {5.2.4}Inter Process Communication}{19}
+\contentsline {chapter}{\numberline {6}Project Plan}{20}
+\contentsline {chapter}{\numberline {7}Log}{21}
+\contentsline {section}{\numberline {7.1}Week 1}{21}
+\contentsline {section}{\numberline {7.2}Week 2}{21}
+\contentsline {section}{\numberline {7.3}Week 3}{21}
+\contentsline {section}{\numberline {7.4}Week 4}{21}
+\contentsline {section}{\numberline {7.5}Week 5}{21}
+\contentsline {section}{\numberline {7.6}Week 6}{22}
+\contentsline {section}{\numberline {7.7}Week 7}{22}
+\contentsline {chapter}{\numberline {8}Appendices}{23}

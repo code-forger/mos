@@ -33,7 +33,7 @@ void main(void)
             break;
         }
     }
-    setio(1,1,20,20);
+    //setio(1,1,20,20);
     char** programs = malloc(sizeof(char*)*entries);
     int program_tracker = 0;
 

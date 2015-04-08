@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include "../paging/paging.h"
 #include "../kstdlib/kstdlib.h"
+#include "port.h"
 
 uint8_t terminal_make_color(terminal_color text, terminal_color back)
 {
@@ -20,8 +21,8 @@ static uint32_t VGA_HEIGHT = 25;
 static char last_char_pressed;
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
-static uint8_t inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
-static uint8_t active_color = COLOR_WHITE | COLOR_BLACK << 4;
+static uint8_t inactive_color = COLOR_DARK_GREY | COLOR_WHITE << 4;
+static uint8_t active_color = COLOR_BLACK | COLOR_WHITE << 4;
 static uint16_t* terminal;
 static uint16_t* process_terminal;
 static uint16_t* kernel_terminal;
@@ -49,7 +50,7 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
         for (uint32_t x = px; x <= (px + wx); x++ )
             process_terminal[y * VGA_WIDTH + x] = process_terminal[(y + 1) * VGA_WIDTH + x];
     for (uint32_t x = px; x <= (px + wx); x++)
-        process_terminal[(py + wy) * VGA_WIDTH + x] = ' ';
+        process_terminal[(py + wy) * VGA_WIDTH + x] = terminal_make_character(' ', (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
@@ -78,8 +79,8 @@ void terminal_initialize()
     last_char_pressed = ' ';
     current_row = 0;
     currnet_column = 0;
-    inactive_color = COLOR_LIGHT_GREY | COLOR_BLACK << 4;
-    active_color = COLOR_WHITE | COLOR_BLACK << 4;
+    inactive_color = COLOR_DARK_GREY | (COLOR_WHITE << 4);
+    active_color = COLOR_BLACK | (COLOR_WHITE << 4);
     VGA_WIDTH = 80;
     VGA_HEIGHT = 25;
 

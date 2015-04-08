@@ -48,29 +48,33 @@ void write_blank(int line)
         putcharat(' ', i, line);
 }
 
-void write_processes_metric(int line, char*number, int pos, int padding, char* sep)
+void write_processes_metric(int line, char*number, int pos, int padding, char* sep, int justify)
 {
     pos += table_offset;
     int len = strlen(number);
-    putcharat(sep[0], pos-1, line);
+    //putcharat(sep[0], pos-1, line);
     putcharat(sep[1], pos, line);
-    for(int i = 0; i < padding-len; i++)
-        putcharat(' ', i + 1 + pos, line);
+    if (!justify)
+        for(int i = 0; i < padding-len; i++)
+            putcharat(' ', i + 1 + pos, line);
     for(int i = 0; i < len; i++)
-        putcharat(number[i], i + 1 + (padding-len) + pos, line);
+        putcharat(number[i], i + 1 + (justify?0:(padding-len)) + pos, line);
+    if (justify)
+        for(int i = 0; i < padding-len; i++)
+            putcharat(' ', i + 1  + len + pos, line);
     putcharat(sep[2], pos+padding+1, line);
     putcharat(sep[3], pos+padding+2, line);
 }
 
-void write_metrics(int line, char*pid, char*command, char*time, char*perc, char* state, char* sep)
+void write_metrics(int line, char*pid, char*command, char*time, char*perc, char* state, char* sep, int justify)
 {
-    write_processes_metric(line, pid, 0, 5, sep);
-    write_processes_metric(line, command, 8, 20, sep);
-    write_processes_metric(line, time, 31, 8, sep);
-    write_processes_metric(line, perc, 42, 6, sep);
-    write_processes_metric(line++, state, 51, 8, sep);
-    if (line-6 == selected_process)
-        putcharat('>', table_offset, 5 + selected_process);
+    write_processes_metric(line, pid, 0, 5, sep, 1);
+    write_processes_metric(line, command, 8, 20, sep, 1);
+    write_processes_metric(line, time, 31, 8, sep, justify);
+    write_processes_metric(line, perc, 42, 6, sep, justify);
+    write_processes_metric(line++, state, 51, 8, sep, 1);
+    //if (line-6 == selected_process)
+        //putcharat('>', table_offset, 5 + selected_process);
 }
 
 void write_rubertic(int height)
@@ -121,12 +125,12 @@ char *get_state_string(char*in)
 
 void main(int argc, char** argv)
 {
-    selected_process = 0;
+    selected_process = 1000;
     table_offset = 3;
     int ticks = ticks_ms() - 1000;
 
     int state;
-    int line = 2;
+    int line = 3;
     int* last_cycle_ms = 0;
 
     int last_ticks, this_ticks;
@@ -142,19 +146,20 @@ void main(int argc, char** argv)
     setio(0, top, 79, height);
     stdin_init();
 
-    //printf("    Running Processes:\n\n");
+    printf("\n  Running Programs:");
     write_rubertic(height);
-    write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
-    write_metrics(line++, "pid", "command", "cpu time", "cpu %", "state", "|  |");
-    write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
+    //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
+    write_metrics(line++, "PID", "Command", "CPU time", "CPU %", "State", "   |", 1);
+    //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
 
+    int line_offsett = 4;
     int* pnum = malloc(1);
     while(1)
     {
         int delta_ms = ticks_ms() - ticks;
 
 
-        line = 5;
+        line = line_offsett;
 
         FILE dd;
         fopendir("/info/", &dd, false);
@@ -165,9 +170,9 @@ void main(int argc, char** argv)
 
         if (selected_process >= num_processes)
         {
-            putcharat(' ' , 3, 5 + selected_process);
+            putcharat(' ' , 2, line_offsett + selected_process);
             selected_process = num_processes-1;
-            putcharat('>' , 3, 5 + selected_process);
+            putcharat('>' , 2, line_offsett + selected_process);
         }
 
         int c;
@@ -179,14 +184,14 @@ void main(int argc, char** argv)
                 switch(c)
                 {
                     case UP:
-                        putcharat(' ' , 3, 5 + selected_process);
+                        putcharat(' ' , 2, line_offsett + selected_process);
                         selected_process = (selected_process - 1) < 0?num_processes-1:selected_process-1;
-                        putcharat('>' , 3, 5 + selected_process);
+                        putcharat('>' , 2, line_offsett + selected_process);
                         break;
                     case DOWN:
-                        putcharat(' ' , 3, 5 + selected_process);
+                        putcharat(' ' , 2, line_offsett + selected_process);
                         selected_process = (selected_process + 1) % num_processes;
-                        putcharat('>' , 3, 5 + selected_process);
+                        putcharat('>' , 2, line_offsett + selected_process);
                         break;
                 }
             }
@@ -204,9 +209,9 @@ void main(int argc, char** argv)
                 }
                 else
                 {
-                    putcharat(' ' , 3, 5 + selected_process);
+                    putcharat(' ' , 2, line_offsett + selected_process);
                     selected_process = (selected_process + 1) % num_processes;
-                    putcharat('>' , 3, 5 + selected_process);
+                    putcharat('>' , 2, line_offsett + selected_process);
                 }
             }
         }
@@ -224,27 +229,27 @@ void main(int argc, char** argv)
             {
                 char *num = file_read_name(process_dir);
 
-                pnum[line-5] = atoi(num);
+                pnum[line-line_offsett] = atoi(num);
 
                 char* namestring = get_info(num, "name");
                 char* cputimestring = get_metric(num, "cputime");
                 char* statestring = get_metric(num, "state");
-                this_cycle_ms[line-5] = atoi(cputimestring);
+                this_cycle_ms[line-line_offsett] = atoi(cputimestring);
 
                 char fcputimestring[9];
-                format_time( this_cycle_ms[line-5], fcputimestring);
+                format_time( this_cycle_ms[line-line_offsett], fcputimestring);
 
                 char percent_str[9] = "---%";
                 if (last_cycle_ms != 0)
                 {
-                    int ms_this_cycle = this_cycle_ms[line-5] - last_cycle_ms[line-5];
+                    int ms_this_cycle = this_cycle_ms[line-line_offsett] - last_cycle_ms[line-line_offsett];
                     int percent = (ms_this_cycle * 100) / (this_ticks - last_ticks);
                     sprintf(percent_str, "%d%%", percent);
                 }
 
                 char *stateletterstring = get_state_string(statestring);
 
-                write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "|  |");
+                write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "   |", 0);
                 free(num);
                 free(namestring);
                 free(cputimestring);
@@ -252,7 +257,7 @@ void main(int argc, char** argv)
                 free(stateletterstring);
             }
 
-            write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
+            //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
             write_blank(line);
 
             if (last_cycle_ms != 0)

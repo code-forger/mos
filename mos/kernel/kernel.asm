@@ -5,6 +5,19 @@ section .text
 align   4
 
 kernel_start:
+
+    ; Disable blink
+    mov dx, 0x3DA
+    in al, dx
+    mov dx, 0x3C0
+    mov al, 0x30
+    out dx, al
+    inc dx
+    in al, dx
+    and al, 0xF7
+    dec dx
+    out dx, al
+
     call init_kernel
     cli
     hlt

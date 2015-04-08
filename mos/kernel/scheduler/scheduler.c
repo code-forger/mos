@@ -217,9 +217,9 @@ void scheduler_kill(uint32_t pid)
 {
     if (pid > 1 && pid < next_pid && !(process_table[pid].flags & F_DEAD))
     {
-        scheduler_mark_process_as(pid, F_DEAD);
-
         terminal_clear_process(pid);
+
+        scheduler_mark_process_as(pid, F_DEAD);
 
         char procdir[7+7] = "/info/";
 

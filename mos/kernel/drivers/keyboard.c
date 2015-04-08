@@ -59,7 +59,7 @@ void keyboard_interupt(void)
         if (ctrl && alpha_map[code] == '\t')
         {
             int32_t target;
-            if ((target = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD)) >= 0)
+            if ((target = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD | F_IS_HIDDEN)) >= 0)
                 terminal_set_active_input(target);
         }
         else if (shift && alpha_map[code] == '\t')

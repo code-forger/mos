@@ -88,6 +88,8 @@ union Inode getDirInodeByPath(char* path)
 union Inode getInodeByName(char* path, char * namein)
 {
     union Inode dirinode = getDirInodeByPath(path);
+    if (!dirinode.node.info.exists)
+        return dirinode;
     int* pointers = inodeGetPointers(dirinode);
 
     for (int i = 0; i < dirinode.node.size; i++)
@@ -271,8 +273,10 @@ int kmrfsNewFile(char* path, char* filename, char* contents,int length)
     return 0;
 
 }
+
 uint32_t kmrfsFileExists(char* name)
 {
+    //printf("[CALL] : kmrfsFileExists(%s)\n", name);
     char* namecpy = malloc(strlen(name)+1);
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';

@@ -41,7 +41,7 @@ static void push_terminal_up()
         for ( uint32_t x = 0; x <= VGA_WIDTH; x++ )
             kernel_terminal[y * VGA_WIDTH + x] = kernel_terminal[(y + 1) * VGA_WIDTH + x];
     for (uint32_t x = 0; x <= VGA_WIDTH; x++)
-        kernel_terminal[VGA_HEIGHT * VGA_WIDTH + x] = ' ';
+        kernel_terminal[VGA_HEIGHT * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
 }
 
 void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
@@ -55,7 +55,7 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 
 void terminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
-    //terminal_switch_context(KERNEL_CONTEXT);
+    terminal_switch_context(KERNEL_CONTEXT);
     kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
 }
 

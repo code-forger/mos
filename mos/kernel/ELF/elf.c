@@ -54,7 +54,7 @@ static char* load_file(const char* name)
 
 int64_t elf_load(const char* name, process_table_entry* ptb)
 {
-    //printf("THIS");
+    //printf("[CALL] : elf_load(%d, %h)", name, ptb);
     char* file = load_file(name);
     //printf("found file %s\n", file);
     if (file[0] == '\0')

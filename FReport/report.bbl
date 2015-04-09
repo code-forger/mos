@@ -5,4 +5,39 @@ Code of conduct | membership | bcs - the chartered institute for it.
 \newblock http://www.bcs.org/category/6030.
 \newblock Accessed: 2014-11-5.
 
+\bibitem{manFork}
+fork(2): create child process - linux man page.
+\newblock http://linux.die.net/man/2/fork.
+\newblock Accessed: 2014-11-3.
+
+\bibitem{manExecve}
+execve(2): execute program - linux man page.
+\newblock http://linux.die.net/man/2/execve.
+\newblock Accessed: 2014-11-3.
+
+\bibitem{manKill}
+kill(2): send signal to process - linux man page.
+\newblock http://linux.die.net/man/2/kill.
+\newblock Accessed: 2014-11-4.
+
+\bibitem{manMalloc}
+malloc(3): allocate/free dynamic memory - linux man page.
+\newblock http://linux.die.net/man/3/malloc.
+\newblock Accessed: 2014-11-4.
+
+\bibitem{manPipe}
+pipe(2): create pipe - linux man page.
+\newblock http://linux.die.net/man/2/pipe.
+\newblock Accessed: 2014-11-5.
+
+\bibitem{manWrite}
+write(2): to file descriptor - linux man page.
+\newblock http://linux.die.net/man/2/write.
+\newblock Accessed: 2014-11-5.
+
+\bibitem{manRead}
+read(2): read from file descriptor - linux man page.
+\newblock http://linux.die.net/man/2/read.
+\newblock Accessed: 2014-11-5.
+
 \end{thebibliography}

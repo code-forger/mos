@@ -29,11 +29,5 @@ memory/memory.o: memory/memory.c memory/memory.h memory/memory.asm
 	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -c memory/memory.c -o memory/memory.o -std=gnu99 -ffreestanding -Wall -Wextra -Werror
 
 clean:
-	rm -r *.o
-	rm -r init/*.o
-	rm -r memory/*.o
-	rm -r interupts/*.o
-	rm -r pic/*.o
-	rm -r io/*.o
-	rm mos.bin
-	rm isodir/boot/mos.bin
+	rm -rf *.o *~ */*.o */*~
+	rm -f loader.bin

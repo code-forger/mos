@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.2.25)  8 APR 2015 17:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.2.25)  9 APR 2015 10:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -312,10 +312,14 @@ Window_Navigation_Screenshot.png>] [13
 
 ] [14]
 Chapter 4.
+[15
+
+
+]
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.472 ...ne at the bottom of the screen, with a \>
+l.477 ...ne at the bottom of the screen, with a \>
                                                    prompt where the user can...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -323,120 +327,125 @@ you left one out. Proceed, with fingers crossed.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.473 
+l.478 
       
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
-[15
+[16
 
-
-] [16] [17]
+] [17] [18]
 Chapter 5.
-<images/schedule_screenshot.png, id=87, 1245.65375pt x 705.63625pt>
+<images/schedule_screenshot.png, id=91, 1245.65375pt x 705.63625pt>
 File: images/schedule_screenshot.png Graphic file (type png)
 <use images/schedule_screenshot.png>
-Package pdftex.def Info: images/schedule_screenshot.png used on input line 598.
+Package pdftex.def Info: images/schedule_screenshot.png used on input line 600.
 
 (pdftex.def)             Requested size: 451.68915pt x 255.87003pt.
 
-Overfull \hbox (34.41916pt too wide) in paragraph at lines 598--599
+Overfull \hbox (34.41916pt too wide) in paragraph at lines 600--601
  [][] 
  []
 
-[18
+[19
 
  <./images/schedule_screenshot.png>]
 Chapter 6.
-[19
+[20
 
-] [20]
+] [21]
 Chapter 7.
-<images/proposal_doc.pdf, id=99, 597.23125pt x 845.1575pt>
+<images/proposal_doc.pdf, id=102, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 663.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 663.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
-[21
+[22
 
-] <images/proposal_doc.pdf, id=105, page=1, 597.23125pt x 845.1575pt>
+] <images/proposal_doc.pdf, id=108, page=1, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 663.
 
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[22 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=146, page=2, 597.
+[23 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=149, page=2, 597.
 23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[23 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=151, page=3, 597.
+[24 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=155, page=3, 597.
 23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 661.
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 663.
 
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[24 <./images/proposal_doc.pdf>] (./report.bbl
+[25 <./images/proposal_doc.pdf>] (./report.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 4--7
 []\OT1/cmr/m/n/10 Code of con-duct | mem-ber-ship | bcs - the char-tered in-sti
 -tute for it.
  []
 
-) [25
+
+Underfull \hbox (badness 10000) in paragraph at lines 24--27
+[]\OT1/cmr/m/n/10 malloc(3): al-lo-cate/free dy-namic mem-ory - linux man page.
+
+ []
+
+) [26
 
 ] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 3262 strings out of 493109
- 47865 string characters out of 6135010
- 120146 words of memory out of 5000000
- 6663 multiletter control sequences out of 15000+600000
+ 3269 strings out of 493109
+ 47933 string characters out of 6135010
+ 120167 words of memory out of 5000000
+ 6670 multiletter control sequences out of 15000+600000
  9442 words of font info for 34 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  40i,18n,46p,716b,416s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -449,10 +458,10 @@ cm/cmr10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm
 mr17.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cms
 y10.pfb></usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
 9.pfb>
-Output written on report.pdf (26 pages, 4282011 bytes).
+Output written on report.pdf (27 pages, 4283227 bytes).
 PDF statistics:
- 188 PDF objects out of 1000 (max. 8388607)
- 108 compressed objects within 2 object streams
+ 191 PDF objects out of 1000 (max. 8388607)
+ 110 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  91 words of extra memory for PDF output out of 10000 (max. 10000000)
 

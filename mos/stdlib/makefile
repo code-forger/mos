@@ -24,3 +24,6 @@ time.o: time.c
 
 file.o: file.c
 	~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc -o file.o -c file.c -ffreestanding -nostdlib -std=gnu99
+
+clean:
+	rm -rf *.o *~

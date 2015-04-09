@@ -56,3 +56,25 @@ all: init-code name-code banner_left-code time-code notes-code parameter_test-co
 
 .PHONY man-code:
 	$(MAKE) -C man
+
+clean:
+	rm -rf *.o *~ */*.o */*~
+	rm -f banner_left/banner_left
+	rm -f fork_bomb/fork_bomb
+	rm -f init/init
+	rm -f kill/kill
+	rm -f less/less
+	rm -f ls/ls
+	rm -f man/man
+	rm -f mash/mash
+	rm -f memory_bomb/memory_bomb
+	rm -f mkdir/mkdir
+	rm -f mv/mv
+	rm -f name/name
+	rm -f notes/notes
+	rm -f parameter_test/parameter_test
+	rm -f pong/pong
+	rm -f processes/processes
+	rm -f rm/rm
+	rm -f time/time
+	rm -f touch/touch

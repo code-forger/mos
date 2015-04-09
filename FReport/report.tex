@@ -345,21 +345,21 @@ Linux exposes a number of system calls to the program developers to allow them t
 \noindent
 \textbf{Creating a new process}
 
-To create a new process, Linux provide the `fork' system call.
+To create a new process, Linux provide the `fork' system call. \cite{manFork}
 
 Fork will spawn a new processes with a perfect copy of the calling processes memory and cpu state. This effectively means that fork will return twice, once into the caller and once into the child. It will return 0 to the child and the child pid to the parent.
 
 \noindent
 \textbf{Changing executable}
 
-To change the executable that your process is running Linux provides execve.
+To change the executable that your process is running Linux provides execve. \cite{manExecve}
 
 Execve will replace the calling processes memory with that of the target executable and then jump to the \_\_start label in the target executables code. This allows for switching into new executables and can be used along side fork to spawn new programs.
 
 \noindent
 \textbf{Destroying processes}
 
-To destroy a process, Linux provides the `kill' system call.
+To destroy a process, Linux provides the `kill' system call. \cite{manKill}
 
 In Linux, kill is not just for killing processes. It allows the caller to send a signal to the target process. Frequently the signal sent is SIGKILL or SIGTERM which both destroy the target processes in different ways.
 
@@ -375,7 +375,7 @@ Linux provides two functions for memory management, one to allocate memory and o
 \noindent
 \textbf{Allocating memory}
 
-Linux provides the malloc call to allocate memory.
+Linux provides the malloc call to allocate memory. \cite{manMalloc}
 
 Malloc is passed the size of memory need in bytes and will return a pointer to the heap that is at least of the size requested.
 
@@ -398,14 +398,14 @@ Communication between processes is an important part of creating complex behavio
 \noindent
 \textbf{Creating a pipe.}
 
-Linux provides the `pipe' system call to create pipes.
+Linux provides the `pipe' system call to create pipes. \cite{manPipe}
 
 `pipe' created a one directional communication channel and provides the user a handle to this channel.
 
 \noindent
 \textbf{Reading and Writing to a pipe.}
 
-To use this channel, Linux provides `write' and `read':
+To use this channel, Linux provides `write' and `read': \cite{manWrite} \cite{manRead}
 
 These system calls will read and write using the pipe, allowing process to send data to each other. Note, it is by design that the pipe only transmits bytes, it is down to the user space program to define any communication protocols for transmitting more complex data.
 
@@ -452,6 +452,11 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 As with the Analysis, the Design phase was separated into End User and Program Developer sections. The designs presented here are the final designs for the system, some earlier versions can be found in XXXXX.
 
+Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ascii drawing and focussing on delivering the service provided in a quick and clean manner.
+
+Program Developer design was constructed with a 'many simple tools' structure. Each system call the standard library contained was made to perform one task, rather than bunching many tasks into one more complex call. This allows developers to maintain simple, intuitive control over their resources.
+
+\clearpage
 \section{The End User}
 
 The End Users interaction directly with MOS will be limited, as the majority of their time will be spent interacting with the user space programs running on the system. Because of this, MOS will ship with a number of user space tools for managing the system
@@ -512,13 +517,18 @@ The first is rm. rm will try to delete the object at the obsolete path path pass
 
 The second is mv. mv will take two parameters, the first will be the path to an existing file system object (file or directory) and the second will be the path to an existing directory. mv will move the specified object (and all of its children in the case of a directory) into the target directory.
 
+\subsection{File Editing: notes}
+
+MOS' provides a simple multi-line text editor for editing text files. The program takes one parameter which is a path to the file you wish to edit. If the file does not exist notes will create it.
+
+Notes supports common cursor key commands for navigating the cursor and saves when ctrl+s is presses.
 \section{The Program Developers}
 
-As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very simerlar to that of the Linux kernel that was analysed.
+As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very similar to that of the Linux kernel that was analysed.
 
 \subsection{Managing processes}
 
-MOS will provide a very similar set of system calls to Linux, however their behavior may be simpler.
+MOS will provide a very similar set of system calls to Linux, however their behaviour may be simpler.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together.
 
@@ -526,7 +536,7 @@ These features were considered independently of each other except for creating a
 
 Similar to Linux the process creation pattern MOS was designed to follow the `fork and exec' pattern. Therefore MOS provides two system calls:
 
-`fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish them selfs by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
+`fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish themselves by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
 
 `exec(pid)' takes the integer value of the target program to be loaded. It does not return. On failure the current process will not continue.
 

@@ -90,12 +90,5 @@ kerneltest.o: kerneltest.c
 
 
 clean:
-	rm -r *.o
-	rm -r init/*.o
-	rm -r memory/*.o
-	rm -r interupts/*.o
-	rm -r pic/*.o
-	rm -r drivers/*.o
-	rm -r io/*.o
-	rm mos.bin
-	rm isodir/boot/mos.bin
+	rm -rf *.o *~ */*.o */*~
+	rm -f mos.bin

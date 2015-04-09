@@ -1,5 +1,5 @@
 ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
-ata1-master: type=disk, path="/home/m/Documents/OSProject/mos/mos_disk.img", model="MOS - Drive"
+ata1-master: type=disk, path="mos_disk.img", model="MOS - Drive"
 
 boot: disk
 memory: guest=1024, host=1024

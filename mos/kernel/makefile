@@ -1,5 +1,5 @@
 CPPFLAGS =  -std=gnu99 -ffreestanding -Wall -Wextra -Werror
-GCC = ~/Documents/OSProject/buildtools/local/bin/i686-elf-gcc
+GCC = ../../buildtools/local/bin/i686-elf-gcc
 
 all: mos.bin
 

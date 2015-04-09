@@ -152,6 +152,15 @@ void main(int argc, char** argv)
     write_metrics(line++, "PID", "Command", "CPU time", "CPU %", "State", "   |", 1);
     //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");
 
+    char* namecache[49];
+    int nameused[49];
+
+    for (int i = 0; i < 49; i++)
+    {
+        namecache[i] = 0;
+        nameused[i] = 0;
+    }
+
     int line_offsett = 4;
     int* pnum = malloc(1);
     while(1)
@@ -231,7 +240,9 @@ void main(int argc, char** argv)
 
                 pnum[line-line_offsett] = atoi(num);
 
-                char* namestring = get_info(num, "name");
+                if (namecache[pnum[line-line_offsett]] == 0)
+                    namecache[pnum[line-line_offsett]] = get_info(num, "name");
+                nameused[pnum[line-line_offsett]] = 1;
                 char* cputimestring = get_metric(num, "cputime");
                 char* statestring = get_metric(num, "state");
                 this_cycle_ms[line-line_offsett] = atoi(cputimestring);
@@ -249,13 +260,20 @@ void main(int argc, char** argv)
 
                 char *stateletterstring = get_state_string(statestring);
 
-                write_metrics(line++, num, namestring, fcputimestring, percent_str, stateletterstring, "   |", 0);
+                write_metrics(line++, num, namecache[pnum[line-line_offsett]], fcputimestring, percent_str, stateletterstring, "   |", 0);
                 free(num);
-                free(namestring);
                 free(cputimestring);
                 free(statestring);
                 free(stateletterstring);
                 i++;
+            }
+
+            for (int i = 0; i < 49; i++)
+            {
+                if(nameused[i])
+                    nameused[i] = 0;
+                else
+                    namecache[i] = 0;
             }
 
             //write_metrics(line++, "-----", "--------------------", "--------", "------", "--------", "#--#");

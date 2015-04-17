@@ -1,6 +1,4 @@
 #include "keyboard.h"
-#include "../io/terminal.h"
-#include "../io/port.h"
 
 // Convenience maps from scan codes to characters.
 static const int alpha_map[] = {-1,  -1, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',

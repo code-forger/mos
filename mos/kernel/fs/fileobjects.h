@@ -1,41 +1,33 @@
 #pragma once
 #include "../declarations.h"
 #include "../kstdlib/string.h"
-#define SUPERBLOCKSIZE 7*4
-#define INODESIZE (17*4)
 
+// Usefull global size constants.
+#define SUPERBLOCKSIZE (7*4)
+#define INODESIZE (17*4)
+#define BLOCKHEADSIZE (2*4)
+#define BLOCKPOS(x) (SUPERBLOCKSIZE + sb.data.freelistreserverd + sb.data.inodereserverd + (x*sb.data.blockSize))
+#define BLOCKCOUNT (sb.data.freelistreserverd*8)
+#define INODEPOS(x) (SUPERBLOCKSIZE + sb.data.freelistreserverd + sb.data.inodefreereserverd + (x*INODESIZE))
+#define INODECOUNT (sb.data.inodefreereserverd*8)
+
+// Error values.
 #define FILELIMITREACHED 1
 #define DISKSIZETOOSMALL 2
 #define FOLDERNOTEMPTY 3
 #define NOSUCHFILEORDIRECTORY 4
 #define FILEORDIRECTORYALREADYEXISTS 5
-#define FILEISLOCKEDBYANNOTHERPROCESS 5
+#define FILEISLOCKEDBYANNOTHERPROCESS 6
 
-union int_char
+// Convineice wrapper for converting ints to chars and back;
+typedef union int_char
 {
-    int i;
+    uint32_t i;
     char c[4];
-};
+} int_char;
 
-struct Bitfieldbits
-{
-    unsigned char b1 : 1;
-    unsigned char b2 : 1;
-    unsigned char b3 : 1;
-    unsigned char b4 : 1;
-    unsigned char b5 : 1;
-    unsigned char b6 : 1;
-    unsigned char b7 : 1;
-    unsigned char b8 : 1;
-};
-
-union Bitfield
-{
-    struct Bitfieldbits bits;
-    char c;
-};
-
-struct Fileinfo
+// A bitfield for storing file flags
+typedef struct fileinfo
 {
     unsigned char directory : 1;
     unsigned char exists : 1;
@@ -46,44 +38,46 @@ struct Fileinfo
     unsigned char b7 : 1;
     unsigned char b8 : 1;
     char padding[3];
-};
+} fileinfo;
 
-struct Filenode
+// A struct for storing file information
+typedef struct filenode
 {
-    struct Fileinfo info;
-    int nodenumber;
-    int size;
-    int nameblock;
-    int pointers[12];
-    int pointerblock;
-};
+    struct fileinfo info;
+    uint32_t nodenumber;
+    uint32_t size;
+    uint32_t nameblock;
+    uint32_t pointers[12];
+    uint32_t pointerblock;
+} filenode;
 
-union Inode
+// A union for converting filenodes into chars and back
+typedef union inode
 {
-    struct Filenode node;
+    struct filenode node;
     char c[INODESIZE];
-};
+} inode;
 
-struct SuperBlockData
+// A struct to store the super block data
+typedef struct superblockdata
 {
-    int magic_number;
-    int freelistreserverd;
-    int inodefreereserverd;
-    int inodereserverd;
-    int blockSize;
-    int rootReserverd;
-    int disksize;
-};
+    uint32_t magic_number;
+    uint32_t freelistreserverd;
+    uint32_t inodefreereserverd;
+    uint32_t inodereserverd;
+    uint32_t blockSize;
+    uint32_t rootReserverd;
+    uint32_t disksize;
+} superblockdata;
 
-
-
-union SuperBlock
+// A union for converting between superblockdata and chars
+typedef union superblock
 {
-    struct SuperBlockData data;
+    superblockdata data;
     char bytes[SUPERBLOCKSIZE];
-} sb;
+} superblock;
 
-
+// A struct for describing files to user space programs.
 typedef struct FILE_type
 {
     uint32_t inode;
@@ -95,3 +89,5 @@ typedef struct FILE_type
     uint32_t type;
 
 } __attribute__((packed)) FILE;
+
+superblock sb;

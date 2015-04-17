@@ -2,14 +2,18 @@
 #include "inode.h"
 
 
-char* blockRead(int blockNumber);
-char blockReadByte(int blockNumber, int blockOffset);
-int blockRewrite(char* data, int start, int length, int inodePointer, int blockNumber);
-int blockWrite (char* data, int start, int length, int inodePointer);
-void blockWriteByte(int blockNumber, int offsett, char c);
-void blockWriteLength(int block, int len);
-int blockGetNextFree();
-void blockFree(int block);
-void blockUnfree(int block);
-int blockIsFree(int block);
-int blockSwap(int source, int location);
+char* block_read(uint32_t blockNumber);
+char block_read_byte(uint32_t blockNumber, uint32_t blockOffset);
+
+uint32_t block_write(char* data, uint32_t start, uint32_t length, uint32_t inodePointer);
+void block_write_byte(uint32_t blockNumber, uint32_t offsett, char c);
+void block_write_length(uint32_t block, uint32_t len);
+
+uint32_t block_rewrite(char* data, uint32_t start, uint32_t length, uint32_t inodePointer, uint32_t blockNumber);
+
+int32_t block_get_next_free();
+void block_free(uint32_t block);
+
+//void blockUnfree(uint32_t block);
+//uint32_t blockIsFree(uint32_t block);
+//uint32_t blockSwap(uint32_t source, uint32_t location);

@@ -3,26 +3,26 @@
 
 
 
-union Inode getInodeByName(char* path, char * name);
-union Inode getDirInodeByPath(char* path);
-union Inode getDirChildrenByPath(union Inode inode, char* path);
+inode getInodeByName(char* path, char * name);
+inode getDirInodeByPath(char* path);
+inode getDirChildrenByPath(inode inode, char* path);
 
-int kmrfsFormatHdd(int _blockSize, int rootDirSize);
+uint32_t kmrfsFormatHdd(uint32_t _blockSize, uint32_t rootDirSize);
 
 
-int kmrfsNewFile(char* path,char* filename, char* contents,int length);
-void kmrfsWriteFile(char* path, char* filename, char* contents,int length);
+uint32_t kmrfsNewFile(char* path,char* filename, char* contents,uint32_t length);
+void kmrfsWriteFile(char* path, char* filename, char* contents,uint32_t length);
 uint32_t kmrfsFileExists(char* name);
-int kmrfsNewFolder(char* path,char* foldername);
+uint32_t kmrfsNewFolder(char* path,char* foldername);
 char** kmrfsGetFolderChildren(char* path);
 char* kmrfsReadFile(char* path,char* filename);
-int kmrfsDeleteFile(char*path,char* filename);
-int kmrfsDeleteFolder(char* path);
-int kmrfsDeleteFolderRecursive(char* path);
+uint32_t kmrfsDeleteFile(char*path,char* filename);
+uint32_t kmrfsDeleteFolder(char* path);
+uint32_t kmrfsDeleteFolderRecursive(char* path);
 
-int kmrfsDefragDisk();
-int kmrfsDefragFolder(char* path, int position);
-int kmrfsDefragFile(char* path, char* filename, int position);
+//uint32_t kmrfsDefragDisk();
+//uint32_t kmrfsDefragFolder(char* path, uint32_t position);
+//uint32_t kmrfsDefragFile(char* path, char* filename, uint32_t position);
 
 uint32_t kmrfs_behaviour_test();
 uint32_t kmrfs_limits_test();

@@ -4,9 +4,9 @@
 #include <stdarg.h>
 
 
-int strcmp(const char* s1, const char* s2);
-int strlen(const char * str);
+uint32_t strcmp(const char* s1, const char* s2);
+uint32_t strlen(const char * str);
 char *strcpy(char *dest, const char *src);
 
-int sprintf(char* s, const char* string, ...);
-int atoi(const char* s);
+uint32_t sprintf(char* s, const char* string, ...);
+uint32_t atoi(const char* s);

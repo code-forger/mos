@@ -1,16 +1,16 @@
 #include "string.h"
 
 
-int strcmp(const char* s1, const char* s2)
+uint32_t strcmp(const char* s1, const char* s2)
 {
     while(*s1 && (*s1==*s2))
         s1++,s2++;
     return *(const unsigned char*)s1-*(const unsigned char*)s2;
 }
 
-int strlen(const char * str)
+uint32_t strlen(const char * str)
 {
-    int i = 0;
+    uint32_t i = 0;
     while (str[i++] != '\0');
     return i-1;
 }
@@ -22,10 +22,10 @@ char *strcpy(char *dest, const char *src)
    return save;
 }
 
-int atoi(const char* s)
+uint32_t atoi(const char* s)
 {
-    int ret = 0;
-    for (int i = 0; s[i] != '\0'; i++)
+    uint32_t ret = 0;
+    for (uint32_t i = 0; s[i] != '\0'; i++)
     {
         ret *= 10;
         ret += s[i] - '0';
@@ -33,15 +33,15 @@ int atoi(const char* s)
     return ret;
 }
 
-int putcharinstr(char c, char* s, int i)
+uint32_t putcharinstr(char c, char* s, uint32_t i)
 {
     s[i] = c;
     return ++i;
 }
 
-static int putintinstr(uint32_t in, char* s, int index)
+static uint32_t putintinstr(uint32_t in, char* s, uint32_t index)
 {
-    int i, length;
+    int32_t i, length;
     uint32_t out, tmp;
     tmp = in;
     tmp/=10;
@@ -62,9 +62,9 @@ static int putintinstr(uint32_t in, char* s, int index)
     return index;
 }
 
-static int putinthexinstr(uint32_t in, char* s, int index)
+static uint32_t putinthexinstr(uint32_t in, char* s, uint32_t index)
 {
-    int i, length;
+    int32_t i, length;
     uint32_t out, tmp;
     tmp = in;
     tmp/=16;
@@ -85,9 +85,9 @@ static int putinthexinstr(uint32_t in, char* s, int index)
     return index;
 }
 
-static int putintbininstr(uint32_t in, char* s, int index)
+static uint32_t putintbininstr(uint32_t in, char* s, uint32_t index)
 {
-    int i, length;
+    int32_t i, length;
     uint32_t out, tmp;
     tmp = in;
     tmp/=2;
@@ -108,11 +108,11 @@ static int putintbininstr(uint32_t in, char* s, int index)
     return index;
 }
 
-int sprintf(char* s, const char* string, ...)
+uint32_t sprintf(char* s, const char* string, ...)
 {
     va_list valist;
 
-    int index = 0;
+    uint32_t index = 0;
 
     va_start(valist, string);
 

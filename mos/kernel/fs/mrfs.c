@@ -33,7 +33,7 @@ static bool isDir(char* path)
 
 static char* splitForLookup(char* name)
 {
-    int pos = strlen(name),l  = strlen(name);
+    uint32_t pos = strlen(name),l  = strlen(name);
     if(pos == 0)
     {
         char* buff = malloc(1);
@@ -50,7 +50,7 @@ static char* splitForLookup(char* name)
 
 //this function renames the specified inode (file OR directory by name) to the given name
 
-int mrfsRename(char* oldname, char* newname)
+uint32_t mrfsRename(char* oldname, char* newname)
 {
     char* olddir = malloc(strlen(oldname)+1);
     strcpy(olddir, oldname);
@@ -65,31 +65,31 @@ int mrfsRename(char* oldname, char* newname)
 
     if (strcmp(newdir, olddir))
     {
-        union Inode filenode = getInodeByName(olddir, fold);
+        inode filenode = getInodeByName(olddir, fold);
         if (filenode.node.info.exists == 0)
             return NOSUCHFILEORDIRECTORY;
-        union Inode dirnode = getDirInodeByPath(olddir);
+        inode dirnode = getDirInodeByPath(olddir);
         if (dirnode.node.info.exists == 0)
             return NOSUCHFILEORDIRECTORY;
-        union Inode newdirnode = getDirInodeByPath(newdir);
+        inode newdirnode = getDirInodeByPath(newdir);
         if (newdirnode.node.info.exists == 0)
             return NOSUCHFILEORDIRECTORY;
 
-        inodeRemoveEntry(&dirnode, filenode.node.nodenumber);
+        inode_remove_entry(&dirnode, filenode.node.nodenumber);
 
         newdirnode.node.pointers[newdirnode.node.size++] = filenode.node.nodenumber;
-        inodeRewrite(newdirnode);
+        inode_rewrite(newdirnode);
     }
 
     if(strcmp(fnew, fold))
     {
-        union Inode inode = getInodeByName(newdir, fold);
-        if (inode.node.info.exists == 0)
+        inode oldinode = getInodeByName(newdir, fold);
+        if (oldinode.node.info.exists == 0)
             return NOSUCHFILEORDIRECTORY;
-        union Inode inodecheck = getInodeByName(newdir, fnew);
+        inode inodecheck = getInodeByName(newdir, fnew);
         if (inodecheck.node.info.exists == 1)
             return FILEORDIRECTORYALREADYEXISTS;
-        inodeResetName(inode, fnew);
+        inode_reset_name(oldinode, fnew);
     }
 
     free(fold);
@@ -101,7 +101,7 @@ int mrfsRename(char* oldname, char* newname)
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
     //printf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
-    int virtual_type = vfs_open_virtual(name, fout);
+    uint32_t virtual_type = vfs_open_virtual(name, fout);
     if (virtual_type == 0)
         return;
     else if(virtual_type == 2)
@@ -115,11 +115,11 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
     char* fname;
-    union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
+    inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
         //printf("EXISTS %s\n", name);
-        union Inode parent = getDirInodeByPath(namecpy);
+        inode parent = getDirInodeByPath(namecpy);
         free(fname);
         free(namecpy);
         fout->inode = file.node.nodenumber;
@@ -133,7 +133,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     {
         //printf("CREATING\n");
         kmrfsNewFile(namecpy, fname, "", 0);
-        union Inode parent = getDirInodeByPath(namecpy);
+        inode parent = getDirInodeByPath(namecpy);
         file = getInodeByName(namecpy, fname);
         free(fname);
         free(namecpy);
@@ -152,7 +152,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     return;
 }
 
-void mrfsOpenDir(char* name, int create, FILE* dout)
+void mrfsOpenDir(char* name, uint32_t create, FILE* dout)
 {
 
     char* namecpy = malloc(strlen(name)+1);
@@ -161,13 +161,13 @@ void mrfsOpenDir(char* name, int create, FILE* dout)
 
     if (isDirPath(namecpy) && isDir(namecpy))
     {
-        union Inode dir = getDirInodeByPath(namecpy);
+        inode dir = getDirInodeByPath(namecpy);
         dout->inode = dir.node.nodenumber;
         dout->index = dout->size = dir.node.size;
         namecpy[strlen(name)-1] = '\0';
         char *fname = splitForLookup(namecpy);
         dout->nameindex = dout->namesize = strlen(fname);
-        union Inode parent = getDirInodeByPath(namecpy);
+        inode parent = getDirInodeByPath(namecpy);
         //printf("parent of %s is %s at %h?\n", name, namecpy, parent);
         dout->parent = parent.node.nodenumber;
         dout->type = 1;
@@ -194,24 +194,23 @@ void mrfsOpenDir(char* name, int create, FILE* dout)
     return;
 }
 
-static void mrfsPutCEnd(int file_num, char c)
+static void mrfsPutCEnd(uint32_t file_num, char c)
 {
-    if (file_num < 0) return;
-    union Inode file = inodeRead(file_num);
+    inode file = inode_read(file_num);
     if (!file.node.info.exists) return;
-    while(inodeLockForWrite(&file));
-    int count;
-    int *pointers;
+    while(inode_lock_for_write(&file));
+    uint32_t count;
+    uint32_t *pointers;
     char* block;
-    union int_char length;
+    int_char length;
     if (file.node.size != 0)
     {
-        pointers = inodeGetPointers(file);
+        pointers = inode_get_pointers(file);
 
         count = file.node.size / (sb.data.blockSize-8) + 1;
 
-        block = blockRead(pointers[count-1]);
-        for (int i = 0; i < 4; i++)
+        block = block_read(pointers[count-1]);
+        for (uint32_t i = 0; i < 4; i++)
         {
             length.c[i] = block[i];
         }
@@ -220,8 +219,8 @@ static void mrfsPutCEnd(int file_num, char c)
     {
         if (file.node.size == 0)
             count = 0;
-        int* newPointers = malloc(sizeof(int)*(count+1));
-        for (int i = 0; i < count; i++)
+        uint32_t* newPointers = malloc(sizeof(int)*(count+1));
+        for (uint32_t i = 0; i < count; i++)
         {
             newPointers[i] = pointers[i];
         }
@@ -230,34 +229,34 @@ static void mrfsPutCEnd(int file_num, char c)
             free(pointers);
             free(block);
         }
-        newPointers[count] = blockWrite(&c, 0, 1, file.node.nodenumber);
-        inodeWritePointers(&file, newPointers, count+1);
+        newPointers[count] = block_write(&c, 0, 1, file.node.nodenumber);
+        inode_write_pointers(&file, newPointers, count+1);
         file.node.size += 1;
-        inodeRewrite(file);
+        inode_rewrite(file);
         free(newPointers);
     }
     else
     {
         char* block_data = malloc(length.i+2);
-        for(int i = 0; i < (length.i); i++)
+        for(uint32_t i = 0; i < (length.i); i++)
             block_data[i] = block[i+8];
         block_data[length.i] = c;
         block_data[length.i+1] = '\0';
-        blockWriteByte(pointers[count-1], length.i, c);
-        blockWriteByte(pointers[count-1], length.i + 1, '\0');
-        blockWriteLength(pointers[count-1], length.i + 1);
+        block_write_byte(pointers[count-1], length.i, c);
+        block_write_byte(pointers[count-1], length.i + 1, '\0');
+        block_write_length(pointers[count-1], length.i + 1);
         file.node.size += 1;
-        inodeRewrite(file);
+        inode_rewrite(file);
         free(block_data);
         free(pointers);
         free(block);
     }
-    inodeUnlockForWrite(&file);
+    inode_unlock_for_write(&file);
 }
 
 void mrfsPutC(FILE* fd, char c)
 {
-    union Inode file = inodeRead(fd->inode);
+    inode file = inode_read(fd->inode);
     if (!file.node.info.exists) return;
 
     if (fd->index == (uint32_t)file.node.size)
@@ -268,52 +267,52 @@ void mrfsPutC(FILE* fd, char c)
     else
     {
 
-        while(inodeLockForWrite(&file));
+        while(inode_lock_for_write(&file));
 
-        int pointer_index = fd->index / (sb.data.blockSize-8);
-        int blockpointer = fd->index % (sb.data.blockSize-8);
+        uint32_t pointer_index = fd->index / (sb.data.blockSize-8);
+        uint32_t blockpointer = fd->index % (sb.data.blockSize-8);
 
-        int pointer = inodeGetPointer(file,pointer_index);
+        uint32_t pointer = inode_get_pointer(file,pointer_index);
 
-        blockWriteByte(pointer, blockpointer, c);
+        block_write_byte(pointer, blockpointer, c);
 
-        inodeUnlockForWrite(&file);
+        inode_unlock_for_write(&file);
     }
     fd->index++;
 }
 
-int mrfsGetC(FILE* fd)
+uint32_t mrfsGetC(FILE* fd)
 {
-    union Inode file = inodeRead(fd->inode);
+    inode file = inode_read(fd->inode);
     if (!file.node.info.exists) return -1;
 
     if (fd->index >= (uint32_t)file.node.size) return -1;
 
-    int pointerIndex = fd->index / (sb.data.blockSize-8);
-    int blockpointer = fd->index % (sb.data.blockSize-8);
+    uint32_t pointerIndex = fd->index / (sb.data.blockSize-8);
+    uint32_t blockpointer = fd->index % (sb.data.blockSize-8);
 
-    int pointer = inodeGetPointer(file, pointerIndex);
-    char ret = blockReadByte(pointer, blockpointer);
+    uint32_t pointer = inode_get_pointer(file, pointerIndex);
+    char ret = block_read_byte(pointer, blockpointer);
 
     fd->index = (fd->index == fd->size)?fd->size:fd->index+1;
     return ret;
 }
 
-int mrfsGetNameC(FILE* fd)
+uint32_t mrfsGetNameC(FILE* fd)
 {
-    union Inode file = inodeRead(fd->inode);
+    inode file = inode_read(fd->inode);
     if (!file.node.info.exists) return -1;
 
     if (fd->nameindex >= (uint32_t)fd->namesize) return -1;
 
-    char ret = blockReadByte(file.node.nameblock, fd->nameindex);
+    char ret = block_read_byte(file.node.nameblock, fd->nameindex);
     fd->nameindex = (fd->nameindex == fd->namesize)?fd->namesize:fd->nameindex+1;
     return ret;
 }
 
-int mrfsGetFile(FILE* dd, FILE* fd)
+uint32_t mrfsGetFile(FILE* dd, FILE* fd)
 {
-    union Inode dir = inodeRead(dd->inode);
+    inode dir = inode_read(dd->inode);
     if (!dir.node.info.exists) return -1;
 
     if (dd->index >= (uint32_t)dir.node.size)
@@ -321,15 +320,15 @@ int mrfsGetFile(FILE* dd, FILE* fd)
         fd->type = 2;
         return -1;
     }
-    int *pointers = inodeGetPointers(dir);
+    uint32_t *pointers = inode_get_pointers(dir);
 
-    union Inode file = inodeRead(pointers[dd->index]);
+    inode file = inode_read(pointers[dd->index]);
     fd->inode = file.node.nodenumber;
     fd->index = fd->size = file.node.size;
 
-    char* block = blockRead(file.node.nameblock);
-    union int_char length;
-    for (int i = 0; i < 4; i++)
+    char* block = block_read(file.node.nameblock);
+    int_char length;
+    for (uint32_t i = 0; i < 4; i++)
     {
         length.c[i] = block[i];
     }
@@ -342,44 +341,44 @@ int mrfsGetFile(FILE* dd, FILE* fd)
     return 0;
 }
 
-int mrfsDeleteFileWithDescriptor(FILE* fd)
+uint32_t mrfsDeleteFileWithDescriptor(FILE* fd)
 {
     //printf("[CALL]\n");
-    union Inode inode = inodeRead(fd->inode);
-    if (inode.node.info.exists == 0)
+    inode fileinode = inode_read(fd->inode);
+    if (fileinode.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
     //printf("[HERE]\n");
-    int numblocks = inode.node.size/(sb.data.blockSize-8) + 1;
+    uint32_t numblocks = fileinode.node.size/(sb.data.blockSize-8) + 1;
 
-    if (inode.node.size == 0)
+    if (fileinode.node.size == 0)
     {
         numblocks = 0;
     }
 
-    int* pointers = inodeGetPointers(inode);
+    uint32_t* pointers = inode_get_pointers(fileinode);
 
-    for(int i = 0; i < numblocks; i++)
-        blockFree(pointers[i]);
-    blockFree(inode.node.nameblock);
+    for(uint32_t i = 0; i < numblocks; i++)
+        block_free(pointers[i]);
+    block_free(fileinode.node.nameblock);
 
-    union Inode dirinode = inodeRead(fd->parent);
-    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
+    inode dirinode = inode_read(fd->parent);
+    inode_remove_entry(&dirinode, fileinode.node.nodenumber);
 
-    inodeFree(inode.node.nodenumber);
+    inode_free(fileinode.node.nodenumber);
     free(pointers);
     return 0;
 }
 
-int mrfsDeleteDirWithDescriptor(FILE* dd)
+uint32_t mrfsDeleteDirWithDescriptor(FILE* dd)
 {
-    union Inode inode = inodeRead(dd->inode);
-    if (inode.node.info.exists == 0)
+    inode fileinode = inode_read(dd->inode);
+    if (fileinode.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
 
-    int* pointers = inodeGetPointers(inode);
-    for (int i = 0; i < inode.node.size; i++)
+    uint32_t* pointers = inode_get_pointers(fileinode);
+    for (uint32_t i = 0; i < fileinode.node.size; i++)
     {
-        union Inode childnode = inodeRead(pointers[i]);
+        inode childnode = inode_read(pointers[i]);
         if (childnode.node.info.directory)
         {
             FILE ndd;
@@ -397,10 +396,10 @@ int mrfsDeleteDirWithDescriptor(FILE* dd)
     }
     free(pointers);
 
-    union Inode dirinode = inodeRead(dd->parent);
-    inodeRemoveEntry(&dirinode, inode.node.nodenumber);
-    inodeFree(inode.node.nodenumber);
-    blockFree(inode.node.nameblock);
+    inode dirinode = inode_read(dd->parent);
+    inode_remove_entry(&dirinode, fileinode.node.nodenumber);
+    inode_free(fileinode.node.nodenumber);
+    block_free(fileinode.node.nameblock);
     return 0;
 }
 //######## ########  ######  ########  ######
@@ -416,7 +415,7 @@ static char* testing_read_file(FILE fd)
     char* buff = malloc (fd.size +1);
     char c;
     fd.index=0;
-    for(int i = 0;(c = mrfsGetC(&fd)) != -1; i++)
+    for(uint32_t i = 0;(c = mrfsGetC(&fd)) != -1; i++)
         buff[i] = c;
     buff[fd.size] = '\0';
     return buff;
@@ -427,7 +426,7 @@ static char* testing_read_file_name(FILE fd)
     char* buff = malloc (fd.namesize +1);
     char c;
     fd.nameindex=0;
-    for(int i = 0;(c = mrfsGetNameC(&fd)) != -1; i++)
+    for(uint32_t i = 0;(c = mrfsGetNameC(&fd)) != -1; i++)
         buff[i] = c;
     buff[fd.namesize] = '\0';
     return buff;
@@ -437,7 +436,7 @@ static char* testing_read_file_name(FILE fd)
 
 uint32_t mrfs_behaviour_test()
 {
-    int failures = 0;
+    uint32_t failures = 0;
 
     FILE fd;
 
@@ -469,13 +468,13 @@ uint32_t mrfs_behaviour_test()
     fd.index = 0;
 
     char buff[6];
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
     fd.nameindex = 0;
-    for (int i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
     buff[4] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file name should give identical result", !strcmp("test",buff), ASSERT_CONTINUE);
@@ -508,7 +507,7 @@ uint32_t mrfs_behaviour_test()
 
     fd.index = 0;
 
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -548,13 +547,13 @@ uint32_t mrfs_behaviour_test()
 
 
     fd.index = 0;
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
 
     fd.nameindex = 0;
-    for (int i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetNameC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file name should give identical result", !strcmp("moved",buff), ASSERT_CONTINUE);
@@ -571,7 +570,7 @@ uint32_t mrfs_behaviour_test()
 
 
     fd.index = 0;
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -585,7 +584,7 @@ uint32_t mrfs_behaviour_test()
 
 uint32_t mrfs_limits_test()
 {
-    int failures = 0;
+    uint32_t failures = 0;
 
     FILE fd;
 
@@ -605,35 +604,35 @@ uint32_t mrfs_limits_test()
 
 uint32_t mrfs_stress_test()
 {
-    int failures = 0;
+    uint32_t failures = 0;
 
     failures = failures;
 
     char name[50];
     FILE fd;
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
-        for(int j = 0; j < strlen(name); j++)
+        for(uint32_t j = 0; j < strlen(name); j++)
             mrfsPutC(&fd, name[j]);
         failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
     mrfsOpenDir("/td/", true, &fd);
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);
-        for(int j = 0; j < strlen(name); j++)
+        for(uint32_t j = 0; j < strlen(name); j++)
             mrfsPutC(&fd, name[j]);
         failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
@@ -643,7 +642,7 @@ uint32_t mrfs_stress_test()
         failures += ktest_assert(str, !strcmp(name, data), ASSERT_CONTINUE);
         mrfsDeleteFileWithDescriptor(&fd);
     }
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);

@@ -16,7 +16,7 @@
 
 static char* splitForLookup(char* name)
 {
-    int pos = strlen(name),l  = strlen(name);
+    uint32_t pos = strlen(name),l  = strlen(name);
     for (;pos>0 && name[pos]!='/';pos--);
     char* buff = malloc(l-pos+1);
     strcpy(buff, name+(++pos));
@@ -25,10 +25,10 @@ static char* splitForLookup(char* name)
     return buff;
 }
 
-union Inode getDirChildrenByPath(union Inode inode, char* path)
+inode getDirChildrenByPath(inode nodein, char* path)
 {
-    int foldernamelen = 0;
-    for (int i = 0; i < sb.data.blockSize && path[i]; i++)
+    uint32_t foldernamelen = 0;
+    for (uint32_t i = 0; i < sb.data.blockSize && path[i]; i++)
     {
         if (path[i] == '/')
         {
@@ -38,26 +38,26 @@ union Inode getDirChildrenByPath(union Inode inode, char* path)
     }
     if (foldernamelen == 0)
     {
-        return inode;
+        return nodein;
     }
     char foldername[foldernamelen+1];
 
-    for (int i = 0; i < foldernamelen; i++)
+    for (uint32_t i = 0; i < foldernamelen; i++)
     {
         foldername[i] = path[i];
     }
     foldername[foldernamelen] = 0;
 
 
-    int* pointers = inodeGetPointers(inode);
+    uint32_t* pointers = inode_get_pointers(nodein);
 
-    for (int i = 0; i < inode.node.size; i++)
+    for (uint32_t i = 0; i < nodein.node.size; i++)
     {
-        union Inode folderinode = inodeRead(pointers[i]);
+        inode folderinode = inode_read(pointers[i]);
 
         if (folderinode.node.info.directory)
         {
-            char* name = inodeGetName(folderinode);
+            char* name = inode_get_name(folderinode);
             if (strcmp(foldername,name) == 0)
             {
                 free(pointers);
@@ -70,46 +70,46 @@ union Inode getDirChildrenByPath(union Inode inode, char* path)
     free(pointers);
 
 
-    union Inode retnode;
+    inode retnode;
     retnode.node.info.exists = 0;
     retnode.node.info.directory = 0;
     return retnode;
 }
 
 
-union Inode getDirInodeByPath(char* path)
+inode getDirInodeByPath(char* path)
 {
-    union Inode inode = inodeRead(0);
+    inode root = inode_read(0);
 
-    union Inode out = getDirChildrenByPath(inode, (path+1));
+    inode out = getDirChildrenByPath(root, (path+1));
     return out;
 }
 
-union Inode getInodeByName(char* path, char * namein)
+inode getInodeByName(char* path, char * namein)
 {
-    union Inode dirinode = getDirInodeByPath(path);
+    inode dirinode = getDirInodeByPath(path);
     if (!dirinode.node.info.exists)
         return dirinode;
-    int* pointers = inodeGetPointers(dirinode);
+    uint32_t* pointers = inode_get_pointers(dirinode);
 
-    for (int i = 0; i < dirinode.node.size; i++)
+    for (uint32_t i = 0; i < dirinode.node.size; i++)
     {
-        union Inode inode = inodeRead(pointers[i]);
+        inode file = inode_read(pointers[i]);
 
-        char* name = inodeGetName(inode);
+        char* name = inode_get_name(file);
 
         if (strcmp(name,namein) == 0)
         {
             free(pointers);
             free(name);
-            return inode;
+            return file;
         }
         free(name);
     }
     free(pointers);
 
 
-    union Inode retnode;
+    inode retnode;
     retnode.node.info.exists = 0;
     return retnode;
 }
@@ -123,11 +123,11 @@ union Inode getInodeByName(char* path, char * namein)
 //##        #######  ##     ## ##     ## ##     ##    ##
 
 //this function formats a hardrive, prepareing the superblock, the free lists, and the root directory
-int kmrfsFormatHdd(int _blockSize, int rootDirSize)
+uint32_t kmrfsFormatHdd(uint32_t _blockSize, uint32_t rootDirSize)
 {
     hdd_seek(0);
     //printf("THIS\n");
-    for (int i = 0; i < SUPERBLOCKSIZE; i++)
+    for (uint32_t i = 0; i < SUPERBLOCKSIZE; i++)
     {
         sb.bytes[i] = hdd_read();
         //printf("%d - %c - %h\n", sb.bytes[i], sb.bytes[i], sb.bytes[i]);
@@ -136,7 +136,7 @@ int kmrfsFormatHdd(int _blockSize, int rootDirSize)
     //printf(" %h \n", sb.data.magic_number);
 
 
-    if (sb.data.magic_number == (int32_t)0xADDEADBE)
+    if (sb.data.magic_number == (uint32_t)0xADDEADBE)
     {
         FILE dd;
 
@@ -156,11 +156,11 @@ int kmrfsFormatHdd(int _blockSize, int rootDirSize)
     else
     {
         // Make super block
-        int bpi = 5; //block per inode
+        uint32_t bpi = 5; //block per inode
 
         //FINL        FBL             inodeSpace          blockSpace               superblockSpace
         //nInodes/8 + nInodes*bpi/8 + nInodes*INODESIZE + nInodes*bpi*_blockSize + SUPERBLOCKSIZE = hdd_capacity()
-        int nInodes = ((hdd_capacity()-SUPERBLOCKSIZE)*8)/(1+bpi+8*INODESIZE+(8*bpi*_blockSize));
+        uint32_t nInodes = ((hdd_capacity()-SUPERBLOCKSIZE)*8)/(1+bpi+8*INODESIZE+(8*bpi*_blockSize));
 
         sb.data.magic_number = 0xADDEADBE;
         sb.data.freelistreserverd = nInodes * bpi / 8;
@@ -172,24 +172,24 @@ int kmrfsFormatHdd(int _blockSize, int rootDirSize)
         sb.data.disksize = hdd_capacity();
 
         hdd_seek(0);
-        for (int i = 0; i < SUPERBLOCKSIZE; i++)
+        for (uint32_t i = 0; i < SUPERBLOCKSIZE; i++)
             hdd_write(sb.bytes[i]);
 
-        for (int i = 0; i < sb.data.freelistreserverd; i++)
+        for (uint32_t i = 0; i < sb.data.freelistreserverd; i++)
             hdd_write(0);
 
-        for (int i = 0; i < sb.data.inodefreereserverd; i++)
+        for (uint32_t i = 0; i < sb.data.inodefreereserverd; i++)
             hdd_write(0);
 
-        union Inode inode;
-        inode.node.info.directory = 1;
-        inode.node.info.exists = 1;
-        inode.node.info.locked = 0;
-        inode.node.info.init = 0;
-        inode.node.size = 0;
-        inode.node.nodenumber = 0;
+        inode root;
+        root.node.info.directory = 1;
+        root.node.info.exists = 1;
+        root.node.info.locked = 0;
+        root.node.info.init = 0;
+        root.node.size = 0;
+        root.node.nodenumber = 0;
 
-        if(inodeWrite(&inode))
+        if(inode_write(&root))
             return DISKSIZETOOSMALL;
     }
 
@@ -220,54 +220,54 @@ int kmrfsFormatHdd(int _blockSize, int rootDirSize)
 
 //this function creates a new file under the specified name and directory with the given data
 
-int kmrfsNewFile(char* path, char* filename, char* contents,int length)
+uint32_t kmrfsNewFile(char* path, char* filename, char* contents,uint32_t length)
 {
-    union Inode dirinode = getDirInodeByPath(path);
+    inode dirinode = getDirInodeByPath(path);
     if (dirinode.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
-    union Inode inodecheck = getInodeByName(path, filename);
+    inode inodecheck = getInodeByName(path, filename);
     if (inodecheck.node.info.exists == 1)
         return FILEORDIRECTORYALREADYEXISTS;
-    union Inode inode;
-    inode.node.info.directory = 0;
-    inode.node.info.exists = 0;
-    inode.node.info.locked = 0;
-    inode.node.info.init = 0;
-    inode.node.size = length;
+    inode file;
+    file.node.info.directory = 0;
+    file.node.info.exists = 0;
+    file.node.info.locked = 0;
+    file.node.info.init = 0;
+    file.node.size = length;
 
 
-    int numOfBlocks = length / (sb.data.blockSize-8) + 1;
+    uint32_t numOfBlocks = length / (sb.data.blockSize-8) + 1;
     if (length == 0)
         numOfBlocks = 0;
-    int pointers[numOfBlocks];
+    uint32_t pointers[numOfBlocks];
 
-    if (inodeWrite(&inode))
+    if (inode_write(&file))
         return FILELIMITREACHED;
-    inodeSetName(&inode, filename);
+    inode_set_name(&file, filename);
 
-    for (int currentByte = 0, blocknum = 0; currentByte < length;blocknum++)
+    for (uint32_t currentByte = 0, blocknum = 0; currentByte < length;blocknum++)
     {
-        pointers[blocknum] = blockWrite(contents, currentByte, (length-currentByte > (sb.data.blockSize-8))?(sb.data.blockSize-8):length-currentByte, inode.node.nodenumber);
+        pointers[blocknum] = block_write(contents, currentByte, (length-currentByte > (sb.data.blockSize-8))?(sb.data.blockSize-8):length-currentByte, file.node.nodenumber);
         currentByte = (blocknum+1)*(sb.data.blockSize-8);
     }
-    inodeWritePointers(&inode, pointers, numOfBlocks);
+    inode_write_pointers(&file, pointers, numOfBlocks);
 
-    inode.node.info.exists = 1;
-    inodeRewrite(inode);
-    int* oldpointers = inodeGetPointers(dirinode);
+    file.node.info.exists = 1;
+    inode_rewrite(file);
+    uint32_t* oldpointers = inode_get_pointers(dirinode);
 
-    int* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
+    uint32_t* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
 
-    for (int i = 0; i < dirinode.node.size; i++)
+    for (uint32_t i = 0; i < dirinode.node.size; i++)
     {
         newpointers[i] = oldpointers[i];
     }
 
-    newpointers[dirinode.node.size] = inode.node.nodenumber;
+    newpointers[dirinode.node.size] = file.node.nodenumber;
 
-    inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
+    inode_write_pointers(&dirinode, newpointers, dirinode.node.size + 1);
 
-    inodeRewrite(dirinode);
+    inode_rewrite(dirinode);
     free(oldpointers);
     free(newpointers);
     return 0;
@@ -281,7 +281,7 @@ uint32_t kmrfsFileExists(char* name)
     strcpy(namecpy, name);
     namecpy[strlen(name)] = '\0';
     char* fname;
-    union Inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
+    inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
         free(fname);
@@ -295,42 +295,42 @@ uint32_t kmrfsFileExists(char* name)
 
 //this function makes a new folder in the directory specified
 
-int kmrfsNewFolder(char* path,char* foldername)
+uint32_t kmrfsNewFolder(char* path,char* foldername)
 {
-    union Inode dirinode = getDirInodeByPath(path);
+    inode dirinode = getDirInodeByPath(path);
 
     if (dirinode.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
-    union Inode inodecheck = getInodeByName(path, foldername);
+    inode inodecheck = getInodeByName(path, foldername);
     if (inodecheck.node.info.exists == 1)
         return FILEORDIRECTORYALREADYEXISTS;
-    union Inode inode;
-    inode.node.info.directory = 1;
-    inode.node.info.exists = 0;
-    inode.node.info.locked = 0;
-    inode.node.info.init = 0;
-    inode.node.size = 0;
+    inode file;
+    file.node.info.directory = 1;
+    file.node.info.exists = 0;
+    file.node.info.locked = 0;
+    file.node.info.init = 0;
+    file.node.size = 0;
 
 
-    if (inodeWrite(&inode))
+    if (inode_write(&file))
         return FILELIMITREACHED;
 
-    inodeSetName(&inode, foldername);
+    inode_set_name(&file, foldername);
 
-    inode.node.info.exists = 1;
-    inodeRewrite(inode);
+    file.node.info.exists = 1;
+    inode_rewrite(file);
 
-    int* oldpointers = inodeGetPointers(dirinode);
-    int* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
+    uint32_t* oldpointers = inode_get_pointers(dirinode);
+    uint32_t* newpointers = malloc(sizeof(int) * (dirinode.node.size + 1 + 1));
 
-    for (int i = 0; i < dirinode.node.size; i++)
+    for (uint32_t i = 0; i < dirinode.node.size; i++)
         newpointers[i] = oldpointers[i];
 
-    newpointers[dirinode.node.size] = inode.node.nodenumber;
+    newpointers[dirinode.node.size] = file.node.nodenumber;
 
-    inodeWritePointers(&dirinode, newpointers, dirinode.node.size + 1);
+    inode_write_pointers(&dirinode, newpointers, dirinode.node.size + 1);
 
-    inodeRewrite(dirinode);
+    inode_rewrite(dirinode);
     free(oldpointers);
     free(newpointers);
     return 0;
@@ -341,31 +341,31 @@ int kmrfsNewFolder(char* path,char* foldername)
 char* kmrfsReadFile(char* path,char* filename)
 {
     //printf("KMRFS 1\n");
-    union Inode inode = getInodeByName(path, filename);
+    inode file = getInodeByName(path, filename);
     //printf("KMRFS 2\n");
 
-    if (inode.node.info.exists == 0)
+    if (file.node.info.exists == 0)
         return "\0";//return NOSUCHFILEORDIRECTORY;
     //printf("KMRFS 3\n");
 
-    int numblocks = inode.node.size/(sb.data.blockSize-8)  + 1;
-    char* outputstream = malloc(sizeof(char)*(inode.node.size + 10));
+    uint32_t numblocks = file.node.size/(sb.data.blockSize-8)  + 1;
+    char* outputstream = malloc(sizeof(char)*(file.node.size + 10));
     //printf("KMRFS 4\n");
-    int* pointers = inodeGetPointers(inode);
-    int length = 0;
+    uint32_t* pointers = inode_get_pointers(file);
+    uint32_t length = 0;
     //printf("KMRFS 5\n");
-    for(int i = 0; i < numblocks; i++)
+    for(uint32_t i = 0; i < numblocks; i++)
     {
         //printf("KMRFS 5.1 %d %h\n",i,pointers[i]);
-        char* block = blockRead(pointers[i]);
+        char* block = block_read(pointers[i]);
         //printf("KMRFS 6\n");
 
-        union int_char blockfilllevel;
-        for (int j = 0; j < 4; j++)
+        int_char blockfilllevel;
+        for (uint32_t j = 0; j < 4; j++)
         {
             blockfilllevel.c[j] = block[j];
         }
-        for (int j = 0; j < blockfilllevel.i; j++)
+        for (uint32_t j = 0; j < blockfilllevel.i; j++)
         {
             outputstream[j+(i*(sb.data.blockSize-8))] = block[j+8];
         }
@@ -388,21 +388,21 @@ char* kmrfsReadFile(char* path,char* filename)
 
 char** kmrfsGetFolderChildren(char* path)
 {
-    union Inode inode = getDirInodeByPath(path);
+    inode file = getDirInodeByPath(path);
 
-    int* pointers = NULL;
+    uint32_t* pointers = NULL;
 
-    pointers = inodeGetPointers(inode);
+    pointers = inode_get_pointers(file);
 
-    char ** names = malloc(sizeof(char*) * (inode.node.size+1));
-    for (int i = 0; i < inode.node.size; i++)
+    char ** names = malloc(sizeof(char*) * (file.node.size+1));
+    for (uint32_t i = 0; i < file.node.size; i++)
     {
-        union Inode childnode = inodeRead(pointers[i]);
+        inode childnode = inode_read(pointers[i]);
         char* name = NULL;
-        name = inodeGetName(childnode);
+        name = inode_get_name(childnode);
         if (childnode.node.info.directory)
         {
-            int nameLength = strlen(name);
+            uint32_t nameLength = strlen(name);
             char * newname = malloc(sizeof(char)*(nameLength+2));
             strcpy(newname, name);
             newname[nameLength] = '/';
@@ -415,35 +415,35 @@ char** kmrfsGetFolderChildren(char* path)
             names[i] = name;
         }
     }
-    names[inode.node.size] = malloc(sizeof(char*));
-    names[inode.node.size][0] = '\0';
+    names[file.node.size] = malloc(sizeof(char*));
+    names[file.node.size][0] = '\0';
     free(pointers);
     return names;
 }
 
 
 //these three functions defragment fiels folders or optionally the entire .
-
-int kmrfsDefragDisk()
+/*
+uint32_t kmrfsDefragDisk()
 {
-    int position = 0;
-    union Inode inode = getDirInodeByPath("0\n");
-    if (inode.node.info.exists == 0)
+    uint32_t position = 0;
+    inode file = getDirInodeByPath("0\n");
+    if (file.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
 
-    int* pointers = inodeGetPointers(inode);
-    for (int i = 0; i < inode.node.size; i++)
+    uint32_t* pointers = inode_get_pointers(file);
+    for (uint32_t i = 0; i < file.node.size; i++)
     {
-        union Inode childnode = inodeRead(pointers[i]);
-        char* name = inodeGetName(childnode);
+        inode childnode = inode_read(pointers[i]);
+        char* name = inode_get_name(childnode);
         if (childnode.node.info.directory)
         {
-            int pathLength = strlen("/\0");
-            int nameLength = strlen(name);
+            uint32_t pathLength = strlen("/\0");
+            uint32_t nameLength = strlen(name);
             char newPath[pathLength+nameLength+2];
-            for (int i = 0; i < pathLength; i++)
+            for (uint32_t i = 0; i < pathLength; i++)
                 newPath[i] = '/';
-            for (int i = 0; i < nameLength; i++)
+            for (uint32_t i = 0; i < nameLength; i++)
                 newPath[i+pathLength] = name[i];
             newPath[pathLength+nameLength] = '/';
             newPath[pathLength+nameLength+1] = '\0';
@@ -459,25 +459,25 @@ int kmrfsDefragDisk()
     return 0;
 }
 
-int kmrfsDefragFolder(char* path, int position)
+uint32_t kmrfsDefragFolder(char* path, uint32_t position)
 {
-    union Inode inode = getDirInodeByPath(path);
-    if (inode.node.info.exists == 0)
+    inode file = getDirInodeByPath(path);
+    if (file.node.info.exists == 0)
         return NOSUCHFILEORDIRECTORY;
 
-    int* pointers = inodeGetPointers(inode);
-    for (int i = 0; i < inode.node.size; i++)
+    uint32_t* pointers = inode_get_pointers(file);
+    for (uint32_t i = 0; i < file.node.size; i++)
     {
-        union Inode childnode = inodeRead(pointers[i]);
-        char* name = inodeGetName(childnode);
+        inode childnode = inode_read(pointers[i]);
+        char* name = inode_get_name(childnode);
         if (childnode.node.info.directory)
         {
-            int pathLength = strlen(path);
-            int nameLength = strlen(name);
+            uint32_t pathLength = strlen(path);
+            uint32_t nameLength = strlen(name);
             char newPath[pathLength+nameLength+2];
-            for (int i = 0; i < pathLength; i++)
+            for (uint32_t i = 0; i < pathLength; i++)
                 newPath[i] = path[i];
-            for (int i = 0; i < nameLength; i++)
+            for (uint32_t i = 0; i < nameLength; i++)
                 newPath[i+pathLength] = name[i];
             newPath[pathLength+nameLength] = '/';
             newPath[pathLength+nameLength+1] = '\0';
@@ -494,30 +494,30 @@ int kmrfsDefragFolder(char* path, int position)
     return position;
 }
 
-int kmrfsDefragFile(char* path, char* filename, int position)
+uint32_t kmrfsDefragFile(char* path, char* filename, uint32_t position)
 {
-    int trying = 1;
+    uint32_t trying = 1;
     while (trying==1)
     {
         trying = 0;
-        union Inode inode = getInodeByName(path, filename);
-        if (inode.node.info.exists == 0)
+        inode file = getInodeByName(path, filename);
+        if (file.node.info.exists == 0)
         {
             return NOSUCHFILEORDIRECTORY;
         }
 
-        int* pointers = inodeGetBlocks(inode);
-        int count = inode.node.size / (sb.data.blockSize-8) + 1;
+        uint32_t* pointers = inode_get_blocks(file);
+        uint32_t count = file.node.size / (sb.data.blockSize-8) + 1;
         count += (count>12?2:1);
-        int* targets = malloc(sizeof(int) * count + (count>12?2:1));
-        int namePosition = position;
+        uint32_t* targets = malloc(sizeof(int) * count + (count>12?2:1));
+        uint32_t namePosition = position;
         targets[0] = position;
-        for (int i = 0; i < count; i++)
+        for (uint32_t i = 0; i < count; i++)
         {
             targets[i] = position++;
         }
 
-        for (int i = 0; i < count; i++)
+        for (uint32_t i = 0; i < count; i++)
         {
             if (targets[i] == pointers[i])
             {
@@ -536,7 +536,7 @@ int kmrfsDefragFile(char* path, char* filename, int position)
         free(targets);
     }
     return position;
-}
+}*/
 
 //######## ########  ######  ########  ######
 //   ##    ##       ##    ##    ##    ##    ##
@@ -551,7 +551,7 @@ static char* testing_read_file(FILE fd)
     char* buff = malloc (fd.size +1);
     char c;
     fd.index=0;
-    for(int i = 0;(c = mrfsGetC(&fd)) != -1; i++)
+    for(uint32_t i = 0;(c = mrfsGetC(&fd)) != -1; i++)
         buff[i] = c;
     buff[fd.size] = '\0';
     return buff;
@@ -563,7 +563,7 @@ static char* testing_read_file_name(FILE fd)
     char* buff = malloc (fd.namesize +1);
     char c;
     fd.nameindex=0;
-    for(int i = 0;(c = mrfsGetNameC(&fd)) != -1; i++)
+    for(uint32_t i = 0;(c = mrfsGetNameC(&fd)) != -1; i++)
         buff[i] = c;
     buff[fd.namesize] = '\0';
     return buff;
@@ -573,7 +573,7 @@ static char* testing_read_file_name(FILE fd)
 
 uint32_t kmrfs_behaviour_test()
 {
-    int failures = 0;
+    uint32_t failures = 0;
 /*
     //printf("Starting MRFS Tests.\n");
 
@@ -594,7 +594,7 @@ uint32_t kmrfs_behaviour_test()
     fd.index = 0;
 
     char buff[6];
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -614,7 +614,7 @@ uint32_t kmrfs_behaviour_test()
 
     fd.index = 0;
 
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : writing then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -658,7 +658,7 @@ uint32_t kmrfs_behaviour_test()
 
 
     fd.index = 0;
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -675,7 +675,7 @@ uint32_t kmrfs_behaviour_test()
 
 
     fd.index = 0;
-    for (int i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
+    for (uint32_t i = 0; ((buff[i] = mrfsGetC(&fd)) != -1); i++);
     buff[5] = '\0';
 
     failures += ktest_assert("[MRFS] : moving then reading a file should give identical result", !strcmp("abcde",buff), ASSERT_CONTINUE);
@@ -690,7 +690,7 @@ uint32_t kmrfs_behaviour_test()
 
 uint32_t kmrfs_limits_test()
 {
-    int failures = 0;
+    uint32_t failures = 0;
 /*
     FILE fd;
 
@@ -710,35 +710,35 @@ uint32_t kmrfs_limits_test()
 
 uint32_t kmrfs_stress_test()
 {
-    int failures = 0;/*
+    uint32_t failures = 0;/*
 
     failures = failures;
 
     char name[50];
     FILE fd;
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
-        for(int j = 0; j < strlen(name); j++)
+        for(uint32_t j = 0; j < strlen(name); j++)
             mrfsPutC(&fd, name[j]);
         failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
     mrfsNewFolder("/", "td");
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);
-        for(int j = 0; j < strlen(name); j++)
+        for(uint32_t j = 0; j < strlen(name); j++)
             mrfsPutC(&fd, name[j]);
         failures += ktest_assert(name, true, ASSERT_CONTINUE);
     }
 
 
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/test%d", i);
         mrfsOpenFile(name, true, &fd);
@@ -747,7 +747,7 @@ uint32_t kmrfs_stress_test()
         sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
         failures += ktest_assert(str, !strcmp(name, data), ASSERT_HALT);
     }
-    for (int i = 0; i < 50; i++)
+    for (uint32_t i = 0; i < 50; i++)
     {
         sprintf(name,"/td/test%d", i);
         mrfsOpenFile(name, true, &fd);

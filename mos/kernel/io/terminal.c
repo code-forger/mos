@@ -498,3 +498,17 @@ void terminal_show_process(uint32_t pid)
         ptb->io.snapshot = 0;
     }
 }
+
+void terminal_switch_input()
+{
+    int32_t target;
+    if ((target = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD | F_IS_HIDDEN)) >= 0)
+        terminal_set_active_input(target);
+}
+
+void terminal_switch_hidden()
+{
+    int32_t target;
+    if ((target = scheduler_get_next_process(terminal_get_last_shown_input(), F_IS_HIDDEN, F_DEAD)) >= 0)
+        terminal_show_process(target);
+}

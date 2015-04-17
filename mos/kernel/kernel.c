@@ -43,7 +43,6 @@ void init_kernel()
     pipe_init();
     hdd_init();
     init_mem();
-    keryboard_init();
 
     kmrfsFormatHdd(4*1024, 0);
 

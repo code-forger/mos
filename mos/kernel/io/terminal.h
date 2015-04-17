@@ -49,3 +49,6 @@ char terminal_get_last_char_pressed();
 
 void terminal_hide_process(uint32_t pid);
 void terminal_show_process(uint32_t pid);
+
+void terminal_switch_input();
+void terminal_switch_hidden();

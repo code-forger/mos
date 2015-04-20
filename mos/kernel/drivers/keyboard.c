@@ -32,9 +32,9 @@ static const int F1_DOWN = 0x3B;
 static const int F2_DOWN = 0x3C;
 
 // Flags for modifier keys
-static bool shift = false;
-static bool ctrl = false;
-static bool command = false;
+static bool shift;
+static bool ctrl;
+static bool command;
 
 // Ask the keyboard buffer for one character.
 char keyboard_get_a_byte()
@@ -42,12 +42,19 @@ char keyboard_get_a_byte()
     return alpha_map[get_byte_from(0x60)];
 }
 
+void keyboard_init()
+{
+    shift = 0;
+    ctrl = 0;
+    command = 0;
+}
+
 void keyboard_interupt(void)
 {
     uint8_t code = get_byte_from(0x60);
     if (command) // Previous code was 0xE0 indicating incoming 2 byte sequence.
     {
-        command = false;
+        command = 0;
         terminal_send_to_process(code);
     }
     // If code is in map range and map has entry.
@@ -60,27 +67,27 @@ void keyboard_interupt(void)
             terminal_send_to_process((!shift)?alpha_map[code]:upper_alpha_map[code]); // Send character pressed to process.
     else if (code == 0xE0) // This special code means next byte received is NOT a normal character.
     {
-        command = true;
+        command = 1;
         terminal_send_to_process(code);
     }
     else if (code == LSHIFT_DOWN || code == RSHIFT_DOWN)  // Check for all modifier codes:
     {
-        shift = true;
-        terminal_send_to_process(code);
+        shift = 1;
+        //terminal_send_to_process(code);
     }
     else if  (code == LSHIFT_UP || code == RSHIFT_UP) // --
     {
-        shift = false;
-        terminal_send_to_process(code);
+        shift = 0;
+        //terminal_send_to_process(code);
     }
     else if (code == LCTRL_DOWN || code == RCTRL_DOWN) // --
     {
-        ctrl = true;
+        ctrl = 1;
         terminal_send_to_process(code);
     }
     else if  (code == LCTRL_UP || code == RCTRL_UP) // --
     {
-        ctrl = false;
+        ctrl = 0;
         terminal_send_to_process(code);
     }
     // Special case to switch terminal context

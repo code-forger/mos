@@ -1,5 +1,8 @@
 #include "port.h"
 
+
+//** SOME OF THE FOLLOWING CODE WAS COLLECTED FROM EXTERNAL SOURCES **/
+
 uint8_t get_byte_from(uint32_t port_num)
 {
     uint8_t byte = 0;
@@ -23,3 +26,4 @@ void send_long_to(uint32_t port_num, uint32_t val)
 {
     __asm__ __volatile__ ("outl %%ax, %%dx" :: "a" (val),"d" (port_num));
 }
+//** SOME OF THE PREVIOUS CODE WAS COLLECTED FROM EXTERNAL SOURCES **/

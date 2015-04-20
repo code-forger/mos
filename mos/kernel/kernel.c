@@ -36,6 +36,7 @@ void init_kernel()
     directory[0] = 0 | R_W_NP;
     memory_init();
     paging_init();
+    keyboard_init();
     terminal_initialize();
     gdt_init();
     idt_init();

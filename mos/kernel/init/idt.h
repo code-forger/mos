@@ -55,22 +55,21 @@ void terminal_putchar_syscall(void);
 void terminal_init_syscall(void);
 void stdin_init_syscall(void);
 void relinquish_input_syscall(void);
+
 void scheduler_fork_syscall(void);
 void scheduler_pid_syscall(void);
-void scheduler_exec_syscall(void);
-void scheduler_exec_string_syscall(void);
-void scheduler_exec_string_parameters_syscall(void);
 void scheduler_sleep_syscall(void);
 void scheduler_pause_syscall(void);
+void scheduler_exec_string_syscall(void);
 void scheduler_kill_syscall(void);
 void scheduler_hide_syscall(void);
 void scheduler_show_syscall(void);
+void scheduler_exec_string_parameters_syscall(void);
+
 void pipe_pipe_syscall(void);
 void pipe_write_syscall(void);
 void pipe_read_syscall(void);
-void file_read_syscall(void);
-void file_write_syscall(void);
-void dir_read_syscall(void);
+
 void file_open_syscall(void);
 void file_putc_syscall(void);
 void file_getc_syscall(void);
@@ -78,7 +77,8 @@ void file_opendir_syscall(void);
 void file_getfile_syscall(void);
 void file_getnamec_syscall(void);
 void file_delete_syscall(void);
-void file_delete_dir_syscall(void);
 void file_mv_syscall(void);
+void file_delete_dir_syscall(void);
+
 void ticks_ms_syscall(void);
 void seconds_syscall(void);

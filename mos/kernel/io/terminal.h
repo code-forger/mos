@@ -25,8 +25,8 @@ typedef enum color
 
 
 
-uint8_t terminal_make_color(terminal_color text, terminal_color bg);
-uint16_t terminal_make_character(char c, uint8_t color);
+//uint8_t terminal_make_color(terminal_color text, terminal_color bg);
+//uint16_t terminal_make_character(char c, uint8_t color);
 
 void terminal_initialize();
 

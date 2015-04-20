@@ -3,4 +3,5 @@
 #include "../io/port.h"
 
 char keyboard_get_a_byte();
+void keyboard_init();
 void keyboard_interupt(void);

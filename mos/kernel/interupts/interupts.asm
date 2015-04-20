@@ -27,18 +27,21 @@ extern c_terminal_putchar_syscall
 extern c_terminal_init_syscall
 extern c_stdin_init_syscall
 extern c_relinquish_input_syscall
+
 extern c_scheduler_fork_syscall
 extern c_scheduler_pid_syscall
-extern c_scheduler_exec_string_syscall
-extern c_scheduler_exec_string_parameters_syscall
 extern c_scheduler_sleep_syscall
 extern c_scheduler_pause_syscall
+extern c_scheduler_exec_string_syscall
 extern c_scheduler_kill_syscall
 extern c_scheduler_hide_syscall
 extern c_scheduler_show_syscall
+extern c_scheduler_exec_string_parameters_syscall
+
 extern c_pipe_pipe_syscall
 extern c_pipe_write_syscall
 extern c_pipe_read_syscall
+
 extern c_file_open_syscall
 extern c_file_putc_syscall
 extern c_file_getc_syscall
@@ -46,8 +49,9 @@ extern c_file_opendir_syscall
 extern c_file_getfile_syscall
 extern c_file_getnamec_syscall
 extern c_file_delete_syscall
-extern c_file_delete_dir_syscall
 extern c_file_mv_syscall
+extern c_file_delete_dir_syscall
+
 extern c_ticks_ms_syscall
 extern c_seconds_syscall
 
@@ -80,18 +84,21 @@ global terminal_putchar_syscall
 global terminal_init_syscall
 global stdin_init_syscall
 global relinquish_input_syscall
+
 global scheduler_fork_syscall
 global scheduler_pid_syscall
-global scheduler_exec_string_syscall
-global scheduler_exec_string_parameters_syscall
 global scheduler_sleep_syscall
 global scheduler_pause_syscall
+global scheduler_exec_string_syscall
 global scheduler_kill_syscall
 global scheduler_hide_syscall
 global scheduler_show_syscall
+global scheduler_exec_string_parameters_syscall
+
 global pipe_pipe_syscall
 global pipe_write_syscall
 global pipe_read_syscall
+
 global file_open_syscall
 global file_putc_syscall
 global file_getc_syscall
@@ -99,8 +106,9 @@ global file_opendir_syscall
 global file_getfile_syscall
 global file_getnamec_syscall
 global file_delete_syscall
-global file_delete_dir_syscall
 global file_mv_syscall
+global file_delete_dir_syscall
+
 global ticks_ms_syscall
 global seconds_syscall
 
@@ -274,6 +282,8 @@ relinquish_input_syscall:
     popad
     iret
 
+
+
 scheduler_fork_syscall:
     pushad
     call c_scheduler_fork_syscall
@@ -286,20 +296,6 @@ scheduler_pid_syscall:
     popad
     iret
 
-scheduler_exec_string_syscall:
-    cli
-    pushad
-    call c_scheduler_exec_string_syscall
-    popad
-    iret
-
-scheduler_exec_string_parameters_syscall:
-    cli
-    pushad
-    call c_scheduler_exec_string_parameters_syscall
-    popad
-    iret
-
 scheduler_sleep_syscall:
     pushad
     call c_scheduler_sleep_syscall
@@ -309,6 +305,13 @@ scheduler_sleep_syscall:
 scheduler_pause_syscall:
     pushad
     call c_scheduler_pause_syscall
+    popad
+    iret
+
+scheduler_exec_string_syscall:
+    cli
+    pushad
+    call c_scheduler_exec_string_syscall
     popad
     iret
 
@@ -329,6 +332,15 @@ scheduler_show_syscall:
     call c_scheduler_show_syscall
     popad
     iret
+
+scheduler_exec_string_parameters_syscall:
+    cli
+    pushad
+    call c_scheduler_exec_string_parameters_syscall
+    popad
+    iret
+
+
 
 pipe_pipe_syscall:
     cli
@@ -353,6 +365,8 @@ pipe_read_syscall:
     popad
     sti
     iret
+
+
 
 file_open_syscall:
     cli
@@ -410,6 +424,14 @@ file_delete_syscall:
     sti
     iret
 
+file_mv_syscall:
+    cli
+    pushad
+    call c_file_mv_syscall
+    popad
+    sti
+    iret
+
 file_delete_dir_syscall:
     cli
     pushad
@@ -418,13 +440,7 @@ file_delete_dir_syscall:
     sti
     iret
 
-file_mv_syscall:
-    cli
-    pushad
-    call c_file_mv_syscall
-    popad
-    sti
-    iret
+
 
 ticks_ms_syscall:
     cli

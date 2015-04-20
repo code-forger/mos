@@ -4,12 +4,7 @@
 #include "../kstdlib/kstdlib.h"
 #include "port.h"
 
-uint8_t terminal_make_color(terminal_color text, terminal_color back)
-{
-    return text | back << 4;
-}
-
-uint16_t terminal_make_character(char c, uint8_t color)
+static uint16_t terminal_make_character(char c, uint8_t color)
 {
     uint16_t c16 = c, color16 = color;
     return c16 | color16 << 8;
@@ -18,7 +13,7 @@ uint16_t terminal_make_character(char c, uint8_t color)
 static uint32_t VGA_WIDTH = 80;
 static uint32_t VGA_HEIGHT = 25;
 
-static char last_char_pressed;
+static char last_char_pressed = ' ';
 static uint32_t current_row = 0;
 static uint32_t currnet_column = 0;
 static uint8_t inactive_color = COLOR_DARK_GREY | COLOR_WHITE << 4;
@@ -26,13 +21,14 @@ static uint8_t active_color = COLOR_BLACK | COLOR_WHITE << 4;
 static uint16_t* terminal;
 static uint16_t* process_terminal;
 static uint16_t* kernel_terminal;
-static uint32_t context;
 
 #define KERNEL_CONTEXT 1
 #define PROCESS_CONTEXT 0
 
+static uint32_t context = PROCESS_CONTEXT;
+
 static int32_t active_process = -1;
-static int32_t last_shown;
+static int32_t last_shown = 0;
 
 
 static void push_terminal_up()
@@ -72,23 +68,13 @@ void terminal_initialize()
     kernel_terminal = paging_get_kernel_terminal_buffer();
 
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
+    {
         for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
+        {
             kernel_terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
-
-    context = PROCESS_CONTEXT;
-    last_char_pressed = ' ';
-    current_row = 0;
-    currnet_column = 0;
-    inactive_color = COLOR_DARK_GREY | (COLOR_WHITE << 4);
-    active_color = COLOR_BLACK | (COLOR_WHITE << 4);
-    VGA_WIDTH = 80;
-    VGA_HEIGHT = 25;
-
-    last_shown = 0;
-
-    for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
-        for ( uint32_t x = 0; x < VGA_WIDTH; x++ )
             terminal[y*VGA_WIDTH+x] = terminal_make_character(' ', inactive_color);
+        }
+    }
     //terminal_switch_context(KERNEL_CONTEXT);
 }
 

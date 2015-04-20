@@ -1,8 +1,11 @@
-    #include "interupts.h"
-#include "../scheduler/scheduler.h"
+#include "../drivers/keyboard.h"
+#include "../fs/mrfs.h"
+#include "../io/port.h"
+#include "../io/terminal.h"
 #include "../IPC/pipe.h"
 #include "../kstdlib/kstdlib.h"
-#include "../fs/mrfs.h"
+#include "../pic/pic.h"
+#include "../scheduler/scheduler.h"
 
 void  c_int_zero_division(void)
 {

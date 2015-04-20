@@ -2,6 +2,8 @@
 #include "port.h"
 #include "terminal.h"
 
+//** A SIGNIFICANT PORTION OF THE FOLLOWING CODE WAS COLLECTED FROM EXTERNAL SOURCES **/
+
 static struct channel channels[2];
 static struct hdd drives[4];
 static int drive_selector = -1;
@@ -318,21 +320,43 @@ void hdd_init()
     hdd_index = 0;
 }
 
+//** A SIGNIFICANT PORTION OF THE PREVIOUS CODE WAS COLLECTED FROM EXTERNAL SOURCES **/
+//** the following caching code was written by me.
+
+
+// Find a cached block for the current hdd_index if it exists.
+// If its not dirty and we want it to be, make it dirty.
+static uint32_t last_found_index;
+static uint32_t last_found_cache;
+
 static uint8_t* find_cached_block(uint32_t dirty)
 {
-    for (uint32_t i = 0; i < 31; i++)
+    uint32_t cache_target = ((hdd_index + 0x8000000) >> 9);
+
+    // This lookup cache either speeds up this algorithm 32 times or slows it down by 1 32nd. Not a bad trade off.
+    if (cache_target == last_found_cache) // this is the MOST likely case (about 512 in 513 lookups will be this case!)
     {
-        if (((hdd_index + 0x8000000) >> 9) == block_table->blocks[i].cache)
+        if (block_table->blocks[last_found_index].dirty == 0)
+            block_table->blocks[last_found_index].dirty = dirty;
+        return block_table->block[last_found_index].data;
+    }
+
+    for (uint32_t i = 0; i < 31; i++) // search for the cache.
+    {
+        if (cache_target == block_table->blocks[i].cache)
         {
             if (block_table->blocks[i].dirty == 0)
                 block_table->blocks[i].dirty = dirty;
+            last_found_cache = cache_target;
+            last_found_index = i;
             return block_table->block[i].data;
         }
     }
     return (uint8_t*)0;
 }
 
-void purge_cache()
+// Simply clear the cache.
+static void purge_cache()
 {
     for(uint32_t i = 0; i < 31; i++)
     {
@@ -341,6 +365,7 @@ void purge_cache()
     }
 }
 
+// If any caches are dirty, write them.
 void hdd_write_cache()
 {
     for(uint32_t i = 0; i < 31; i++)
@@ -353,6 +378,7 @@ void hdd_write_cache()
     }
 }
 
+// Find a free caching slot. If there isn't one, wipe the cache and look again.
 static uint8_t* find_free_block(uint32_t dirty)
 {
     for (uint32_t i = 0; i < 31; i++)
@@ -366,12 +392,12 @@ static uint8_t* find_free_block(uint32_t dirty)
     }
 
     hdd_write_cache();
-
     purge_cache();
 
     return find_free_block(dirty);
 }
 
+// Request a write cache for the current hdd_index, if there isn't one, get one.
 static uint8_t* request_write()
 {
     uint8_t* buffer;
@@ -388,11 +414,7 @@ static uint8_t* request_write()
     return buffer;
 }
 
-void hdd_write(uint8_t data)
-{
-    request_write()[(hdd_index++ & 0x1FF)] = data;
-}
-
+// Request a read cache for the current hdd_index, if there isn't one, get one.
 static uint8_t* request_read()
 {
     uint8_t* buffer;
@@ -407,6 +429,12 @@ static uint8_t* request_read()
     ide_ata_access(0, drive_selector, (hdd_index + 0x8000000) >> 9, 1, 0, (uint32_t)buffer);
 
     return buffer;
+}
+
+
+void hdd_write(uint8_t data)
+{
+    request_write()[(hdd_index++ & 0x1FF)] = data;
 }
 
 uint8_t hdd_read()

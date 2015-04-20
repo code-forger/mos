@@ -2,6 +2,8 @@
 #include "../declarations.h"
 #include "../paging/paging.h"
 
+//** A SIGNIFICANT PORTION OF THE FOLLOWING CODE WAS COLLECTED FROM EXTERNAL SOURCES **/
+
 #define HDD_CS_ERR     0x01
 #define HDD_CS_IDX     0x02
 #define HDD_CS_CORR    0x04
@@ -88,24 +90,6 @@ struct channel {
    uint8_t  noint;
 };
 
-struct block_meta
-{
-   uint32_t cache;
-   uint32_t dirty;
-};
-
-struct block
-{
-   uint8_t data[512];
-};
-
-typedef struct block_table_type
-{
-    struct block_meta blocks[31];
-    struct block_meta padding[33];
-    struct block      block[31];
-} block_table_type;
-
 struct hdd {
    uint8_t  reserved;    // 0 (Empty) or 1 (This Drive really exists).
    uint8_t  channel;     // 0 (Primary Channel) or 1 (Secondary Channel).
@@ -120,12 +104,35 @@ struct hdd {
 
 void hdd_init();
 
+//** A SIGNIFICANT PORTION OF THE PREVIOUS CODE WAS COLLECTED FROM EXTERNAL SOURCES **/
+//** the following caching code was written by me.
+
+struct block_meta
+{
+   uint32_t cache;
+   uint32_t dirty;
+};
+
+struct block
+{
+   uint8_t data[512];
+};
+
+//(31 * 8) + (33 * 8) + (31 * 512) == 4096*4 == 0x4000
+typedef struct block_table_type
+{
+    struct block_meta blocks[31];
+    struct block_meta padding[33];
+    struct block      block[31];
+} block_table_type;
+
+void hdd_write_cache();
 
 void hdd_write(uint8_t b);
 uint8_t hdd_read();
+
 uint32_t hdd_remaining();
 void hdd_reset();
 void hdd_seek(uint32_t index);
 uint32_t hdd_current();
 uint32_t hdd_capacity();
-void hdd_write_cache();

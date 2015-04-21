@@ -25,117 +25,93 @@ uint32_t pipe_create(uint32_t loc, uint32_t* pipe_head_out, uint32_t* pipe_tail_
     pipe_table[*pipe_head_out].location = loc;
     pipe_table[*pipe_tail_out].location = loc;
 
-    pipe_table[*pipe_head_out].pad = 0xDE;
-    pipe_table[*pipe_tail_out].pad = 0xDE;
-    pipe_table[*pipe_head_out].pad1 = 0xDE;
-    pipe_table[*pipe_tail_out].pad1 = 0xDE;
-    pipe_table[*pipe_head_out].pad2 = 0xDE;
-    pipe_table[*pipe_tail_out].pad2 = 0xDE;
-
-
     pipe_table[*pipe_head_out].mode = PIPE_WRITE;
     pipe_table[*pipe_tail_out].mode = PIPE_READ;
 
-    uint32_t *pipe_actual = (uint32_t*) loc;
-    pipe_actual[0] = 0;
-    pipe_actual[1] = 0;
+    uint32_t *pipe_heads = (uint32_t*) loc;
+    pipe_heads[PIPE_READ] = 0;
+    pipe_heads[PIPE_WRITE] = 0;
 
     return 0;
 }
 
-uint32_t pipe_write(uint32_t pipe, uint8_t data_in)
+static uint32_t pipe_map_foreign_heap(PIPE pipe)
 {
-    asm("cli");
-    if (pipe_table[pipe].mode != PIPE_WRITE)
+
+        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH); // Get the heap table for the process.
+
+        uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000; // Figure out which heap page the pipe starts in.
+
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[1 + (pipe_heap_index)], SCRATCH_TOP); // Map the pipes heap page and the next heap page (in case the pipe is longer than 0x1000).
+        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[(pipe_heap_index)], SCRATCH);
+
+        uint32_t rebased_location = (pipe_table[pipe].location & 0x00000FFF) + SCRATCH; // Recalculate the pipe location based upon SCRATCH bring the new base.
+        return rebased_location;
+}
+
+uint32_t pipe_write(PIPE pipe, uint8_t data_in)
+{
+    if (pipe_table[pipe].mode != PIPE_WRITE) // Pipe in wrong mode.
+        return 1;
+
+    uint32_t location;
+
+    if(pipe_table[pipe].pid == scheduler_get_pid()) // Writing into current processes memory space.
+        location = pipe_table[pipe].location;
+    else // Writing into another processes memory space.
+        location = pipe_map_foreign_heap(pipe);
+
+    uint32_t *pipe_heads = (uint32_t*)location;
+    uint8_t *pipe_actual_8 = (uint8_t*)location;
+
+    if (((pipe_heads[PIPE_WRITE] + 1) % 248) == pipe_heads[PIPE_READ]) // Writing would run into read pointer.
     {
         return 1;
     }
-    if(pipe_table[pipe].pid == scheduler_get_pid())
-    {
-        uint32_t *pipe_actual = (uint32_t*)pipe_table[pipe].location;
-        uint8_t *pipe_actual_8 = (uint8_t*)pipe_table[pipe].location;
-        if (((pipe_actual[1] + 1) % 248) == pipe_actual[0])
-        {
-            return 1;
-        }
-        else
-        {
-            pipe_actual_8[pipe_actual[1]+8] = data_in;
-            pipe_actual[1] = ((pipe_actual[1] + 1) % 248);
-        }
-    }
     else
     {
-        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH);
-
-        uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000;
-
-        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[1 + (pipe_heap_index)], SCRATCH_TOP);
-        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[(pipe_heap_index)], SCRATCH);
-
-        uint32_t rebased_location = (pipe_table[pipe].location & 0x00000FFF) + SCRATCH;
-
-        uint32_t *pipe_actual = (uint32_t*)rebased_location;
-        uint8_t *pipe_actual_8 = (uint8_t*)rebased_location;
-        if (((pipe_actual[1] + 1) % 248) == pipe_actual[0])
-        {
-            paging_unmap_virtual(SCRATCH);
-            return 1;
-        }
-        else
-        {
-            pipe_actual_8[pipe_actual[1]+8] = data_in;
-            pipe_actual[1] = ((pipe_actual[1] + 1) % 248);
-        }
-        paging_unmap_virtual(SCRATCH);
+        pipe_actual_8[pipe_heads[PIPE_WRITE]+8] = data_in; // Write data.
+        pipe_heads[PIPE_WRITE] = ((pipe_heads[PIPE_WRITE] + 1) % 248); // Move write pointer.
     }
+
+    if(pipe_table[pipe].pid != scheduler_get_pid()) // Clean up from remap.
+    {
+        paging_unmap_virtual(SCRATCH);
+        paging_unmap_virtual(SCRATCH_TOP);
+    }
+
     return 0;
 }
 
-uint32_t pipe_read(uint32_t pipe, uint8_t *data_out)
+uint32_t pipe_read(PIPE pipe, uint8_t *data_out) // Pipe in wrong mode.
 {
     if (pipe_table[pipe].mode != PIPE_READ)
-    {
         return 2;
-    }
-    if(pipe_table[pipe].pid == scheduler_get_pid())
+
+    uint32_t location;
+
+    if(pipe_table[pipe].pid == scheduler_get_pid()) // Reading from current processes memory space.
+        location = pipe_table[pipe].location;
+    else // Reading from another processes memory space.
+        location = pipe_map_foreign_heap(pipe);
+
+    uint32_t *pipe_heads = (uint32_t*)location;
+    uint8_t *pipe_actual_8 = (uint8_t*)location;
+
+    if (pipe_heads[PIPE_READ] == pipe_heads[PIPE_WRITE]) // Pipe empty.
     {
-        uint32_t *pipe_actual = (uint32_t*)pipe_table[pipe].location;
-        uint8_t *pipe_actual_8 = (uint8_t*)pipe_table[pipe].location;
-        if (pipe_actual[0] == pipe_actual[1])
-        {
-            return 1;
-        }
-        else
-        {
-            *data_out = pipe_actual_8[pipe_actual[0]+8];
-            pipe_actual[0] = ((pipe_actual[0] + 1) % 248);
-        }
+        return 1;
     }
     else
     {
-        paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH);
+        *data_out = pipe_actual_8[pipe_heads[PIPE_READ]+8]; // Read data.
+        pipe_heads[PIPE_READ] = ((pipe_heads[PIPE_READ] + 1) % 248); // Move pointer.
+    }
 
-        uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000;
-
-        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[1 + (pipe_heap_index)], SCRATCH_TOP);
-        paging_map_phys_to_virtual(((uint32_t*)SCRATCH)[(pipe_heap_index)], SCRATCH);
-
-        uint32_t rebased_location = (pipe_table[pipe].location & 0x00000FFF) + SCRATCH;
-
-        uint32_t *pipe_actual = (uint32_t*)rebased_location;
-        uint8_t *pipe_actual_8 = (uint8_t*)rebased_location;
-        if (pipe_actual[0] == pipe_actual[1])
-        {
-            paging_unmap_virtual(SCRATCH);
-            return 1;
-        }
-        else
-        {
-            *data_out = pipe_actual_8[pipe_actual[0]+8];
-            pipe_actual[0] = ((pipe_actual[0] + 1) % 248);
-        }
+    if(pipe_table[pipe].pid != scheduler_get_pid()) // Clean up from remap.
+    {
         paging_unmap_virtual(SCRATCH);
+        paging_unmap_virtual(SCRATCH_TOP);
     }
     return 0;
 }

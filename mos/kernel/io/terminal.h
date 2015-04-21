@@ -30,7 +30,6 @@ typedef enum color
 
 void terminal_initialize();
 
-void terminal_set_color(uint8_t color);
 void terminal_putchar(char c);
 void terminal_putchar_at(char c, uint32_t x, uint32_t y);
 void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y);

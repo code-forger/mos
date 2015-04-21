@@ -536,7 +536,7 @@ void  c_ticks_ms_syscall(void)
 {
     uint32_t *ret;
     asm("mov %%eax, %0":"=r"(ret):);
-    *ret = scheduler_ticks_ms();
+    *ret = scheduler_ms();
 
     send_byte_to(MASTER_PIC, 0x20);
 }

@@ -103,11 +103,6 @@ void terminal_switch_context(uint32_t target)
     }
 }
 
-void terminal_set_color(uint8_t color)
-{
-    inactive_color = color;
-}
-
 void terminal_putchar(char c)
 {
     if (c == '\n')
@@ -134,33 +129,13 @@ void terminal_putchar(char c)
     }
 }
 
-void terminal_string_for_process(io_part* io) // for keyboard.c
+void terminal_string_for_process(io_part* io)
 {
-    /*printf("PRINTING P=%d,%d p=%d,%d w=%d,%d, c=%d, r=%d\n",
-        io->pipes[0],
-        io->pipes[1],
-        io->px,
-        io->py,
-        io->wx,
-        io->wy,
-        io->column,
-        io->row);*/
     uint8_t uc = 0;
     char c = '\0';
     while(pipe_read(io->outpipe, &uc) == 0)
     {
         c = (char)uc;
-
-        /*if (c == 0x1A)
-        {
-            pipe_read(io->outpipe, &uc);
-            c = (char)uc;
-            uint8_t x, y;
-            pipe_read(io->outpipe, &x);
-            c = (char)uc;
-            pipe_read(io->outpipe, &y);
-            terminal_putchar_at_for_process(c, x, y);
-        }*/
 
         if (c == '\n')
         {
@@ -263,12 +238,6 @@ static void terminal_putintbin(uint32_t in)
 
 void printf(const char* string, ...)
 {
-    if (context != 1 && context != 0)
-    {
-        return;
-    }
-    //terminal_switch_context(KERNEL_CONTEXT);
-    //asm("cli");
     va_list valist;
 
     va_start(valist, string);
@@ -300,9 +269,7 @@ void printf(const char* string, ...)
     }
     /* clean memory reserved for valist */
     va_end(valist);
-    //asm("sti");
 }
-
 
 
 static void terminal_hide_overlapping(uint32_t pid);

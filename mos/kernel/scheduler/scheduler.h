@@ -3,7 +3,7 @@
 #include "../memory/memory.h"
 #include "../IPC/pipe.h"
 
-uint32_t scheduler_ticks_ms();
+uint32_t scheduler_ms();
 int32_t fork();
 void scheduler_time_interupt();
 void scheduler_init();
@@ -25,7 +25,7 @@ int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, ui
 #define F_WAKE      (uint32_t)0b00010000
 #define F_HAS_INPUT (uint32_t)0b00100000
 #define F_IS_HIDDEN (uint32_t)0b01000000
-#define F_FORKED (uint32_t)0b10000000
+#define F_FORKED    (uint32_t)0b10000000
 
 #define FS_ALL       (uint32_t)0b11111111
 #define FS_NONE      (uint32_t)0

@@ -118,6 +118,6 @@ void loader_main(multiboot_info_t *info, uint32_t magic)
     asm("cli");
     //asm("hlt");
     asm("mov %0, %%esp"::"r"(0xffbfffff));
-    asm("jmp %0"::"r"(0xc04000d0));
+    asm("jmp %0"::"r"(0xc04000e0));
     for (;;);
 }

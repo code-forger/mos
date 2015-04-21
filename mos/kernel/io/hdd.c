@@ -305,7 +305,7 @@ void hdd_init()
     {
         if (drives[i].reserved == 1)
         {
-            printf("%d Found %s Drive %dMB - %s\n",
+            kprintf("%d Found %s Drive %dMB - %s\n",
             i ,
             (const char *[]){"ATA", "ATAPI"}[drives[i].type],
             drives[i].size / 1024 / 2,

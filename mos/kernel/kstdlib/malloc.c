@@ -29,11 +29,11 @@ static void check_integrity(header *check)
             freee = "FREE";
     else
         freee = "NOTF";
-    printf("CI = Current Node %h : %s, : %h : %h%h%h\n", check, freee, check->size,check->pad1,check->pad2,check->pad3);
+    kprintf("CI = Current Node %h : %s, : %h : %h%h%h\n", check, freee, check->size,check->pad1,check->pad2,check->pad3);
 */
     if (check->pad1 != 0xDE || check->pad2 != 0xDE || check->pad3 != 0xDE)
     {
-        printf("MEMORY VIOLATION at %h \n", check);
+        kprintf("MEMORY VIOLATION at %h \n", check);
         //dump_memory((uint32_t)top);
         asm("cli");
         asm("hlt");
@@ -141,7 +141,7 @@ void dump_memory(uint32_t memory)
                 freee = "FREE";
         else
             freee = "NOTF";
-        printf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
+        kprintf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
 
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
         //for(int i = 0;i < 1000000;i++);
@@ -155,7 +155,7 @@ void dump_memory(uint32_t memory)
             freee = "FREE";
     else
         freee = "NOTF";
-    printf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
+    kprintf("DM Current Node %h : %s, : %h\n", current, freee, current->size);
 }
 
 
@@ -237,7 +237,7 @@ void *malloc_for_process(uint32_t size, uint32_t memory) {
         current = (header*)((uint32_t)current + HEAD_SIZE + current->size);
     } while (current->free != 3);
 
-    printf("Memory Manager our of memory!\n");
+    kprintf("Memory Manager our of memory!\n");
     asm("cli");
     asm("hlt");
     return 0;

@@ -24,25 +24,15 @@ typedef enum color
 } terminal_color;
 
 
-
-//uint8_t terminal_make_color(terminal_color text, terminal_color bg);
-//uint16_t terminal_make_character(char c, uint8_t color);
-
-void terminal_initialize();
-
-void terminal_putchar(char c);
-void terminal_putchar_at(char c, uint32_t x, uint32_t y);
-void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y);
-void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy);
-void printf(const char* string, ...);
-void terminal_setio(PIPE pipes[2]);
-void terminal_setin(PIPE pipes[2]);
-void terminal_string_for_process(io_part* io);
-void terminal_set_active_input(int32_t pid);
-uint32_t terminal_get_active_input();
-uint32_t terminal_get_last_shown_input();
-void terminal_send_to_process(char data);
+//CONTROL METHODS
+void terminal_init();
 void terminal_switch_context(uint32_t target);
+
+void terminal_set_active(int32_t pid);
+uint32_t terminal_get_active();
+uint32_t terminal_get_last_shown();
+
+void terminal_send_to_process(char data);
 void terminal_clear_process(uint32_t pid);
 char terminal_get_last_char_pressed();
 
@@ -51,3 +41,12 @@ void terminal_show_process(uint32_t pid);
 
 void terminal_switch_input();
 void terminal_switch_hidden();
+
+//KERNEL METHODS
+void kprintf(const char* string, ...);
+
+//PROCESS METHODS
+void pterminal_putchar_at(char c, uint32_t x, uint32_t y);
+void pterminal_sync(io_part* io);
+void pterminal_setout(PIPE pipes[2]);
+void pterminal_setin(PIPE pipes[2]);

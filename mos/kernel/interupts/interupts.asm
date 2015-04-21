@@ -198,9 +198,7 @@ int_general_protection:
 
 int_page_fault:
     pushad
-    pushaf
     call c_int_page_fault
-    popaf
     popad
     add esp, 4
     iret

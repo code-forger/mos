@@ -9,7 +9,7 @@
 
 void  c_int_zero_division(void)
 {
-    printf("ZERO_DIVISION_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("ZERO_DIVISION_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -20,7 +20,7 @@ void  c_int_zero_division(void)
 
 void  c_int_debugger(void)
 {
-    printf("DEBUGGER_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("DEBUGGER_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -31,7 +31,7 @@ void  c_int_debugger(void)
 
 void  c_int_nmi(void)
 {
-    printf("NMI_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("NMI_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -42,7 +42,7 @@ void  c_int_nmi(void)
 
 void  c_int_breakpoint(void)
 {
-    printf("BREAKPOINT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("BREAKPOINT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -53,7 +53,7 @@ void  c_int_breakpoint(void)
 
 void  c_int_overflow(void)
 {
-    printf("OVERFLOW_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("OVERFLOW_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -64,7 +64,7 @@ void  c_int_overflow(void)
 
 void  c_int_bounds(void)
 {
-    printf("BOUNDS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("BOUNDS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -75,7 +75,7 @@ void  c_int_bounds(void)
 
 void  c_int_invalid_opcode(void)
 {
-    printf("INVALID_OPCODE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("INVALID_OPCODE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -86,7 +86,7 @@ void  c_int_invalid_opcode(void)
 
 void  c_int_coprocessor_not_available(void)
 {
-    printf("COPROCERROR_NOT_AVAILABLE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("COPROCERROR_NOT_AVAILABLE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -97,7 +97,7 @@ void  c_int_coprocessor_not_available(void)
 
 void  c_int_double_fault(void)
 {
-    printf("DOUBLEFAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("DOUBLEFAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -108,7 +108,7 @@ void  c_int_double_fault(void)
 
 void  c_int_coprocessor_segment_overrun(void)
 {
-    printf("COPROCESSOR_SEGMENT_OVERRUN_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("COPROCESSOR_SEGMENT_OVERRUN_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -119,7 +119,7 @@ void  c_int_coprocessor_segment_overrun(void)
 
 void  c_int_invalid_tss(void)
 {
-    printf("INVALID_TSS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("INVALID_TSS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -130,7 +130,7 @@ void  c_int_invalid_tss(void)
 
 void  c_int_segment_not_present(void)
 {
-    printf("SEGMENT_NOT_PRESENT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("SEGMENT_NOT_PRESENT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -141,7 +141,7 @@ void  c_int_segment_not_present(void)
 
 void  c_int_stack_fault(void)
 {
-    printf("STACK_FAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
+    kprintf("STACK_FAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -152,7 +152,7 @@ void  c_int_stack_fault(void)
 
 void  c_int_general_protection(void)
 {
-    printf("GENERAL_PROTECTION_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("GENERAL_PROTECTION_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -176,7 +176,7 @@ void  c_int_page_fault(void)
     }
     else
     {
-        printf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
+        kprintf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
         send_byte_to(MASTER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;
@@ -188,7 +188,7 @@ void  c_int_page_fault(void)
 
 void  c_int_reserved(void)
 {
-    printf("RESERVED_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("RESERVED_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -199,7 +199,7 @@ void  c_int_reserved(void)
 
 void  c_int_math_fault(void)
 {
-    printf("MATH_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("MATH_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -210,7 +210,7 @@ void  c_int_math_fault(void)
 
 void  c_int_alignment_check(void)
 {
-    printf("ALIGNMENT_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("ALIGNMENT_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -221,7 +221,7 @@ void  c_int_alignment_check(void)
 
 void  c_int_machine_check(void)
 {
-    printf("MACHINE_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("MACHINE_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -232,7 +232,7 @@ void  c_int_machine_check(void)
 
 void  c_int_simd_floating_point(void)
 {
-    printf("SIMD_FLOATING_POINT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
+    kprintf("SIMD_FLOATING_POINT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
     send_byte_to(MASTER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
@@ -271,7 +271,7 @@ void  c_terminal_putchar_syscall(void)
     asm("mov %%edi, %0":"=r"(x):);
     asm("mov %%edx, %0":"=r"(y):);
 
-    terminal_putchar_at_for_process(c, x, y);
+    pterminal_putchar_at(c, x, y);
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -280,7 +280,7 @@ void  c_terminal_init_syscall(void)
 {
     PIPE* pipes;
     asm("mov %%esi, %0":"=r"(pipes):);
-    terminal_setio(pipes);
+    pterminal_setout(pipes);
     send_byte_to(MASTER_PIC, 0x20);
 }
 
@@ -289,9 +289,9 @@ void  c_relinquish_input_syscall(void)
 {
     if (!(scheduler_get_process_table_entry(scheduler_get_pid()).flags & F_FORKED))
     {
-        int next_input = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD);
+        int next_input = scheduler_get_next_process(terminal_get_active(), F_HAS_INPUT, F_DEAD);
         if (next_input != -1)
-            terminal_set_active_input(next_input);
+            terminal_set_active(next_input);
     }
     send_byte_to(MASTER_PIC, 0x20);
 }
@@ -301,7 +301,7 @@ void  c_stdin_init_syscall(void)
 {
     PIPE* pipes;
     asm("mov %%esi, %0":"=r"(pipes):);
-    terminal_setin(pipes);
+    pterminal_setin(pipes);
     send_byte_to(MASTER_PIC, 0x20);
 }
 

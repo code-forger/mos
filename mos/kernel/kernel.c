@@ -17,7 +17,7 @@
 
 void kerror(const char* data)
 {
-    printf(data);
+    kprintf(data);
 }
 
 #if defined(__cplusplus)
@@ -37,7 +37,7 @@ void init_kernel()
     memory_init();
     paging_init();
     keyboard_init();
-    terminal_initialize();
+    terminal_init();
     gdt_init();
     idt_init();
     pic_init();
@@ -50,8 +50,10 @@ void init_kernel()
     kernel_set_pit();
     for(int i = 0 ; i < 0000001; i++);
 
-    if(keyboard_get_a_byte() == 't')
-        kernel_test_mode(TEST_STRESS, TEST_QUIET);
+    kprintf("HERE\n");
+
+    if(keyboard_get_a_byte() != 't')
+        kernel_test_mode(TEST_STRESS, TEST_VERBOSE);
 
     uint32_t esp, ebp;
 

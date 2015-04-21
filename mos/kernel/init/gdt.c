@@ -20,7 +20,7 @@ void gdt_init()
 
 void gdt_print_entry(uint32_t i)
 {
-    printf("GDT ENTRY %d : %d %d %d\n", i, (gdt_info->gdt[i].hi_offset << 16) + (gdt_info->gdt[i].mid_offset << 8) + gdt_info->gdt[i].lo_offset, gdt_info->gdt[i].lo_limit, gdt_info->gdt[i].type);
+    kprintf("GDT ENTRY %d : %d %d %d\n", i, (gdt_info->gdt[i].hi_offset << 16) + (gdt_info->gdt[i].mid_offset << 8) + gdt_info->gdt[i].lo_offset, gdt_info->gdt[i].lo_limit, gdt_info->gdt[i].type);
 }
 
 void gdt_encode_entry(uint32_t i, uint32_t offset, uint32_t limit, uint8_t type, uint8_t granularity)

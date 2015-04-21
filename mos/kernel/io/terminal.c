@@ -4,11 +4,8 @@
 #include "../kstdlib/kstdlib.h"
 #include "port.h"
 
-static uint16_t terminal_make_character(char c, uint8_t color)
-{
-    uint16_t c16 = c, color16 = color;
-    return c16 | color16 << 8;
-}
+#define KERNEL_CONTEXT 1
+#define PROCESS_CONTEXT 0
 
 static uint32_t VGA_WIDTH = 80;
 static uint32_t VGA_HEIGHT = 25;
@@ -22,14 +19,34 @@ static uint16_t* terminal;
 static uint16_t* process_terminal;
 static uint16_t* kernel_terminal;
 
-#define KERNEL_CONTEXT 1
-#define PROCESS_CONTEXT 0
-
 static uint32_t context = PROCESS_CONTEXT;
 
 static int32_t active_process = -1;
 static int32_t last_shown = 0;
 
+// ######  ########    ###    ######## ####  ######
+//##    ##    ##      ## ##      ##     ##  ##    ##
+//##          ##     ##   ##     ##     ##  ##
+// ######     ##    ##     ##    ##     ##  ##
+//      ##    ##    #########    ##     ##  ##
+//##    ##    ##    ##     ##    ##     ##  ##    ##
+// ######     ##    ##     ##    ##    ####  ######
+
+//##     ## ######## ######## ##     ##  #######  ########   ######
+//###   ### ##          ##    ##     ## ##     ## ##     ## ##    ##
+//#### #### ##          ##    ##     ## ##     ## ##     ## ##
+//## ### ## ######      ##    ######### ##     ## ##     ##  ######
+//##     ## ##          ##    ##     ## ##     ## ##     ##       ##
+//##     ## ##          ##    ##     ## ##     ## ##     ## ##    ##
+//##     ## ########    ##    ##     ##  #######  ########   ######
+
+static void terminal_hide_overlapping(uint32_t pid);
+
+static uint16_t terminal_make_character(char c, uint8_t color)
+{
+    uint16_t c16 = c, color16 = color;
+    return c16 | color16 << 8;
+}
 
 static void push_terminal_up()
 {
@@ -40,7 +57,7 @@ static void push_terminal_up()
         kernel_terminal[VGA_HEIGHT * VGA_WIDTH + x] = terminal_make_character(' ', active_color);
 }
 
-void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
+static void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
 {
     for (uint32_t y = py; y < (py + wy - 1); y++ )
         for (uint32_t x = px; x < (px + wx); x++ )
@@ -49,23 +66,155 @@ void push_terminal_up_at(uint32_t px, uint32_t py, uint32_t wx, uint32_t wy)
         process_terminal[(py + wy - 1) * VGA_WIDTH + x] = terminal_make_character(' ', (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
 }
 
-void terminal_putchar_at(char c, uint32_t x, uint32_t y)
+static void kterminal_putchar_at(char c, uint32_t x, uint32_t y)
 {
     //terminal_switch_context(KERNEL_CONTEXT);
     kernel_terminal[y * VGA_WIDTH + x] = terminal_make_character(c, active_color);
 }
 
-void terminal_putchar_at_for_process(char c, uint32_t x, uint32_t y)
+static void kterminal_putchar(char c)
 {
-    process_table_entry ptb = scheduler_get_process_table_entry(scheduler_get_pid());
-    if (x < ptb.io.wx && y < ptb.io.wy)
-        process_terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+    if (c == '\n')
+    {
+        currnet_column = 0;
+        if ( ++current_row == VGA_HEIGHT )
+        {
+            push_terminal_up();
+            current_row--;
+        }
+    }
+    else
+    {
+        kterminal_putchar_at(c, currnet_column, current_row);
+        if ( ++currnet_column == VGA_WIDTH )
+        {
+            currnet_column = 0;
+            if ( ++current_row == VGA_HEIGHT )
+            {
+                push_terminal_up();
+                current_row--;
+            }
+        }
+    }
 }
 
-void terminal_initialize()
+static void kterminal_putint(uint32_t in)
+{
+    int i, length;
+    uint32_t out, tmp;
+    tmp = in;
+    tmp/=10;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=10;
+    }
+    char buff[length];
+    for (i = 0; i < length ; i++)
+    {
+        out = (in%10);
+        buff[(length-1)-i] = out + '0';
+        in/=10;
+    }
+
+    for (i--;i >= 0;i--)
+        kterminal_putchar(buff[(length-1)-i]);
+}
+
+static void kterminal_putinthex(uint32_t in)
+{
+    int i, length;
+    uint32_t out, tmp;
+    tmp = in;
+    tmp/=16;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=16;
+    }
+    char buff[length];
+    for (i = 0; i < length ; i++)
+    {
+        out = (in%16);
+        buff[(length-1)-i] = (out < 10)?(out + '0'):((out-10) + 'A');
+        in/=16;
+    }
+
+    for (i--;i >= 0;i--)
+        kterminal_putchar(buff[(length-1)-i]);
+}
+
+static void kterminal_putintbin(uint32_t in)
+{
+    int i, length;
+    uint32_t out, tmp;
+    tmp = in;
+    tmp/=2;
+    for (length = 1; tmp != 0 ; length++)
+    {
+        tmp/=2;
+    }
+    char buff[length];
+    for (i = 0; i < length ; i++)
+    {
+        out = (in%2);
+        buff[(length-1)-i] = out + '0';
+        in/=2;
+    }
+
+    for (i--;i >= 0;i--)
+        kterminal_putchar(buff[(length-1)-i]);
+}
+
+static int overlaps(uint32_t pid, uint32_t process)
+{
+    //printf("[CALL] : overlaps(%d, %d)", pid, process);
+    process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
+    process_table_entry ptb2 = scheduler_get_process_table_entry(process);
+
+    return (ptb1.io.px < ptb2.io.px + ptb2.io.wx &&
+        ptb2.io.px < ptb1.io.px + ptb1.io.wx &&
+        ptb1.io.py < ptb2.io.py + ptb2.io.wy &&
+        ptb2.io.py < ptb1.io.py + ptb1.io.wy);
+}
+
+static void terminal_hide_overlapping(uint32_t pid)
+{
+    //printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
+    uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
+    while (process != 0)
+    {
+        //printf("check for %d - ", process);
+        if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
+            terminal_hide_process(process);
+
+        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
+    }
+}
+
+// ######   #######  ##    ## ######## ########   #######  ##
+//##    ## ##     ## ###   ##    ##    ##     ## ##     ## ##
+//##       ##     ## ####  ##    ##    ##     ## ##     ## ##
+//##       ##     ## ## ## ##    ##    ########  ##     ## ##
+//##       ##     ## ##  ####    ##    ##   ##   ##     ## ##
+//##    ## ##     ## ##   ###    ##    ##    ##  ##     ## ##
+// ######   #######  ##    ##    ##    ##     ##  #######  ########
+
+//##     ## ######## ######## ##     ##  #######  ########   ######
+//###   ### ##          ##    ##     ## ##     ## ##     ## ##    ##
+//#### #### ##          ##    ##     ## ##     ## ##     ## ##
+//## ### ## ######      ##    ######### ##     ## ##     ##  ######
+//##     ## ##          ##    ##     ## ##     ## ##     ##       ##
+//##     ## ##          ##    ##     ## ##     ## ##     ## ##    ##
+//##     ## ########    ##    ##     ##  #######  ########   ######
+
+
+void terminal_init()
 {
     process_terminal = terminal = paging_get_terminal_buffer();
     kernel_terminal = paging_get_kernel_terminal_buffer();
+
+
+    current_row = 0;
+    currnet_column = 0;
 
     for ( uint32_t y = 0; y < VGA_HEIGHT; y++ )
     {
@@ -103,202 +252,7 @@ void terminal_switch_context(uint32_t target)
     }
 }
 
-void terminal_putchar(char c)
-{
-    if (c == '\n')
-    {
-        currnet_column = 0;
-        if ( ++current_row == VGA_HEIGHT )
-        {
-            push_terminal_up();
-            current_row--;
-        }
-    }
-    else
-    {
-        terminal_putchar_at(c, currnet_column, current_row);
-        if ( ++currnet_column == VGA_WIDTH )
-        {
-            currnet_column = 0;
-            if ( ++current_row == VGA_HEIGHT )
-            {
-                push_terminal_up();
-                current_row--;
-            }
-        }
-    }
-}
-
-void terminal_string_for_process(io_part* io)
-{
-    uint8_t uc = 0;
-    char c = '\0';
-    while(pipe_read(io->outpipe, &uc) == 0)
-    {
-        c = (char)uc;
-
-        if (c == '\n')
-        {
-            io->column = 0;
-            if ( ++io->row == io->wy)
-            {
-                push_terminal_up_at(io->px, io->py, io->wx, io->wy);
-                io->row--;
-            }
-        }
-        else
-        {
-            if (io->column == io->wx)
-            {
-                io->column = 0;
-                if ( ++io->row == io->wy )
-                {
-                    push_terminal_up_at(io->px, io->py, io->wx, io->wy);
-                    io->row--;
-                }
-            }
-            terminal_putchar_at_for_process(c, io->column, io->row);
-            ++io->column;
-        }
-    }
-}
-
-static void terminal_putint(uint32_t in)
-{
-    int i, length;
-    uint32_t out, tmp;
-    tmp = in;
-    tmp/=10;
-    for (length = 1; tmp != 0 ; length++)
-    {
-        tmp/=10;
-    }
-    char buff[length];
-    for (i = 0; i < length ; i++)
-    {
-        out = (in%10);
-        buff[(length-1)-i] = out + '0';
-        in/=10;
-    }
-
-    for (i--;i >= 0;i--)
-        terminal_putchar(buff[(length-1)-i]);
-}
-
-static void terminal_putinthex(uint32_t in)
-{
-    int i, length;
-    uint32_t out, tmp;
-    tmp = in;
-    tmp/=16;
-    for (length = 1; tmp != 0 ; length++)
-    {
-        tmp/=16;
-    }
-    char buff[length];
-    for (i = 0; i < length ; i++)
-    {
-        out = (in%16);
-        buff[(length-1)-i] = (out < 10)?(out + '0'):((out-10) + 'A');
-        in/=16;
-    }
-
-    for (i--;i >= 0;i--)
-        terminal_putchar(buff[(length-1)-i]);
-}
-
-static void terminal_putintbin(uint32_t in)
-{
-    int i, length;
-    uint32_t out, tmp;
-    tmp = in;
-    tmp/=2;
-    for (length = 1; tmp != 0 ; length++)
-    {
-        tmp/=2;
-    }
-    char buff[length];
-    for (i = 0; i < length ; i++)
-    {
-        out = (in%2);
-        buff[(length-1)-i] = out + '0';
-        in/=2;
-    }
-
-    for (i--;i >= 0;i--)
-        terminal_putchar(buff[(length-1)-i]);
-}
-
-/*static void terminal_print(const char* data)
-{
-    uint32_t datalen = strlen(data);
-    for ( uint32_t i = 0; i < datalen; i++ )
-        terminal_putchar(data[i]);
-}*/
-
-void printf(const char* string, ...)
-{
-    va_list valist;
-
-    va_start(valist, string);
-
-    for (uint32_t i = 0;; i++)
-    {
-        if(string[i] == '\0')
-            break;
-        if(string[i] == '%')
-        {
-            if(string[i+1] == '%')
-                terminal_putchar('%');
-            if(string[i+1] == 'd')
-                terminal_putint(va_arg(valist, int));
-            if(string[i+1] == 'c')
-                terminal_putchar(va_arg(valist, int));
-            if(string[i+1] == 'h')
-                terminal_putinthex(va_arg(valist, int));
-            if(string[i+1] == 'b')
-                terminal_putintbin(va_arg(valist, int));
-            if(string[i+1] == 's')
-                printf((const char*)va_arg(valist, int));
-            i++;
-        }
-        else
-        {
-            terminal_putchar(string[i]);
-        }
-    }
-    /* clean memory reserved for valist */
-    va_end(valist);
-}
-
-
-static void terminal_hide_overlapping(uint32_t pid);
-
-void terminal_setio(PIPE* pipes)
-{
-    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
-    pipe_read(pipes[1], &ptb->io.px);
-    pipe_read(pipes[1], &ptb->io.py);
-    pipe_read(pipes[1], &ptb->io.wx);
-    pipe_read(pipes[1], &ptb->io.wy);
-    ptb->io.outpipe = pipes[1];
-    ptb->io.column = 0;
-    ptb->io.row = 0;
-    terminal_hide_overlapping(scheduler_get_pid());
-}
-
-void terminal_setin(PIPE* pipes)
-{
-    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
-    ptb->io.inpipe = pipes[0];
-    ptb->flags |= F_HAS_INPUT;
-    if (active_process == -1)
-        active_process = scheduler_get_pid();
-    else
-        terminal_set_active_input(scheduler_get_pid());
-}
-
-void terminal_set_active_input(int32_t pid)
+void terminal_set_active(int32_t pid)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(active_process);
     for (uint32_t y = ptb.io.py; y < ptb.io.py + ptb.io.wy; y++)
@@ -328,6 +282,28 @@ void terminal_set_active_input(int32_t pid)
     }
 }
 
+uint32_t terminal_get_active()
+{
+    return active_process;
+}
+
+uint32_t terminal_get_last_shown()
+{
+    return last_shown;
+}
+
+
+void terminal_send_to_process(char data)
+{
+    if (active_process != -1)
+    {
+        process_table_entry ptb = scheduler_get_process_table_entry(active_process);
+        pipe_write(ptb.io.inpipe, data);
+        scheduler_unmark_process_as(active_process, (F_PAUSED | F_SKIP));
+    }
+    last_char_pressed = data;
+}
+
 void terminal_clear_process(uint32_t pid)
 {
     process_table_entry ptb = scheduler_get_process_table_entry(pid);
@@ -343,31 +319,11 @@ void terminal_clear_process(uint32_t pid)
     }
 }
 
-uint32_t terminal_get_active_input()
-{
-    return active_process;
-}
-
-uint32_t terminal_get_last_shown_input()
-{
-    return last_shown;
-}
-
-void terminal_send_to_process(char data)
-{
-    if (active_process != -1)
-    {
-        process_table_entry ptb = scheduler_get_process_table_entry(active_process);
-        pipe_write(ptb.io.inpipe, data);
-        scheduler_unmark_process_as(active_process, (F_PAUSED | F_SKIP));
-    }
-    last_char_pressed = data;
-}
-
 char terminal_get_last_char_pressed()
 {
     return last_char_pressed;
 }
+
 
 void terminal_hide_process(uint32_t pid)
 {
@@ -401,32 +357,6 @@ void terminal_hide_process(uint32_t pid)
     }
 }
 
-static int overlaps(uint32_t pid, uint32_t process)
-{
-    //printf("[CALL] : overlaps(%d, %d)", pid, process);
-    process_table_entry ptb1 = scheduler_get_process_table_entry(pid);
-    process_table_entry ptb2 = scheduler_get_process_table_entry(process);
-
-    return (ptb1.io.px < ptb2.io.px + ptb2.io.wx &&
-        ptb2.io.px < ptb1.io.px + ptb1.io.wx &&
-        ptb1.io.py < ptb2.io.py + ptb2.io.wy &&
-        ptb2.io.py < ptb1.io.py + ptb1.io.wy);
-}
-
-static void terminal_hide_overlapping(uint32_t pid)
-{
-    //printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
-    uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
-    while (process != 0)
-    {
-        //printf("check for %d - ", process);
-        if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
-            terminal_hide_process(process);
-
-        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
-    }
-}
-
 void terminal_show_process(uint32_t pid)
 {
     if (scheduler_get_process_table_entry_for_editing(pid) != 0)
@@ -452,16 +382,150 @@ void terminal_show_process(uint32_t pid)
     }
 }
 
+
 void terminal_switch_input()
 {
     int32_t target;
-    if ((target = scheduler_get_next_process(terminal_get_active_input(), F_HAS_INPUT, F_DEAD | F_IS_HIDDEN)) >= 0)
-        terminal_set_active_input(target);
+    if ((target = scheduler_get_next_process(terminal_get_active(), F_HAS_INPUT, F_DEAD | F_IS_HIDDEN)) >= 0)
+        terminal_set_active(target);
 }
 
 void terminal_switch_hidden()
 {
     int32_t target;
-    if ((target = scheduler_get_next_process(terminal_get_last_shown_input(), F_IS_HIDDEN, F_DEAD)) >= 0)
+    if ((target = scheduler_get_next_process(terminal_get_last_shown(), F_IS_HIDDEN, F_DEAD)) >= 0)
         terminal_show_process(target);
+}
+
+//##    ## ######## ########  ##    ## ######## ##
+//##   ##  ##       ##     ## ###   ## ##       ##
+//##  ##   ##       ##     ## ####  ## ##       ##
+//#####    ######   ########  ## ## ## ######   ##
+//##  ##   ##       ##   ##   ##  #### ##       ##
+//##   ##  ##       ##    ##  ##   ### ##       ##
+//##    ## ######## ##     ## ##    ## ######## ########
+
+//##     ## ######## ######## ##     ##  #######  ########   ######
+//###   ### ##          ##    ##     ## ##     ## ##     ## ##    ##
+//#### #### ##          ##    ##     ## ##     ## ##     ## ##
+//## ### ## ######      ##    ######### ##     ## ##     ##  ######
+//##     ## ##          ##    ##     ## ##     ## ##     ##       ##
+//##     ## ##          ##    ##     ## ##     ## ##     ## ##    ##
+//##     ## ########    ##    ##     ##  #######  ########   ######
+
+void kprintf(const char* string, ...)
+{
+    va_list valist;
+
+    va_start(valist, string);
+
+    for (uint32_t i = 0;; i++)
+    {
+        if(string[i] == '\0')
+            break;
+        if(string[i] == '%')
+        {
+            if(string[i+1] == '%')
+                kterminal_putchar('%');
+            if(string[i+1] == 'd')
+                kterminal_putint(va_arg(valist, int));
+            if(string[i+1] == 'c')
+                kterminal_putchar(va_arg(valist, int));
+            if(string[i+1] == 'h')
+                kterminal_putinthex(va_arg(valist, int));
+            if(string[i+1] == 'b')
+                kterminal_putintbin(va_arg(valist, int));
+            if(string[i+1] == 's')
+                kprintf((const char*)va_arg(valist, int));
+            i++;
+        }
+        else
+        {
+            kterminal_putchar(string[i]);
+        }
+    }
+    /* clean memory reserved for valist */
+    va_end(valist);
+}
+
+//########  ########   #######   ######  ########  ######   ######
+//##     ## ##     ## ##     ## ##    ## ##       ##    ## ##    ##
+//##     ## ##     ## ##     ## ##       ##       ##       ##
+//########  ########  ##     ## ##       ######    ######   ######
+//##        ##   ##   ##     ## ##       ##             ##       ##
+//##        ##    ##  ##     ## ##    ## ##       ##    ## ##    ##
+//##        ##     ##  #######   ######  ########  ######   ######
+
+//##     ## ######## ######## ##     ##  #######  ########   ######
+//###   ### ##          ##    ##     ## ##     ## ##     ## ##    ##
+//#### #### ##          ##    ##     ## ##     ## ##     ## ##
+//## ### ## ######      ##    ######### ##     ## ##     ##  ######
+//##     ## ##          ##    ##     ## ##     ## ##     ##       ##
+//##     ## ##          ##    ##     ## ##     ## ##     ## ##    ##
+//##     ## ########    ##    ##     ##  #######  ########   ######
+
+
+void pterminal_putchar_at(char c, uint32_t x, uint32_t y)
+{
+    process_table_entry ptb = scheduler_get_process_table_entry(scheduler_get_pid());
+    if (x < ptb.io.wx && y < ptb.io.wy)
+        process_terminal[(y + ptb.io.py) * VGA_WIDTH + (x + ptb.io.px)] = terminal_make_character(c, (active_process!=(int32_t)scheduler_get_pid())?inactive_color:active_color);
+}
+
+void pterminal_sync(io_part* io)
+{
+    uint8_t uc = 0;
+    char c = '\0';
+    while(pipe_read(io->outpipe, &uc) == 0)
+    {
+        c = (char)uc;
+
+        if (c == '\n')
+        {
+            io->column = 0;
+            if ( ++io->row == io->wy)
+            {
+                push_terminal_up_at(io->px, io->py, io->wx, io->wy);
+                io->row--;
+            }
+        }
+        else
+        {
+            if (io->column == io->wx)
+            {
+                io->column = 0;
+                if ( ++io->row == io->wy )
+                {
+                    push_terminal_up_at(io->px, io->py, io->wx, io->wy);
+                    io->row--;
+                }
+            }
+            pterminal_putchar_at(c, io->column, io->row);
+            ++io->column;
+        }
+    }
+}
+
+void pterminal_setout(PIPE* pipes)
+{
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
+    pipe_read(pipes[1], &ptb->io.px);
+    pipe_read(pipes[1], &ptb->io.py);
+    pipe_read(pipes[1], &ptb->io.wx);
+    pipe_read(pipes[1], &ptb->io.wy);
+    ptb->io.outpipe = pipes[1];
+    ptb->io.column = 0;
+    ptb->io.row = 0;
+    terminal_hide_overlapping(scheduler_get_pid());
+}
+
+void pterminal_setin(PIPE* pipes)
+{
+    process_table_entry* ptb = scheduler_get_process_table_entry_for_editing(scheduler_get_pid());
+    ptb->io.inpipe = pipes[0];
+    ptb->flags |= F_HAS_INPUT;
+    if (active_process == -1)
+        active_process = scheduler_get_pid();
+    else
+        terminal_set_active(scheduler_get_pid());
 }

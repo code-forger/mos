@@ -49,10 +49,10 @@ int32_t fork()
     char parentprocdir[7+7];
     sprintf(parentprocdir,"/info/%d/",current_pid);
 
-//    printf("[scheduler.c] INFO : Got names:\n");
-//    printf("                   : %s:\n", proc_num_str);
-//    printf("                   : %s:\n", procdir);
-//    printf("                   : %s:\n", parentprocdir);
+//    kprintf("[scheduler.c] INFO : Got names:\n");
+//    kprintf("                   : %s:\n", proc_num_str);
+//    kprintf("                   : %s:\n", procdir);
+//    kprintf("                   : %s:\n", parentprocdir);
 
     kmrfsNewFolder("/info/", proc_num_str); // Copy name into new info area.
     char* f = kmrfsReadFile(parentprocdir, "name");
@@ -295,7 +295,7 @@ void scheduler_time_interupt()
     //interupted = scheduler_from;
 
     if (process_table[current_pid].io.outpipe != 0 && !(process_table[current_pid].flags & F_DEAD))
-        terminal_string_for_process(&process_table[current_pid].io);
+        pterminal_sync(&process_table[current_pid].io);
 
     events();
 

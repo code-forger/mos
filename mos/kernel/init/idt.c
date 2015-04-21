@@ -73,7 +73,7 @@ void idt_init()
 
 void idt_print_entry(uint32_t i)
 {
-    printf("IDT ENTRY %d : %d %d %d\n", i, (idt_info->idt[i].hi_offset << 16) + idt_info->idt[i].lo_offset, idt_info->idt[i].selector, idt_info->idt[i].type);
+    kprintf("IDT ENTRY %d : %d %d %d\n", i, (idt_info->idt[i].hi_offset << 16) + idt_info->idt[i].lo_offset, idt_info->idt[i].selector, idt_info->idt[i].type);
 }
 
 void idt_encode_entry(uint32_t i, unsigned long offset, uint16_t selector, uint8_t type_attr)

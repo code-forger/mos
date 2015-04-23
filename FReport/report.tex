@@ -1,4 +1,4 @@
-% hello.tex - our first latex example
+  % hello.tex - our first latex example
 
 \documentclass[a4paper]{report}
 \usepackage{titlesec}
@@ -36,6 +36,14 @@
 The overall aim for this project is to produce a simple Multitasking Operating System (herein called MOS), following 5 key tenants, to study structure, allocation, and management of different classes of resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach take.
 
 We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviours by providing simple high level abstractions over the intricate low level hardware.
+
+
+
+
+
+
+
+
 
 
 
@@ -164,6 +172,13 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \item \lbrack Complete\rbrack Create A Developers manual.
 \item \lbrack Complete\rbrack Create set of scripts for getting the source code, Building the project, and deploying it to a computer.
 \end{itemize}
+
+
+
+
+
+
+
 
 
 
@@ -448,9 +463,9 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 
 \clearpage
-\chapter{User Design}
+\chapter{Design}
 
-As with the Analysis, the Design phase was separated into End User and Program Developer sections. The designs presented here are the final designs for the system, some earlier versions can be found in XXXXX.
+As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in XXXXX.
 
 Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ascii drawing and focussing on delivering the service provided in a quick and clean manner.
 
@@ -522,6 +537,37 @@ The second is mv. mv will take two parameters, the first will be the path to an 
 MOS' provides a simple multi-line text editor for editing text files. The program takes one parameter which is a path to the file you wish to edit. If the file does not exist notes will create it.
 
 Notes supports common cursor key commands for navigating the cursor and saves when ctrl+s is presses.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{The Program Developers}
 
 As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very similar to that of the Linux kernel that was analysed.
@@ -582,6 +628,181 @@ Once a pipe is set up three calls will be able to interact with it:
 `read(pipe)' will return a positive byte representing the byte at the front of the pipe, or a negative error message; -1 will mean the pipe is empty and -2 will mean the pipe is of the wrong type.
 
 `waitToRead(pipe)' will return a positive byte representing the byte at the front of the pipe or a negative error message; -2 will mean the pipe is of the wrong type. Note, if the pipe is empty, this call will block the process until the pipe is written to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\section{The Kernel}
+
+The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one peice of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realised that some modules could be brought 'closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the io descriptors, these io descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures 'cross module'.
+
+The Kernel Loader can also be seen as a kernel module however it is special in that it does its job once at boot, and then does nothing for the remainder of the computers uptime.
+
+
+The kernel design was a living structure throughout the project as it was hard to predict the exact nature of each module. The following modules will be implemented to support all suggested features:
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=400px]{images/Kernel_Modules}
+\caption{Kernel Module Dependencies}
+\label{fig:WinTitleBarScreen}
+\end{figure}
+
+%\begin{itemize}
+%\item Scheduler.
+%\item Program Loader.
+%\item Event manager.
+%\item Pager.
+%\item Physical Memory Manager.
+%\item Heap Manager.
+%\item File System.
+%\item IDE driver.
+%\item Pipe manager.
+%\item IO manager.
+%\item Keyboard driver.
+%\item Interrupts Handler.
+%\end{itemize}
+
+\subsection{The Kernel Loader}
+
+As this module is different from the others we will discuss it first.
+
+The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job is to to coreectly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
+
+It has its own smaller Physical Memory Manager, IO Manager and XXX, To assist in its task. It then maps the kernel to the correct location in memory and jumps to the kernels entry point.
+
+Since the kernel only executes in Protected mode, it has less direct access to physical memory, therefore the kernel loader must initialise the memory map for the Physical Memory Manager module and map this memory map into a suitable Virtual memory location.
+
+\subsection{The Scheduler}
+
+The schedulers task will be to maintain and update all relevant information about all running processes. This means it is responsible for creating, destroying, and switching processes. It will also provide write access to parts of the process information to other modules where necessary.
+
+The scheduler depends on the Program Loader to load new programs from the hard disk, The Event manager organise timed events such as sleeping a processes, The Pager to provide a persistent memory space, and The Heap manager to provide memory space for passing parameters to new processes.
+
+\subsection{The Program Loader}
+
+The program loaders job is to prepare a Program for execution; Loading the binary into memory in an appropriate manner, setting all process table fields to correct values, and ensuring all other system modules correctly reflect the execution of a new program.
+
+The program loader depends on the File System to load programs off disk.
+
+\subsection{The Event Manager}
+
+The event managers job is to track timed events. It will allow for the registration of certain types of events with an event deadline. Once the deadline is passed the Event manager will perform the requested action. This module requires that its main function 'events()' be called with some frequency.
+
+The event manager depends on the Pager to provide a persistent memory space.
+
+\subsection{The Pager}
+
+The pager is the core module that provides memory to the system, it controls the CPU's page tables, mapping physical memory to virtual memory. The pager is also responsible for giving out unique sections of memory to all other kernel modules. By assigning this job to the pager, the kernel memory management is centralised, making it easier to move sections of memory around during development.
+
+The pager depends on the following Physical Memory Manager for locating unallocated physical memory.
+
+\subsection{The Physical Memory Manager}
+
+The physical memory manager maintains a map of the physical memory (RAM) and can provide new physical memory pages to the pager.
+
+The Physical Memory Manager interacts directly with hardware and so has no dependencies.
+
+\subsection{The Heap Manager}
+
+The heap manager allows other kernel modules to use the well known malloc and free calls, providing them with small, temporary (more temporary than the memory provided by the pager) sections of memory of any size.
+
+The heap manager depends on the Pager to provide a persistent memory space.
+
+\subsection{The File System}
+
+The file system will create a file/directory tree abstraction over the IDE drives present on the system. It will provide two different mechanisms for accessing its tree; one for the kernel and one for the user space programs.
+
+The kernel functions will be to read entire files/directories into memory, or write sections of memory into files. These functions are designed for speed and elegance and the kernel always wants to load/save entire files to disk at once.
+
+The user space abstractions are centred around giving out handles to files, and letting programs read those programs like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
+
+The file system depends on the IDE Driver for reading and writing to the Hard Disks.
+
+\subsection{The IDE Driver}
+
+The IDE Driver will be responsible for performing reads and writes to the Hard Drives. It will also need to contain some levels of caching as hard drives are typically very slow compared to the rest of the system.
+
+The IDE driver interacts directly with hardware and so has no dependencies.
+
+\subsection{Pipe Manager}
+
+The pipe manager will maintain information on any pipes that user space programs require. These pipes will also be utilised and the main IO mechanism for user space programs.
+
+The pipe manager depends on the Pager to provide a persistent memory space.
+
+\subsection{The IO Manager}
+
+The IO manager will control all IO for user interaction with processes, as well as any outputting the kernel may do. It must maintain a current rendering of all running processes screen space, and deliver keyboard input to user space processes at the users command. It should also maintain different kernel space and user space windows, allowing for the user to switch between the kernel and user process view.
+
+The IO Manager depends on the Pipe Manager for delivering and receiving IO to the user space processes, the keyboard driver for collecting key presses, The Pager to provide a persistent memory space, and the heap manager for allocating window space to processes.
+
+\subsection{Keyboard Driver}
+
+The keyboard Driver handles keyboard input to the system, Its main job is to correctly pass signals along to the IO manager such that they can be sent to user space processes, however it may also detect system commands (like ctrl+tab and F1) and call the respective module to perform the expected action.
+
+The Keyboard driver interacts directly with hardware and so has no dependencies.
+
+\subsection{The Interrupt Handler}
+
+The interrupt handler is the module that will correctly catch and process all interrupts, this may be seen as the controller of the kernel to some extent as it is both how the kernel receives information from hardware (E.G. when a key is presses, or a hard drive finishes an operation) and the entry point from the user space into the kernel (all system calls occur through the interrupt handles.)
+
+Because of this it depends on many of the previous modules to provide services to user space, deliver information around the kernel, and control the state of the system. Namely, The File System, IO Manager, Pipe Manager, Scheduler, Keyboard Driver, and Event Manager.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \chapter{Project Plan}
 

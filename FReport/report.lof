@@ -15,6 +15,11 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces Kernel Module Dependencies}}{19}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Weekly Schedule. Project work shown in Blue, Extra project time shown in Purple.}}{23}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces The Process Table Structure}}{24}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces The Process Entry Structure}}{25}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces The Memory Map Example}}{25}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Runtime speed-ups of flat vs list.}}{27}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces The Process Table Structure}}{28}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Runtime speed-ups of flat vs list.}}{29}
 \addvspace {10\p@ }
 \addvspace {10\p@ }

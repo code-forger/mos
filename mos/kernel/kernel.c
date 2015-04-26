@@ -52,7 +52,7 @@ void init_kernel()
 
     kprintf("HERE\n");
 
-    if(keyboard_get_a_byte() != 't')
+    if(keyboard_get_a_byte() == 't')
         kernel_test_mode(TEST_STRESS, TEST_VERBOSE);
 
     uint32_t esp, ebp;

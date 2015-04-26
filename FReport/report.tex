@@ -804,29 +804,303 @@ Because of this it depends on many of the previous modules to provide services t
 
 
 
-\chapter{Project Plan}
 
-This project constitutes a significant amount of work, some of which is of undefined difficulty (it will be impossible to predict ahead of time how much time it will take to complete). However there is also a significant amount of time to complete it, if time is managed properly and work effort is consistent.
 
-Because of this, an FDD (feature driven development) style of project management was chosen.
 
-This style is where a feature that can be completed (all prerequisite features are complete) is selected, analysed, designed and then implemented. Once it is completed and tested, the process is repeated.
 
-This style keeps project engineers focused on similar tasks, and prevents them from bouncing around tasks left, right, and center.
 
-The FDD style requires that project engineers have a set schedule and during scheduled work hours focus on the task at hand.
 
-The downside of an FDD project is it is difficult to get an estimate of when the project will be completed. However this does not matter so much as FDD is more concerned about quality progress over superficial deadlines.
 
-The Project engineer has proposed this schedule for the project work (Figure includes non-project work hours to demonstrate correct time allocations.):
+\chapter{Project Implementation}
 
+This section discusses the implementation of each kernel module in turn along with implementation choices and reasoning for each decision.
+
+What wont be discussed here is implementation of the various user space programs delivered with MOS, this is because they are out of the scope of the project and although they were required to make MOS a functional system, they are not interesting from the perspective of this project.
+
+Furthermore the user space standard library will not be discussed. This section of code is a simple user space wrapper of system calls. The system calls them self are the interesting parts, and these will be discussed with the module that contains them.
+
+We will discuss the more complex and central modules firs, and then move onto the simpler modules after.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\clearpage
+
+\section{The Scheduler}
+
+
+\subsection{Data Structure}
 
 \begin{figure}[ht]
-\centering
-\includegraphics[width=450px]{images/schedule_screenshot}
-\caption{Weekly Schedule. Project work shown in Blue, Extra project time shown in Purple.}
-\label{fig:schedulerscreen}
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  \input{Process_Table_Diagram.pdf_tex}
+  \caption{The Process Table Structure}
+  \label{fig:schedulerscreen}
 \end{figure}
+
+
+The Scheduler has a number of data structures to keep track of relevant information. The central structure is the Process Table. This is a fixed size array of Process Entries. Each process entry stores all information pertinent to the process execution (More process information like 'envireonment variables' may be stored on the disk). This table acts as the main record for processes, the position in the table corresponds to the PID of each process.
+
+This structure is however very slow when searching for processes with specific attributes, and also contains no information about which process should be scheduled next. For these reasons the Scheduler also contains a number of linked lists, each storing a list of processes that are 'interesting' in some way.
+
+The central list is the Active Process list; This list contains all processes that either want CPU time, or are known to want CPU time in the future. The order of this list is important because when the scheduler receives a time interrupt, it will schedule the first process on this list that is awake now, moving the old process to the end of the list.
+
+Using a linked list to store the active processes makes it very fast to select a new process to run, and as the scheduler maintains a handle to both ends of the list, both getting the first item in the list and putting something at the back of the list is O(c) time.
+
+The Decision to keep sleeping processes in this list is due to fairness of execution. The Scheduler policy is that every process will receive one time-slice on the CPU before any processes gets a second time-slice. When a process sleeps, it is making the declaration that it will want CPU time later, just not right now. If we were to leave it out of the scheduling queue until it was woken back up by the events module, and then add it to the queue, it would always be waiting too long. Alternatively, if we always scheduled it immediately after it woke up, then it might get more slices than it should. The solution it to put it in the scheduler queue while still asleep. Once it is at the front, it will stay there until it gets woken up. If it wakes too early, it will still have to wait until each other process has had its fair share of time.
+
+The Scheduler also maintains a number of other lists, each containing processes with 'specific' attributes. There is a list for any paused processes, a list of input capable processes, and list of output capable processes. Using seperate lists for each of these 'interesting' attributes means there is never any need to search the process table for this information, also the lists[by being utilised as queue's] can be seen to keep the order of these processes birth (or the order in which they gained the specific attribute stored).
+
+\subsection{The Process Entry}
+
+\begin{figure}[ht]
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  %\input{Process_Entry_Diagram.pdf_tex}
+  \caption{The Process Entry Structure}
+  \label{fig:schedulerscreen}
+\end{figure}
+
+\subsubsection{The Flags}
+
+The Flags in a process entry store boolean information:
+\begin{itemize}
+\item init : This process has been created, but not initialised for execution.
+\item dead : This process is dead; this entry may be reused at any time.
+\item skip : This process should not be scheduled for its next one time slice.
+\item paused : This process is currently asleep.
+\item has\_input : This process can be sent keyboard input.
+\item is\_hidden : This process has a reserved portion of screen space but is currently hidden.
+\item forked : This process is a forked child of another (this will get cleared if the process calls exec).
+\end{itemize}
+
+\subsubsection{The Stack Pointers}
+The stack pointers are the only registers that need to be stored and restored when performing a context shift, this is because all other registers are paused onto the stack by the CPU during an interrupt. They are stored here and are only valid while a process is not currently having a time slice.
+
+\subsubsection{The Memory Map}
+\begin{figure}[ht]
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  %\input{Process_Entry_Diagram.pdf_tex}
+  \caption{The Memory Map Example}
+  \label{fig:schedulerscreen}
+\end{figure}
+
+The memory map stores the physical pages of memory that this process has been allocated. Most entries are direct pointers to the physical addresses of the page being used (or arrays of such addresses]. However, the heap\_physical\_page is actually the physical page that stores a list of physical pages for the processes heap (see diagram above). This is due to the large memory demand that some processes have.
+
+
+
+
+
+
+
+\clearpage
+
+\section{The IO Manager}
+
+The IO manager manages all input and output to and from the userspace applications, All system calls that corrispond to printing tot he sceen of accessing keyboard input lead here.
+
+\subsection{Keyboard Input}
+
+When a userspace program wants it access keyboard input, it first creates a pipe (using the pipe system calls as discussed later) and registers this pipe with the kernel. This pipe descriptor is held in the IO part of the process table.
+
+During this registration, the IO manager also adds the pid of the requesting process to its 'inputable' list (using the same process lists implementation as the scheduler does for its list.). This list will store all the processes that have requested keyboard input in the order that they made the requests.
+
+The use of this list means that when the user requests that keyboard input be switched to a the next process, the IO manager simply has to push the currently focused processes into the back of this list, and pop the next one from the front. This means that switching the focused processes is always O(1).
+
+When a key is pressed and the keyboard driver decides the key press is for the user space, it passes the character to the IO manager which simply writes the character into the input pipe provided. If the process is sleeping (waiting for input) the IO manager will request that the scheduler wake the process up.
+
+\subsection{Screen Output}
+
+The output part of the io manager has more to do, since it is managing a finite and very scarce resource. To consider the screen manager 'fair' we say that; Any request for a portion of the screen by a user space process must by accepted and fulfilled, A portion of the screen can only be under the control of one user space processes at any one time, and The user should have freedom to decide which processes they can interact with at any time.
+
+The major problem with these rules is that rule one and two don't get along, how can we always allow user space processes to get the part of the screen they want, and also never allow overlapping processes. The solution chosen is to hide 'old' processes if they overlap with new ones.
+
+To acquire a portion of the screen the user space processes must register with the kernel a number of things; A pipe for printing in 'progressive' mode, The coordinates for the top left corner of the requested are, and A width and height for this area.
+
+The IO manager first appends this process to its 'outputable' list and populates the io part of the respective processes table entry with the remainder of the metrics, filling the column and row potion with 0 and 0.
+
+It then checks for any over lapping processes, these are processes that are in the 'outputable' list who's screen are collides with the new request. For any overlapping processes, the IO manager first pauses that processes, giving it the is_hidden flag. Then it uses malloc() to request a portion of the kernels heap space of the same size as the old processes screen space. It copies the current state of this screen space into the new memeory and assigns the pointer into the 'snapshot' section of the io part of the process entry. It then moves the processes from the 'outputable' list to the 'hidden' list. Finally it wipes the screen blank.
+
+The above process ensures that, from a processes perspective, it always has full control over a portion of the screen. This is because when it doesn't have control of that part of the screen, it is paused and cannot be executed.
+
+When the user requests to see one of the hidden processes, the IO manager repeats the process above, but instead checking for overlapping with the processes that the user want to bring to the front. Once any overlapping processes have been correctly hidden, it copies the snapshot of the new process back tot he correct area of the screen and unpauses it, moving it back to the 'outputable' list.
+
+\section{The Flat vs List interlude}
+
+During the discussion of the scheduler and the IO manager I have mentioned the use of lists to store PID's in a number of situations. These lists are ultimately an exceleration structure over the process table its self. In the first design, the scheduler and IO manager dealt only with the process table, however as noted above this table is very slow to use for many operations, namely searching for attributes.
+
+For example, when scheduling a new processes, the scheduler would have to do a linear search across the entire processes table, including all dead processes. This meant that the longer the system ran (and the more processes that had been run) the slower the algorithm, even if all these processes were already dead.
+
+Secondly, when a process requested an over lapping portion of the screen, the IO manager would also have to search the entire process table to see if any other processes overlapped.
+
+The solution was to introduce a number of single linked lists, and maintain pointers to the head and tail of these lists.
+
+By storing the process information in lists, we could accelerate the algorythm in many different places.
+
+The scheduler nologer had to search the process table atall, it simply needed to pull the next process out the front of the respective list.And although the IO manager still needed to search its list, the algorythm now needed only to search the number of processes that have output, not every processes that has ever  been run.
+
+
+But if lists are so good, why not remove the process table all together?
+
+The answer is two fold; Data duplication and direct addressing.
+
+Processes may find them selfs in many of the systems process lists, An active process with input and output is in atleast 3 lists at any time. If these lists directly contained the process entries, they would have to be coppied many times arround the syterm, which would make keeping themup to date slow and difficult. By having the process entries in one place and linking them into the lists indirectly, we can prevent duplication and maintain nice centralisation of informaiton.
+
+Secondly, we often want to perform an action knowing the PID in advance; like setting a process flag of updating the IO part of a process. By storing the Process Entries in an array indexed by PID. These actions are always constant time.
+
+Below is an over view of the the kind of accelrations this system creates.
+
+n is the total number of processes run for the entire uptime of the system
+p is the number of active processes
+o is the number of outputable processes
+i is the number of inputtable processes
+
+it always holds that:
+o <= p
+i <= p
+p <= n
+
+\begin{figure}[ht]
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  %\input{Process_Entry_Diagram.pdf_tex}
+  \caption{Runtime speed-ups of flat vs list.}
+  \label{fig:schedulerscreen}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{The Hard Driver: Drivers and Filesyste,s}
+
+\subsection{The IDE Driver}
+
+The hardware access portion of the IDE driver was not written by me as indicated in the code, I simply adapted it to fit my system.
+
+I did however add a cache above the driver to massively increases read write times.
+
+The caching was necessary because hard drives are slow. But also the manner in which they are accessed is not idea, in an IDE device, the only way of getting data on or off the disk is in 512 byte segments. This means if we want to write one byte, we must read 512 bytes into memory, change the target byte, then write all 512 bytes back to the disk. This is very slow. Especially as it is common to want to write sequential bytes to disk; writing 512 bytes would require 512 reads of disk, then 512 writes to and from the same section of the disk.
+
+\subsubsection{Data Structure}
+
+\begin{figure}[ht]
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  \input{Process_Table_Diagram.pdf_tex}
+  \caption{The Process Table Structure}
+  \label{fig:schedulerscreen}
+\end{figure}
+
+The primary structure here is the cache table, as above, it consists of a number of descriptors and a corresponding number of 512 sections of memory.
+
+The caching layer provides the functions request_read and request_write.
+
+When these functions are called, the cache first searches the cached blocks for a block corresponding to the requested read/write address. If it finds it, it returns the pointer to the cached block. If that block is not cached, it reads it off the disk into a new block and then returns the pointer to the new block.
+
+If there are no new blocks available, the cache writes all modifies blocks back to disk, wipes the entire cache and then tries again.
+
+It may seem inefficient to wipe the entire cache every time there cache fills however; the cache is very small, and purging it in the worst case only takes as long as writing the bocks back to disk, it is very common for a file to be read/write (and therefore be moved into the cache) only once in the entire life of the system, so a large amount of the cache wont be needed again any time soon, the potential algorythm for a more sophisticated swap of old blocks (perhaps a working set clock algorthm) can take more time to execute every time we need one more block than simply throwing away the whole cache, Finally, at every system context shift (every 10 ms) the cache is written and purged anyway.
+
+This 10ms purge happens to both ensure any changes a user space processes has made to the disk is actually written and is not sat in a cache, but also becuase it is assumed that the next user space processes will want to access different portions of the disk and will therefore want a clean cache.
+
+This cache is extremely efficient and reduces the number of read/writes and therefore the time its takes to read files by a huge factor, however there is still one slight slowdown, and as the hard drive is a systems biggest bottle neck, it was seen as appropriate to address it.
+
+It is very common for the same block to be requested repeatedly, this is due to the nature of the file system discussed below. Most the file system structures are sequential bytes, and the data its self is in sequential 4096 byte sections. This means that its very common for one 512byte harddrice block to be read/written for every byte (512 times) before we are done with it. This is only interesting because whenever a read/write is requested from the cahce, it searched its cached blocks for the appropriate block.
+
+This search is slow. Especially as the block we need is almost always (511 out of 512 times) simple 'the same one we used last time'. Because of this, the final algorythm remembers which block it served last request, and always checks that block first. That means that 511 out of 512 times the algorythm is O(1) instead of O(n), and the other 1 out of 512 time, its O(n+1) instead of O(n).
+
+
+
+
+
+\subsection{File System}
+
+The file system (called MRFS from here on out) used was a modification of a piece of second year coursework. This coursework required the create of a file system along with a set of file read write interfaces. These parts will therefore only be discussed briefly. A new set of abstractions were created from scratch for the user space system and these abstractions will be discussed in more detail.
+
+These new abstractions were created due to the unsuitability of the old abstractions for user space. The old abstractions will be refered to as the kernel abstractions as they are used through the kernel. These kernel abstractions are unsuitable for the userspace as they involve calling malloc, and returning a pointer to this memory. Its fobbiden to return a kernel pointer into user space, and having the kernel malloc into the user space is not very good practice. therefore a userpace set of abstractions that provide handles to the #TODO
+
+Although MRFS was taken from a previously complete project, it was significatly modified #TODO
+
+\subsection{File Directory Structure}
+
+\begin{figure}[ht]
+  \centering
+
+  \def\svgwidth{\columnwidth}
+  %\input{Process_Entry_Diagram.pdf_tex}
+  \caption{Runtime speed-ups of flat vs list.}
+  \label{fig:schedulerscreen}
+\end{figure}
+
+MRFS uses an inode structure, this means that every object on the disk is represented and described by an inode. Ecah inode can be either a directory or file in the implemented system. Directorys have other file system objects as children whereas files have data blocks as children. Inode structures are very common structuresand were therefore esy to find information on and implement. MRFS implements  uses bitmaps for storing which inodes and data blocks have been alocated on the disk. It contains no caching as caching was done on a lower level (see IDE driver above). Every inode must be a child of annother inode except for the root inode, called root or '/'. All inodes also must have names, unique to their parent node. this means that any file system object may be referenced by its name along with its inode number.
+
+\subsection{File Directory Kernel Abstractions}
+
+The kernel abstractions are simple in nature, most take a directory path and a file name, and operate upon that file. Those that operate on directories still take 2 strings, one as the path to the parent directory and one as the name of the directory wanted.
+
+These abstractions all work 'all at once' meaning that they deal with files as a whole; reading a whole file into memory, writing a section of memory as an entire file. This is method is fit for the kernel as it never needs to read/write sections of files off disk.
+
+\subsection{File Directory User Space abstractions}
+
+These abstractions are the endpoints for all file/directory system calls. The follow the open, read, close pattern, except that there is no need to close a file. To open a file or directory, the full absolute path to the object is requried. The file system then returns a structure describing the file; its Inode number, its size, its names size, and two pointers, one into its data and one into its name. This structure is the same for both directories and files. The poiters into the data are initialised to point to the end of the fileor directory.
+
+Once a userspace program has aquired this structure it is used with all the remaining calls. These calls all work on a 'on at a time' method. Meaning that writing or reading from a file must be done one character at a time. Reading from a directory returns one file structure at a time, where each is a valid file handle to one of the children of the directory.
+
+These abstractions mean that storing this information and any mallocing must be done at the user-space applications discression. It also allows for eisily reading parts of a file, and updating the file without destroying all the old ccontents
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \chapter{Log}

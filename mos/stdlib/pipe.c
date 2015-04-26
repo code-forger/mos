@@ -1,4 +1,5 @@
 #include "pipe.h"
+#include "process.h"
 
 
 uint32_t pipe(PIPE pipe[2])
@@ -34,4 +35,15 @@ int64_t read(PIPE pipe)
     if(ret != 0)
         return -ret;
     return udata;
+}
+
+int64_t wait_to_read(PIPE pipe)
+{
+    int64_t ret = read(pipe);
+    if(ret == -2)
+        return ret;
+    else
+        while((ret=read(pipe)) < 0)
+            sleep(500);
+    return ret;
 }

@@ -66,34 +66,39 @@
 \contentsline {subsection}{\numberline {5.4.4}File Directory Kernel Abstractions}{30}
 \contentsline {subsection}{\numberline {5.4.5}File Directory User Space abstractions}{30}
 \contentsline {section}{\numberline {5.5}Pager}{30}
-\contentsline {section}{\numberline {5.6}Heap manager}{30}
-\contentsline {subsection}{\numberline {5.6.1}Data Structure}{30}
+\contentsline {section}{\numberline {5.6}Heap manager}{31}
+\contentsline {subsection}{\numberline {5.6.1}Data Structure}{31}
 \contentsline {section}{\numberline {5.7}Pipe Manager}{31}
 \contentsline {subsection}{\numberline {5.7.1}Data Structure}{31}
 \contentsline {section}{\numberline {5.8}Interrupts handler}{32}
-\contentsline {section}{\numberline {5.9}Program Loader}{32}
-\contentsline {chapter}{\numberline {6}Log}{34}
-\contentsline {section}{\numberline {6.1}Week 1}{34}
-\contentsline {section}{\numberline {6.2}Week 2}{34}
-\contentsline {section}{\numberline {6.3}Week 3}{34}
-\contentsline {section}{\numberline {6.4}Week 4}{34}
-\contentsline {section}{\numberline {6.5}Week 5}{34}
-\contentsline {section}{\numberline {6.6}Week 6}{35}
-\contentsline {section}{\numberline {6.7}Week 7}{35}
-\contentsline {section}{\numberline {6.8}Week 8}{35}
-\contentsline {section}{\numberline {6.9}Week 9}{35}
-\contentsline {section}{\numberline {6.10}Week 10}{35}
-\contentsline {section}{\numberline {6.11}Week 11}{35}
-\contentsline {section}{\numberline {6.12}Week 12}{35}
-\contentsline {section}{\numberline {6.13}Week 13}{35}
-\contentsline {section}{\numberline {6.14}Week 14}{36}
-\contentsline {section}{\numberline {6.15}Week 15}{36}
-\contentsline {section}{\numberline {6.16}Week 16}{36}
-\contentsline {section}{\numberline {6.17}Week 17}{36}
-\contentsline {section}{\numberline {6.18}Week 18}{37}
-\contentsline {section}{\numberline {6.19}Week 19}{37}
-\contentsline {section}{\numberline {6.20}Week 20}{37}
-\contentsline {section}{\numberline {6.21}Week 21}{37}
-\contentsline {section}{\numberline {6.22}Week 22}{38}
-\contentsline {section}{\numberline {6.23}Week 23}{38}
-\contentsline {chapter}{\numberline {7}Appendices}{39}
+\contentsline {section}{\numberline {5.9}Program Loader}{33}
+\contentsline {chapter}{\numberline {6}Testing}{34}
+\contentsline {section}{\numberline {6.1}Kernel Tests}{34}
+\contentsline {subsection}{\numberline {6.1.1}Behavioral tests}{34}
+\contentsline {subsection}{\numberline {6.1.2}Limit tests}{35}
+\contentsline {subsection}{\numberline {6.1.3}Stress tests}{35}
+\contentsline {chapter}{\numberline {7}Log}{36}
+\contentsline {section}{\numberline {7.1}Week 1}{36}
+\contentsline {section}{\numberline {7.2}Week 2}{36}
+\contentsline {section}{\numberline {7.3}Week 3}{36}
+\contentsline {section}{\numberline {7.4}Week 4}{36}
+\contentsline {section}{\numberline {7.5}Week 5}{36}
+\contentsline {section}{\numberline {7.6}Week 6}{37}
+\contentsline {section}{\numberline {7.7}Week 7}{37}
+\contentsline {section}{\numberline {7.8}Week 8}{37}
+\contentsline {section}{\numberline {7.9}Week 9}{37}
+\contentsline {section}{\numberline {7.10}Week 10}{37}
+\contentsline {section}{\numberline {7.11}Week 11}{37}
+\contentsline {section}{\numberline {7.12}Week 12}{37}
+\contentsline {section}{\numberline {7.13}Week 13}{37}
+\contentsline {section}{\numberline {7.14}Week 14}{38}
+\contentsline {section}{\numberline {7.15}Week 15}{38}
+\contentsline {section}{\numberline {7.16}Week 16}{38}
+\contentsline {section}{\numberline {7.17}Week 17}{38}
+\contentsline {section}{\numberline {7.18}Week 18}{39}
+\contentsline {section}{\numberline {7.19}Week 19}{39}
+\contentsline {section}{\numberline {7.20}Week 20}{39}
+\contentsline {section}{\numberline {7.21}Week 21}{39}
+\contentsline {section}{\numberline {7.22}Week 22}{40}
+\contentsline {section}{\numberline {7.23}Week 23}{40}
+\contentsline {chapter}{\numberline {8}Appendices}{41}

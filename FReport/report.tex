@@ -964,6 +964,10 @@ The above process ensures that, from a processes perspective, it always has full
 
 When the user requests to see one of the hidden processes, the IO manager repeats the process above, but instead checking for overlapping with the process that the user want to bring to the front. Once any overlapping processes have been correctly hidden, it copies the snapshot of the requested process back to the correct area of the screen and unpauses it, moving it back to the `outputable' list.
 
+Above a print mode called `progressive' mode was mentioned. In this mode, the  IO Manager keeps track of the current position of each processes `caret'. Then, if a processes wants to print in this mode, the processes simply passes a character to the IO manager. The IO manager will use the column and row fields of the IO part of the process entry to place the character within the processes screen space. The IO manager will make sure to wrap when the end of the line is reached, and will also roll the entire process' terminal space up when the bottom is reached. This behaviors is very similar to that seen in Linux and Windows CLI's.
+
+The other print mode is called `targeted' print mode. Here the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the processes screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better gui's and update only portions of the screen space.
+
 \section{The Flat vs List interlude}
 
 During the discussion of the scheduler and the IO manager I have mentioned the use of lists to store PID's in a number of situations. These lists are an acceleration structure over the process table its self. In the first design, the scheduler and IO manager dealt only with the process table, however as noted above this table is very slow to use for many operations, namely searching for attributes.
@@ -1296,6 +1300,52 @@ The program loader has no core data structures and can be seen as a sub module o
 
 
 
+
+\chapter{Testing}
+
+Testing is an important part of any system and there exist many different techniques for testing any software package. As MOS is a significant project, tests were essential to ensure the code contained as few errors as possible. 
+
+Mos has two main different testing levels; Kernel level and user-space level. This is because, even if each kernel module was tested thoroughly and passed, the runtime structure of the system is vast and hard to predict at any time. This means making `offline' tests that cover all eventualities very difficult.
+
+The kernel tests can be run during boot and put the system into a special state where user space applications are not run. Instead, a series of tests are executed.
+
+The user-space tests are a series of programs that can be run at any time while the system is booted normally, This form of testing is far less automated, however allows testings to add their own intuition about how and when to run the test, and how to interpret the output. Some of the tests could bee seen to simply demonstrate a feature. Other tests try their hardest to break the system and are expected to prove the systems stability.
+
+\section{Kernel Tests}
+
+The kernel test module provides a number of useful functions to any module that wants tests. 
+
+First is kernel\_assert. This function performs a boolean check and acts upon its result. It allows for two types of tests, a continue test and a halt test. These modes allow testers to create tests that will halt the system if they fail, in case failure of that test indicates a significant issue with the system. Alternatively tests can be allowed to fail with out preventing other tests from executing, this can be useful when a failed test is not a critical issue, and the tester want to see all tests run before deciding how to respond.
+
+The second function is a function to run the tests them selfs. This takes two flags to dictate the testing behavior; Verbosity and Test level.
+
+Verbosity simply dictates weather kernel\_assert should print out the tests even if the test passes.
+
+The test level allows for testing the system in different ways. There are three test levels; Behavioral tests, Limit tests, and stress tests.
+
+\subsection{Behavioral tests}
+
+Behavioral tests test whether a module behaviors correctly given valid input and a stable system state. If a system had no attacker and users made no mistakes, these would be the only tests required. However as neither of the above is true, the system requires other tests too.
+
+As examples, both the file system and the kernel heap manager use behavioral tests. These tests involve creating files and directories, moving file and directories, allocating kernel memory, and freeing kernel memory all using well formed input to the function calls.
+
+This kind of test is useful for detecting regressions in functionality, and also proving that certain functionality exists.
+
+\subsection{Limit tests}
+
+Limit tests are similar to behavioral tests except that they call functions with incorrect or `limit' input. I.E. If a function can take a number between 1 and 10, Behavioral tests will call the function with perhaps 2, 5, and 7 as inputs, however limit tests will call the function with 0, 1, 10, 11, -34, 2345,and `H' as inputs. They ensure that they correct limit on functions are obeyed, and that functions correctly deal with incorrect input.
+
+As examples, In the file system, limit tests try to create files in directories that don't exist, create empty files, create files with invalid names, create files with very long names, and so on. In the kernel heap manager, limit tests try to allocated memory of negative sized 0 size and very large sizes as well as trying to free memory twice, or that was never allocated in the first place.
+
+This kind of test is useful for detecting where the system may be unable to handle error, and where certain bounds are not enforced.
+
+\subsection{Stress tests}
+
+Stress tests are a special type of limit test where the module is stressed with high volume or large sizes. These tests often repeat tasks very quickly attempting to overwhelm the module they are testing, or try and force `worst case' in running times in algorithms by mocking bad data.
+
+As examples, In the file system Stress tests create hundreds of files in the same directory and create very large files. In the kernel heap manager thousands of tiny pieces of memory are allocated until the system reaches its memory limit.
+
+These tests find places where large volumes or requests or quick repeated requests overload the system, they can be used to identify bottle necks or overload errors in the system.
 
 
 

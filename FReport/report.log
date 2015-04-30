@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.4.29)  29 APR 2015 17:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.4.29)  30 APR 2015 10:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -303,9 +303,6 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
 
 ]
 Chapter 2.
-
-LaTeX Warning: Citation `CoC' on page 9 undefined on input line 192.
-
 [9
 
 ]
@@ -382,32 +379,9 @@ input line 342.
 (pdftex.def)             Requested size: 200.75073pt x 125.46538pt.
  [13 <./images/Windows_title_bar_screenshot.png> <./images/Linux_title_bar_scre
 enshot.png> <./images/Windows_Window_Navigation_Screenshot.png> <./images/Linux
-_Window_Navigation_Screenshot.png>]
+_Window_Navigation_Screenshot.png>] [14
 
-LaTeX Warning: Citation `manFork' on page 14 undefined on input line 363.
-
-
-LaTeX Warning: Citation `manExecve' on page 14 undefined on input line 370.
-
-
-LaTeX Warning: Citation `manKill' on page 14 undefined on input line 377.
-
-
-LaTeX Warning: Citation `manMalloc' on page 14 undefined on input line 393.
-
-[14
-
-]
-
-LaTeX Warning: Citation `manPipe' on page 15 undefined on input line 416.
-
-
-LaTeX Warning: Citation `manWrite' on page 15 undefined on input line 423.
-
-
-LaTeX Warning: Citation `manRead' on page 15 undefined on input line 423.
-
-[15]
+] [15]
 Chapter 4.
 [16
 
@@ -468,107 +442,111 @@ Enter file name:
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1050 ...ng layer provides the functions request_
+l.1054 ...ng layer provides the functions request_
                                                   read and request_write.
 ? 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.1051 
+l.1055 
        
 ? 
 [28]
 ! You can't use `macro parameter character #' in horizontal mode.
-l.1097 ...project, it was significantly modified #
+l.1101 ...project, it was significantly modified #
                                                   TODO
 ? 
 [29] [30] [31] [32] [33]
 Chapter 6.
 [34
 
-] [35] [36] [37] [38]
+] [35]
 Chapter 7.
-<images/proposal_doc.pdf, id=155, 597.23125pt x 845.1575pt>
+[36
+
+] [37] [38] [39] [40]
+Chapter 8.
+<images/proposal_doc.pdf, id=161, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 1491.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 1541.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
  <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 1491.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 1541.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
- [39
+ [41
 
 ]
-<images/proposal_doc.pdf, id=161, page=1, 597.23125pt x 845.1575pt>
+<images/proposal_doc.pdf, id=167, page=1, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
  <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
  <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
- [40 <./images/proposal_doc.pdf>]
-<images/proposal_doc.pdf, id=203, page=2, 597.23125pt x 845.1575pt>
+ [42 <./images/proposal_doc.pdf>]
+<images/proposal_doc.pdf, id=210, page=2, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
  <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
- [41 <./images/proposal_doc.pdf>]
-<images/proposal_doc.pdf, id=208, page=3, 597.23125pt x 845.1575pt>
+ [43 <./images/proposal_doc.pdf>]
+<images/proposal_doc.pdf, id=215, page=3, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
  <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1491
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1541
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
- [42 <./images/proposal_doc.pdf>]
+ [44 <./images/proposal_doc.pdf>]
 (./report.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 4--7
 []\OT1/cmr/m/n/10 Code of con-duct | mem-ber-ship | bcs - the char-tered in-sti
@@ -581,12 +559,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 24--27
 
  []
 
-) [43
+) [45
 
 ] (./report.aux)
-
-LaTeX Warning: There were undefined references.
-
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -594,7 +569,7 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  3280 strings out of 493117
  47967 string characters out of 6135433
- 121129 words of memory out of 5000000
+ 120155 words of memory out of 5000000
  6671 multiletter control sequences out of 15000+600000
  9442 words of font info for 34 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -608,10 +583,10 @@ sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
 ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loc
 al/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loca
 l/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on report.pdf (44 pages, 4243983 bytes).
+Output written on report.pdf (46 pages, 4249395 bytes).
 PDF statistics:
- 249 PDF objects out of 1000 (max. 8388607)
- 152 compressed objects within 2 object streams
+ 255 PDF objects out of 1000 (max. 8388607)
+ 156 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  86 words of extra memory for PDF output out of 10000 (max. 10000000)
 

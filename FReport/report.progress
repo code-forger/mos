@@ -1,0 +1,15 @@
+
+%\begin{itemize}
+-%\item Scheduler.
+-%\item Program Loader.
+?%\item Event manager.
+-%\item Pager.
+?%\item Physical Memory Manager.
+-%\item Heap Manager.
+-%\item File System.
+-%\item IDE driver.
+-%\item Pipe manager.
+-%\item IO manager.
+?%\item Keyboard driver.
+-%\item Interrupts Handler.
+%\end{itemize}

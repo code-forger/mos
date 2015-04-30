@@ -685,17 +685,17 @@ The kernel design was a living structure throughout the project as it was hard t
 
 As this module is different from the others we will discuss it first.
 
-The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job is to to coreectly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
+The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job is to to correctly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
 
 It has its own smaller Physical Memory Manager, IO Manager and XXX, To assist in its task. It then maps the kernel to the correct location in memory and jumps to the kernels entry point.
 
-Since the kernel only executes in Protected mode, it has less direct access to physical memory, therefore the kernel loader must initialise the memory map for the Physical Memory Manager module and map this memory map into a suitable Virtual memory location.
+Since the kernel only executes in Protected mode, it has less direct access to physical memory, therefore the kernel loader must initialize the memory map for the Physical Memory Manager module and map this memory map into a suitable Virtual memory location.
 
 \subsection{The Scheduler}
 
 The schedulers task will be to maintain and update all relevant information about all running processes. This means it is responsible for creating, destroying, and switching processes. It will also provide write access to parts of the process information to other modules where necessary.
 
-The scheduler depends on the Program Loader to load new programs from the hard disk, The Event manager organise timed events such as sleeping a processes, The Pager to provide a persistent memory space, and The Heap manager to provide memory space for passing parameters to new processes.
+The scheduler depends on the Program Loader to load new programs from the hard disk, The Event manager to organize timed events such as sleeping a processes, The Pager to provide a persistent memory space, and The Heap manager to provide memory space for passing parameters to new processes.
 
 \subsection{The Program Loader}
 
@@ -711,7 +711,7 @@ The event manager depends on the Pager to provide a persistent memory space.
 
 \subsection{The Pager}
 
-The pager is the core module that provides memory to the system, it controls the CPU's page tables, mapping physical memory to virtual memory. The pager is also responsible for giving out unique sections of memory to all other kernel modules. By assigning this job to the pager, the kernel memory management is centralised, making it easier to move sections of memory around during development.
+The pager is the core module that provides memory to the system, it controls the CPU's page tables, mapping physical memory to virtual memory. The pager is also responsible for giving out unique sections of memory to all other kernel modules. By assigning this job to the pager, the kernel memory management is centralized, making it easier to move sections of memory around during development.
 
 The pager depends on the following Physical Memory Manager for locating unallocated physical memory.
 
@@ -733,7 +733,7 @@ The file system will create a file/directory tree abstraction over the IDE drive
 
 The kernel functions will be to read entire files/directories into memory, or write sections of memory into files. These functions are designed for speed and elegance and the kernel always wants to load/save entire files to disk at once.
 
-The user space abstractions are centred around giving out handles to files, and letting programs read those programs like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
+The user space abstractions are centered around giving out handles to files, and letting programs read those programs like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
 
 The file system depends on the IDE Driver for reading and writing to the Hard Disks.
 
@@ -745,7 +745,7 @@ The IDE driver interacts directly with hardware and so has no dependencies.
 
 \subsection{Pipe Manager}
 
-The pipe manager will maintain information on any pipes that user space programs require. These pipes will also be utilised and the main IO mechanism for user space programs.
+The pipe manager will maintain information on any pipes that user space programs require. These pipes will also be utilized and the main IO mechanism for user space programs.
 
 The pipe manager depends on the Pager to provide a persistent memory space.
 
@@ -844,12 +844,10 @@ We will discuss the more complex and central modules first, and then move onto t
 \subsection{Data Structure}
 
 \begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  \input{Process_Table_Diagram.pdf_tex}
-  \caption{The Process Table Structure}
-  \label{fig:schedulerscreen}
+\centering
+\includegraphics[width=400px]{images/Scheduler_Structure}
+\caption{Schedulers Data Structures}
+\label{fig:WinTitleBarScreen}
 \end{figure}
 
 
@@ -867,15 +865,14 @@ The Scheduler also maintains a list for any paused processes.
 
 Using separate lists for each of these `interesting' attributes means there is never any need to search the process table for this information. The lists (by being utilized as queue's) can also be seen to keep the order in which the process gained the specific attribute stored.
 
+\clearpage
 \subsection{The Process Entry}
 
 \begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{The Process Entry Structure}
-  \label{fig:schedulerscreen}
+\centering
+\includegraphics[width=400px]{images/Process_Entry_Structure}
+\caption{The Process Entry Structure}
+\label{fig:WinTitleBarScreen}
 \end{figure}
 
 \subsubsection{The Flags}
@@ -895,14 +892,6 @@ The Flags in a process entry store boolean information:
 The stack pointers are the only registers that need to be stored and restored when performing a context shift, this is because all other registers are pushed onto the stack by the interrupt handler during the time-interrupt. The stack pointers are only valid while a process is not currently having a time slice.
 
 \subsubsection{The Memory Map}
-\begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{The Memory Map Example}
-  \label{fig:schedulerscreen}
-\end{figure}
 
 The memory map stores the physical pages of memory that this process has been allocated. Most entries are direct pointers to the physical addresses of the page being used (or arrays of such addresses). However, the heap\_physical\_page is actually the physical page that stores a list of physical pages for the processes heap (see diagram above). This is due to the large memory demand that some processes have and allows for more dynamic scaling of memory allocation.
 
@@ -1002,13 +991,12 @@ o <= p
 i <= p
 p <= n
 
-\begin{figure}[ht]
-  \centering
 
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{Runtime speed-ups of flat vs list.}
-  \label{fig:schedulerscreen}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=400px]{images/List_Speedup}
+\caption{Runtime speed-ups of flat vs list.}
+\label{fig:WinTitleBarScreen}
 \end{figure}
 
 
@@ -1023,10 +1011,7 @@ p <= n
 
 
 
-
-
-
-
+\clearpage
 
 \section{The Hard Drive: Drivers and File systems}
 
@@ -1040,13 +1025,12 @@ The caching was necessary because hard drives are slow. But also the manner in w
 
 \subsubsection{Data Structure}
 
-\begin{figure}[ht]
-  \centering
 
-  \def\svgwidth{\columnwidth}
-  \input{Process_Table_Diagram.pdf_tex}
-  \caption{The Process Table Structure}
-  \label{fig:schedulerscreen}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=400px]{images/Caching_Table}
+\caption{IDE driver Caching Table.}
+\label{fig:WinTitleBarScreen}
 \end{figure}
 
 The primary structure here is the cache table, as above, it consists of a number of descriptors and a corresponding number of 512 sections of memory.
@@ -1103,13 +1087,12 @@ Although MRFS was taken from a previously complete project, it was significantly
 \subsection{File Directory Structure}
 
 \begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{Runtime speed-ups of flat vs list.}
-  \label{fig:schedulerscreen}
+\centering
+\includegraphics[width=200px]{images/MRFS_Structure}
+\caption{Inode Structure #TODO : give source to image.}
+\label{fig:WinTitleBarScreen}
 \end{figure}
+
 
 MRFS uses an inode structure, this means that every object on the disk is represented and described by an inode. Each inode can be either a directory or file. Directory have other file system objects as children whereas files have data blocks as children. Inode structures are very common structures and were therefore easy to find information on and implement. MRFS' implementation uses bitmaps for storing which inodes and data blocks have been allocated on the disk. It contains no caching as caching was done on a lower level (see IDE driver above). Every inode must be a child of another inode except for the root inode, called root or `/'. All inodes also must have names, unique to their parent node. This means that any file system object may be referenced by its name along with its inode number.
 
@@ -1164,19 +1147,17 @@ Other than the memory addresses, the pager is also responsible for paging physic
 
 
 
-
+\clearpage
 
 \section{Heap manager}
 
 \subsection{Data Structure}
 
 \begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{Runtime speed-ups of flat vs list.}
-  \label{fig:schedulerscreen}
+\centering
+\includegraphics[width=400px]{images/Heap_Manager}
+\caption{Heap manager structures}
+\label{fig:WinTitleBarScreen}
 \end{figure}
 
 The Heap manager uses a linked list implementation of memory management. Instead of having its own memory space for this linked list, it put it inside the kernel heap space itself. This means that each section of allocated memory has a memory header (as described above) immediately preceding it.
@@ -1199,7 +1180,7 @@ when freeing a node, the Heap manager sets the node to free, but must check the 
 
 
 
-
+\clearpage
 
 
 
@@ -1211,13 +1192,12 @@ when freeing a node, the Heap manager sets the node to free, but must check the 
 \subsection{Data Structure}
 
 \begin{figure}[ht]
-  \centering
-
-  \def\svgwidth{\columnwidth}
-  %\input{Process_Entry_Diagram.pdf_tex}
-  \caption{Runtime speed-ups of flat vs list.}
-  \label{fig:schedulerscreen}
+\centering
+\includegraphics[width=400px]{images/Pipe_Manager}
+\caption{Pipe manager structures}
+\label{fig:WinTitleBarScreen}
 \end{figure}
+
 
 
 The Pipe manager has one central data structure, the pipe table. The pipe table keeps track of all registered pipes on the system, This table has three fields per entry (as shown above); the PID is the id of the process that owns the pipe, this is needed since the pipe stays in user space memory and knowing which processes it belongs to allows us to locate the correct piece of memory to read and write into the pipe. The location is the memory address of the beginning of the pipe. The mode is whether or not the pipe is a read pipe or a write pipe.
@@ -1311,6 +1291,8 @@ The kernel tests can be run during boot and put the system into a special state 
 
 The user-space tests are a series of programs that can be run at any time while the system is booted normally, This form of testing is far less automated, however allows testings to add their own intuition about how and when to run the test, and how to interpret the output. Some of the tests could bee seen to simply demonstrate a feature. Other tests try their hardest to break the system and are expected to prove the systems stability.
 
+These user-space tests rely on a more `the proof is in the pudding' structure. That is, if i can show you it works, it works `no need to prove it further'. This is because from the user's perspective, this is how the system should be. By simply booting the default configuration, the system has already proved that it can print to the screen in both `progressive' and `targeted' mode, provide the time, accept keyboard input, read files, sleep processes, pause processes, fork and exec processes, and so on. Furthermore, the endpoints for all system calls are kernel modules, which have already been tested for behavior, limits, and stress. Therefore user-tests do not do that deep into testing. 
+
 \section{Kernel Tests}
 
 The kernel test module provides a number of useful functions to any module that wants tests. 
@@ -1348,8 +1330,34 @@ As examples, In the file system Stress tests create hundreds of files in the sam
 These tests find places where large volumes or requests or quick repeated requests overload the system, they can be used to identify bottle necks or overload errors in the system.
 
 
+\section{User-space tests}
 
+The user-space tests are a collection of testing functions that demonstrate user space features and attempt to crash the kernel
 
+\subsection{Feature tests}
+
+\subsubsection{Parameter test}
+
+Parameter test prints the parameters passed to the program
+
+\subsubsection{Input test}
+
+Input test echo's any character typed into it in `progressive' write mode
+
+\subsubsection{Pipe test}
+
+Pipe test creates a pipe, forks its self then sends data down the pipe.
+One processes prints the data being send down the pipe and the other prints the data as read from the pipe.
+
+\subsection{User Space Attacks}
+
+\subsubsection{Fork bomb}
+
+A fork bomb is a type of attack where a process forks itself, then execs itself. The result is a duplication of a processes that keeps forking and executing. This floods the system with processes which are constantly hungry for CPU. This attack is designed to both slow the system, and saturate the process entry table, meaning that new processes cannot be launched.
+
+\subsubsection{Memory bomb}
+
+A memory bomb is an attack where the process tries to allocate as much memory as possible, starving the system of memory, forcing the kernel to take more and more drastic measures to provide memory to this process. This can put the kernel into `thrashing' where the system is taking more time to acquire more memory than it is running user space processes.
 
 
 
@@ -1358,13 +1366,13 @@ These tests find places where large volumes or requests or quick repeated reques
 \chapter{Log}
 
 
-\section{Week 1}
+\section*{Week 1}
 \begin{itemize}
 \item Created basic design docs.
 \item Rewrite existing code to be suitable for this project.
 \end{itemize}
 
-\section{Week 2}
+\section*{Week 2}
 \begin{itemize}
 \item Detect Upper Memory.
 \item Test Stack Jumping.
@@ -1375,7 +1383,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Supervisor Meeting 1: This week we discussed the state of the project, some goals to hit in the upcoming weeks and the proposal report due in next week.
 \end{itemize}
 
-\section{Week 3}
+\section*{Week 3}
 \begin{itemize}
 \item Implemented Paging.
 \item Moved to a higher half kernel.
@@ -1383,19 +1391,19 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Supervisor Meeting 2: This week we discussed how process creation was handled in linux and other Operating Systems, and how to move forward with concurrency.
 \end{itemize}
 
-\section{Week 4}
+\section*{Week 4}
 \begin{itemize}
 \item implemented fork system call.
 \item implemented exec system call.
 \item Supervisor Meeting 3: This week we discussed how IPC was handled on many different system and how I could think about going ahead with IPC.
 \end{itemize}
 
-\section{Week 5}
+\section*{Week 5}
 \begin{itemize}
 \item major bug fixing.
 \end{itemize}
 
-\section{Week 6}
+\section*{Week 6}
 \begin{itemize}
 \item created proposal for IPC.
 \item implemented IPC.
@@ -1403,55 +1411,55 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Supervisor Meeting 4: This week we discussed how to continue work on IPC and the next steps of using the IPC to abstract general process I/O.
 \end{itemize}
 
-\section{Week 7}
+\section*{Week 7}
 \begin{itemize}
 \item finished work on interim report.
 \end{itemize}
 
-\section{Week 8}
+\section*{Week 8}
 \begin{itemize}
 \item Study.
 \end{itemize}
 
-\section{Week 9}
+\section*{Week 9}
 \begin{itemize}
 \item Sleep and Pause System calls.
 \item Began implementation of IO over pipes.
 \end{itemize}
 
-\section{Week 10}
+\section*{Week 10}
 \begin{itemize}
 \item Completed basic keyboard support
 \item Created first iteration of Notes application.
 \end{itemize}
 
-\section{Week 11}
+\section*{Week 11}
 \begin{itemize}
 \item Added input switching.
 \item Added input indication: Input process now changes color.
 \end{itemize}
 
-\section{Week 12}
+\section*{Week 12}
 \begin{itemize}
 \item Added hard drive support.
 \item Added some file support in user space.
 
 \end{itemize}
 
-\section{Week 13}
+\section*{Week 13}
 \begin{itemize}
 \item Created tool for writing the virtual hard drive from outside the emulator.
 \item Init program now loads from disk.
 \end{itemize}
 
-\section{Week 14}
+\section*{Week 14}
 \begin{itemize}
 \item Created launcher program.
 \item Created process viewer program.
 \item Fixed a number of MRFS issues.
 \end{itemize}
 
-\section{Week 15}
+\section*{Week 15}
 \begin{itemize}
 \item Created kill system call.
 \item Created Created new file abstractions.
@@ -1462,7 +1470,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Added Ctrl+Tab to switch between hidden processes.
 \end{itemize}
 
-\section{Week 16}
+\section*{Week 16}
 \begin{itemize}
 \item Scheduler now reuses old PID's
 \item Created much better notes program with multi line editing capabilities.
@@ -1473,7 +1481,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Fixed many misc bugs.
 \end{itemize}
 
-\section{Week 17}
+\section*{Week 17}
 \begin{itemize}
 \item Fixed refresh rate issue.
 \item Moved time services into the kernel.
@@ -1482,7 +1490,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Created `rm', `mkdir', and `touch'.
 \end{itemize}
 
-\section{Week 18}
+\section*{Week 18}
 \begin{itemize}
 \item Created tests for new MRFS abstractions.
 \item Added /proc/ directory for storing process state.
@@ -1490,7 +1498,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Added better test tracking for high volume of tests.
 \end{itemize}
 
-\section{Week 19}
+\section*{Week 19}
 \begin{itemize}
 \item Modified pong and processes to take command line parameters to define their location on screen.
 \item Created Poster for poster presentation.
@@ -1499,7 +1507,7 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Create `fork\_bomb' program.
 \end{itemize}
 
-\section{Week 20}
+\section*{Week 20}
 \begin{itemize}
 \item Moved from dual disk setup to single disk.
 \item Reduced O() complexity of many MRFS calls.
@@ -1509,12 +1517,12 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Protected against killing shell process.
 \item Created user manuals.
 \item Created Developer docs.
-\item Bound remainder of CPU interupts.
+\item Bound remainder of CPU interrupts.
 \item Improved Processes program/
 \item Fixed many bugs with fork cycle and mrfs edge cases.
 \end{itemize}
 
-\section{Week 21}
+\section*{Week 21}
 \begin{itemize}
 \item Began Final Report work.
 \item Change color to black on white.
@@ -1523,12 +1531,12 @@ These tests find places where large volumes or requests or quick repeated reques
 \item Added caching to processes program
 \end{itemize}
 
-\section{Week 22}
+\section*{Week 22}
 \begin{itemize}
 \item Code Refactor.
 \end{itemize}
 
-\section{Week 23}
+\section*{Week 23}
 \begin{itemize}
 \item Report work.
 \item Added wait\_to\_read system call.

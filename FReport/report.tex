@@ -33,9 +33,9 @@
 
 \chapter{Introduction}
 
-The overall aim for this project is to produce a simple Multitasking Operating System (herein called MOS), following 5 key tenants, to study structure, allocation, and management of different classes of resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach take.
+The overall aim for this project is to produce a simple Multitasking Operating System (herein called MOS) to study structure, allocation, and management of different classes of hardware resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach taken.
 
-We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviours by providing simple high level abstractions over the intricate low level hardware.
+We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviors by providing simple high level abstractions over the intricate low level hardware.
 
 
 
@@ -57,7 +57,7 @@ We live in a world surrounded and controlled by machines, and software is our wa
 \section{Understanding Operating Systems}
 
 
-Before this project can even begin, an understanding of what a Operating System is and does is required.
+Before this project can even begin, an understanding of what an Operating System is and does is required.
 
 Operating Systems come in all different shapes and sizes, however usually they contain three distinct parts:
 
@@ -72,7 +72,7 @@ The Final part is a collection of programs and other software that come with the
 \begin{figure}[ht]
 \centering
 \includegraphics[width=415px]{images/bootProcess.png}
-\caption{An Example of a boot cycle. The bootloader is in control while the CPU is in Real Mode.}
+\caption{An example boot cycle.}
 \label{fig:theloader}
 \end{figure}
 
@@ -90,7 +90,7 @@ Finally the bootloader can jump to the start of the kernel and it's job is finis
 \begin{wrapfigure}{r}{150px}
 \centering
 \includegraphics[width=150px]{images/kernel}
-\caption{The Kernels Role is to make using the hardware easier for programs.}
+\caption{A high level look at a kernel.}
 \vspace{-10pt}
 \label{fig:thekernel}
 \end{wrapfigure}
@@ -133,7 +133,7 @@ Figure \ref{fig:theserver} shows how even showing simple windows on the screen r
 \clearpage
 \section {Project Aims}
 
-The project was begun with a number of Primary and Extended Objectives, however as the project progressed, new objectives were discovered. These new objectives were prioritised over other extended objectives. This lead to some of the original extended objectives being left incomplete.
+The project was begun with a number of Primary and Extended Objectives, however as the project progressed, new objectives were discovered. These new objectives were prioritized over other extended objectives. This lead to some of the original extended objectives being left incomplete.
 
 \textbf {Primary Objectives:}
 
@@ -146,7 +146,7 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \item Allow multiple `programs' asynchronous access to areas of the terminal screen.
 \item Allow for the management of the execution state of each `program'.
 \item Allow each `program' access to a unique memory space.
-\item Allow `programms' to asynchronously send data to each other.
+\item Allow `programs' to asynchronously send data to each other.
 \item Handle all common cpu interrupts and resolve them correctly.
 \item Handle keyboard input and allow programs to `collect' keyboard inputs.
 \end{itemize}
@@ -168,8 +168,8 @@ The project was begun with a number of Primary and Extended Objectives, however 
 
 
 \begin{itemize}
-\item \lbrack Complete\rbrack Create A user manual.
-\item \lbrack Complete\rbrack Create A Developers manual.
+\item \lbrack Complete\rbrack Create a user manual.
+\item \lbrack Complete\rbrack Create a developers manual.
 \item \lbrack Complete\rbrack Create set of scripts for getting the source code, Building the project, and deploying it to a computer.
 \end{itemize}
 
@@ -190,8 +190,6 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \chapter{Professional Considerations}
 
 As this project falls within the bound of Computer Science, It will comply with the British Society of Computing (BSC) Code of Conduct \cite{CoC}. Although there is no contractual obligation to follow this code, it is important to recognize and comply with them to ensure the integrity of the project.
-
-Each of the four main sections of the Code of Conduct will be discussed in order;
 
 \section{Public Interest}
 
@@ -216,12 +214,29 @@ The project engineer, Michael Rochester, will carry out this project to the high
 
 \section{Requirement for ethical review}
 
-This Project is a technical exercise in understanding the low level relationship between hardware and software, due to this, the project does not require human participation, testing, or feedback. As such, The Project does not require an ethical review, and there are no ethical concerns with this project.
+This project is a technical exercise in understanding the low level relationship between hardware and software, due to this, the project does not require human participation, testing, or feedback. As such, The Project does not require an ethical review, and there are no ethical concerns with this project.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \clearpage
 \chapter{Requirements Analysis}
 
-In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of the MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
+In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
 
 Modern Operating Systems are such that there are two user groups.
 
@@ -230,6 +245,11 @@ The End Users are the people using the Operating System and its programs to assi
 
 
 The Program Developers use an Operating System as a platform to create the programs the End User will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviours like creating new processes, Allocating dynamic memory, allocating screen space to the programs, and accesing the hard drive. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
+
+
+
+
+
 
 \clearpage
 \section{The End User}
@@ -241,7 +261,7 @@ The parts of the reference systems that were analysed from the end users perspec
 
 In both reference systems, the `windows' key is used to expose the program launching interface.
 
-In Windows, the interface is a customizable, horizontal-scrolling, tile-based launcher. Each tile can be set to launch an application, or even launch a sub-activity of certain applications. Furthermore each Tile can give basic information of the internal state of the programs, even when the program is not properly running. (see Figure \ref{fig:WinLaunchScreen}.)
+In Windows, the interface is a customizable, horizontal-scrolling, tile-based launcher. Each tile can be set to launch an application, or even launch a sub-activity of certain applications. Furthermore each tile can give basic information of the internal state of the programs, even when the program is not properly running. (see Figure \ref{fig:WinLaunchScreen}.)
 
 
 In Linux, the interface is a alphabetized list (with icons) of installed programs, sorted into pages. Pages can be navigated with vertical scrolling, or by jumping directly to a page represented by dots to the right of the screen. Linux also provides a `quick launch bar' (on the left of the screen) that can be accessed by simple pushing your cursor to the left edge of the screen. This allows for quicker launching of your favorite programs (see Figure \ref{fig:LinLaunchScreen}.)
@@ -360,7 +380,7 @@ Linux exposes a number of system calls to the program developers to allow them t
 \noindent
 \textbf{Creating a new process}
 
-To create a new process, Linux provide the `fork' system call. \cite{manFork}
+To create a new process, Linux provide the fork system call. \cite{manFork}
 
 Fork will spawn a new processes with a perfect copy of the calling processes memory and cpu state. This effectively means that fork will return twice, once into the caller and once into the child. It will return 0 to the child and the child pid to the parent.
 
@@ -374,14 +394,14 @@ Execve will replace the calling processes memory with that of the target executa
 \noindent
 \textbf{Destroying processes}
 
-To destroy a process, Linux provides the `kill' system call. \cite{manKill}
+To destroy a process, Linux provides the kill system call. \cite{manKill}
 
 In Linux, kill is not just for killing processes. It allows the caller to send a signal to the target process. Frequently the signal sent is SIGKILL or SIGTERM which both destroy the target processes in different ways.
 
 \noindent
 \textbf{Pausing and Restarting processes}
 
-To pause and continue processes in Linux, the kill system call is re used, but now the caller sends the SIGSTOP signal.
+To pause and continue processes in Linux, the kill system call is reused, but now the caller sends the SIGSTOP signal.
 
 \subsection{Managing memory in Linux}
 
@@ -401,6 +421,7 @@ Linux provides the free call to deallocate memory.
 
 Free is passed a pointer to memory that was received from malloc, it frees this memory allowing for it to be allocated during future calls to malloc.
 
+\clearpage
 
 \subsection{Managing screen space in Linux}
 
@@ -413,20 +434,20 @@ Communication between processes is an important part of creating complex behavio
 \noindent
 \textbf{Creating a pipe.}
 
-Linux provides the `pipe' system call to create pipes. \cite{manPipe}
+Linux provides the pipe system call to create pipes. \cite{manPipe}
 
-`pipe' created a one directional communication channel and provides the user a handle to this channel.
+pipe creates a one directional communication channel and provides the user a handle to this channel.
 
 \noindent
 \textbf{Reading and Writing to a pipe.}
 
-To use this channel, Linux provides `write' and `read': \cite{manWrite} \cite{manRead}
+To use this channel, Linux provides write and read: \cite{manWrite} \cite{manRead}
 
 These system calls will read and write using the pipe, allowing process to send data to each other. Note, it is by design that the pipe only transmits bytes, it is down to the user space program to define any communication protocols for transmitting more complex data.
 
 \section{Analysis conclusion}
 
-It was found that in end user design, many systems share similar design features. These features are very rich and operate do to a wide collection of tool, utilities, and applications The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works, However due to time constraints MOS will target much simpler versions of these features.
+It was found that in end user design, many systems share similar design features. These features are very rich and operate do to a wide collection of tool, utilities, and applications. The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works, However due to time constraints MOS will target much simpler versions of these features.
 
 From the programmers perspective. The system API's or modern Operating Systems have been well thought out and have stood the test of time, however sometimes represent behaviours far more complex than that which MOS targets. The studied API's will be mimicked both to follow tried and tested ideas, and also so that program developers feel at home developing for MOS.
 
@@ -465,11 +486,11 @@ From the programmers perspective. The system API's or modern Operating Systems h
 \clearpage
 \chapter{Design}
 
-As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in XXXXX.
+As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in TODO Link to apendix here.
 
 Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ascii drawing and focussing on delivering the service provided in a quick and clean manner.
 
-Program Developer design was constructed with a 'many simple tools' structure. Each system call the standard library contained was made to perform one task, rather than bunching many tasks into one more complex call. This allows developers to maintain simple, intuitive control over their resources.
+Program Developer design was constructed with a `many simple tools' structure. Each system call the standard library contained was made to perform one task, rather than bunching many tasks into one more complex call. This allows developers to maintain simple, intuitive control over their resources.
 
 \clearpage
 \section{The End User}
@@ -489,7 +510,7 @@ The following actions will be possible using the built in tools.
 
 MASH will be MOS' built in shell. Using MASH, users can launch any other process.
 
-MASH will support passing parameters to launched processes, and a persistent file history. It will be displayed to the user as a single line at the bottom of the screen, with a \> prompt where the user can enter their command.
+MASH will support passing parameters to launched processes, and a persistent file history. It will be displayed to the user as a single line at the bottom of the screen, with a \textgreater  prompt where the user can enter their command.
 
 Since MASH will cover Process Creation. All other actions that user can perform with build in tools are achieved through different built in programs. The user can use MASH to launch these programs passing any desired parameters.
 
@@ -522,19 +543,19 @@ As shown, this tool will show the user information about each running processes 
 
 \subsection{File/Directory creation: mkdir and touch}
 
-MOS will provide two programs for creating files and directories. touch will create empty files and mkdir will create directories. Both programs will operate in a similar way, taking an absolute path as their only parameter. Neither will create anything unless the parent directory of the wanted object exists, and the parameter is well formed (with a training / for directories).
+MOS will provide two programs for creating files and directories. touch will create empty files and mkdir will create directories. Both programs will operate in a similar way, taking an absolute path as their only parameter. Neither will create anything unless the parent directory of the wanted object exists, and the parameter is well formed (with a trailing / for directories).
 
 \subsection{File/Directory Management: rm and mv}
 
 For file and directory management MOS will provide two functions.
 
-The first is rm. rm will try to delete the object at the obsolete path path passed as its only parameter. This path must be will formed and the object must exist however rm does not mind if the object is a file or directory and will delete either. If a directory is selected, all child nodes of that directory will be delete recursively.
+The first is rm. rm will try to delete the object at the absolute path path passed as its only parameter. This path must be well formed and the object must exist however rm does not mind if the object is a file or directory and will delete either. If a directory is selected, all child nodes of that directory will be delete recursively.
 
 The second is mv. mv will take two parameters, the first will be the path to an existing file system object (file or directory) and the second will be the path to an existing directory. mv will move the specified object (and all of its children in the case of a directory) into the target directory.
 
 \subsection{File Editing: notes}
 
-MOS' provides a simple multi-line text editor for editing text files. The program takes one parameter which is a path to the file you wish to edit. If the file does not exist notes will create it.
+MOS' will provide a simple multi-line text editor for editing text files. The program will take one parameter which is a path to the file you wish to edit. If the file does not exist notes will create it.
 
 Notes supports common cursor key commands for navigating the cursor and saves when ctrl+s is presses.
 
@@ -566,7 +587,7 @@ Notes supports common cursor key commands for navigating the cursor and saves wh
 
 
 
-
+\clearpage
 
 \section{The Program Developers}
 
@@ -584,7 +605,7 @@ Similar to Linux the process creation pattern MOS was designed to follow the `fo
 
 `fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish themselves by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
 
-`exec(pid)' takes the integer value of the target program to be loaded. It does not return. On failure the current process will not continue.
+`exec(name)' takes the absolute path of the target program to be loaded. It does not return. On failure the current process will not continue.
 
 \textbf{Destroying processes}
 
@@ -600,11 +621,13 @@ Pausing programs is important for efficiency, therefore MOS provides the followi
 
 `wake(pid)' will wake the target process and allow it to be scheduled again. It will NOT cause the target process to be executed next.
 
+`sleep(time)' will pause the current processes for the specified time in ms. The process will wake early if the wake system call is called on this process.
+
 \subsection{Managing memory}
 
-The memory managemnt API will be Identical to that of Linux. Therefore MOS will provide two system calls:
+The memory managemnt API will be identical to that of Linux. Therefore MOS will provide two system calls:
 
-`malloc(size)' will allocate a memory locations of size, and return a pointer to that location.
+`malloc(size)' will allocate a memory location of size, and return a pointer to that location.
 
 `free(pointer)' will deallocate the memory at a pointer.
 
@@ -612,12 +635,12 @@ The memory managemnt API will be Identical to that of Linux. Therefore MOS will 
 
 As the Linux screen management system cannot be mimicked in the MOS, a new one entirely was invented. This lead to one system call:
 
-`setio(px,py,wx,wy)' will attempt to allocate the portion of the screen using the starting coordinate (px,py) and the size (wx,wy). If this failed (that portion of the screen is already allocated) the call will block. Otherwise it will reserve this portion of the screen for this process.
+`setio(px,py,wx,wy)' will allocate the portion of the screen using the starting coordinate (px,py) and the size (wx,wy).
 
 
 \subsection{Inter Process Communication}
 
-The Interprocess Communication process will be very similar to Linux's system with one key addition.
+The Interprocess Communication process will be very similar to Linux's system with one key addition; wait to read
 
 `pipe(size, \&readpipe, \&writepipe)' will set up a communication channel of the requested size. On failure it will return one of a number of errors: -1 will indicate that the pipe cannot be created due to a lack of space, -2 will indicate that the system pipe table is full. This call will fill readpipe and writepipe with descriptors that can be passed to all the other pipe calls.
 
@@ -628,6 +651,36 @@ Once a pipe is set up three calls will be able to interact with it:
 `read(pipe)' will return a positive byte representing the byte at the front of the pipe, or a negative error message; -1 will mean the pipe is empty and -2 will mean the pipe is of the wrong type.
 
 `waitToRead(pipe)' will return a positive byte representing the byte at the front of the pipe or a negative error message; -2 will mean the pipe is of the wrong type. Note, if the pipe is empty, this call will block the process until the pipe is written to.
+
+
+\subsection{File Access}
+
+The File access functions will use a similarly idea to linux's however will be far simpler.
+
+`fopen(name, \&file\_handle, create)' will open the file specified by the absolute path `name' and store the relelvent information into the file handle provided. If the file does not exist and the `create' parameter is true, the file will be created. If the directory does not exists, no action will be taken. If the file does not exist or any other error occurs, the type field of the file handle will be set to 2. The rest of the structure will be considered invalid.
+
+Once a file handle has been retrieved, the file can be modified through the handle.
+
+`fputc(\&file\_handle, char)' and `char = fgetc(\&file\_handle)' will write and get characters from the file, the file handle must be valid and well formed else the function will take no action and return an error code. The read/write will be performed at the file handles current data index.
+
+`fseek(\&file\_handle, position)' will seek the data index of the file to the desired location, the index will be clipped to the bounds of the file and so will always be positive and \textless = the file's size.
+
+`char = fgetnamec(\&file\_handle)' and `fnameseek(\&file\_handle, position)' will act the same as the corresponding functions above however operating on the name of the file.
+
+`fdelete(\&file\_handle)' will delete the file at this file handle if it exists.
+
+`frename(oldname, newname)' will move and rename the file at oldname to newname. If either the source file doesn not exist or the target directory does not exist the function will take no action.
+
+
+\subsection{Directory Access}
+
+`fopendir(name, \&dir\_handle, create)' will open the directory in the same manner as files are opened above.
+
+
+`file\_handle = fgetfile(\&dir\_handle)' Will get the file handle at the directories current file index. This file will be a valid file handle to be used will all file functions.
+
+`fseek(\&dir\_handle, position)', `char = fgetnamec(\&dir\_handle)', `fnameseek(\&dir\_handle, position)', and `fdeletedir(\&dir\_handle)' will act on directories exactly as on files.
+
 
 
 
@@ -652,7 +705,7 @@ Once a pipe is set up three calls will be able to interact with it:
 \clearpage
 \section{The Kernel}
 
-The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one peice of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realised that some modules could be brought 'closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the io descriptors, these io descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures 'cross module'.
+The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one peice of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realised that some modules could be brought `closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the io descriptors, these io descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures `cross module'.
 
 The Kernel Loader can also be seen as a kernel module however it is special in that it does its job once at boot, and then does nothing for the remainder of the computers uptime.
 
@@ -693,39 +746,27 @@ Since the kernel only executes in Protected mode, it has less direct access to p
 
 \subsection{The Scheduler}
 
-The schedulers task will be to maintain and update all relevant information about all running processes. This means it is responsible for creating, destroying, and switching processes. It will also provide write access to parts of the process information to other modules where necessary.
-
-The scheduler depends on the Program Loader to load new programs from the hard disk, The Event manager to organize timed events such as sleeping a processes, The Pager to provide a persistent memory space, and The Heap manager to provide memory space for passing parameters to new processes.
+The scheduler's task will be to maintain and update all relevant information about all running processes. This means it is responsible for creating, destroying, and switching processes. It will also provide write access to parts of the process information to other modules where necessary.
 
 \subsection{The Program Loader}
 
 The program loaders job is to prepare a Program for execution; Loading the binary into memory in an appropriate manner, setting all process table fields to correct values, and ensuring all other system modules correctly reflect the execution of a new program.
 
-The program loader depends on the File System to load programs off disk.
-
 \subsection{The Event Manager}
 
 The event managers job is to track timed events. It will allow for the registration of certain types of events with an event deadline. Once the deadline is passed the Event manager will perform the requested action. This module requires that its main function 'events()' be called with some frequency.
-
-The event manager depends on the Pager to provide a persistent memory space.
 
 \subsection{The Pager}
 
 The pager is the core module that provides memory to the system, it controls the CPU's page tables, mapping physical memory to virtual memory. The pager is also responsible for giving out unique sections of memory to all other kernel modules. By assigning this job to the pager, the kernel memory management is centralized, making it easier to move sections of memory around during development.
 
-The pager depends on the following Physical Memory Manager for locating unallocated physical memory.
-
 \subsection{The Physical Memory Manager}
 
 The physical memory manager maintains a map of the physical memory (RAM) and can provide new physical memory pages to the pager.
 
-The Physical Memory Manager interacts directly with hardware and so has no dependencies.
-
 \subsection{The Heap Manager}
 
 The heap manager allows other kernel modules to use the well known malloc and free calls, providing them with small, temporary (more temporary than the memory provided by the pager) sections of memory of any size.
-
-The heap manager depends on the Pager to provide a persistent memory space.
 
 \subsection{The File System}
 
@@ -735,38 +776,25 @@ The kernel functions will be to read entire files/directories into memory, or wr
 
 The user space abstractions are centered around giving out handles to files, and letting programs read those programs like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
 
-The file system depends on the IDE Driver for reading and writing to the Hard Disks.
-
 \subsection{The IDE Driver}
 
 The IDE Driver will be responsible for performing reads and writes to the Hard Drives. It will also need to contain some levels of caching as hard drives are typically very slow compared to the rest of the system.
 
-The IDE driver interacts directly with hardware and so has no dependencies.
-
 \subsection{Pipe Manager}
 
-The pipe manager will maintain information on any pipes that user space programs require. These pipes will also be utilized and the main IO mechanism for user space programs.
-
-The pipe manager depends on the Pager to provide a persistent memory space.
+The pipe manager will maintain information on any pipes that user space programs require. These pipes will also be utilized as the main IO mechanism for user space programs.
 
 \subsection{The IO Manager}
 
 The IO manager will control all IO for user interaction with processes, as well as any outputting the kernel may do. It must maintain a current rendering of all running processes screen space, and deliver keyboard input to user space processes at the users command. It should also maintain different kernel space and user space windows, allowing for the user to switch between the kernel and user process view.
 
-The IO Manager depends on the Pipe Manager for delivering and receiving IO to the user space processes, the keyboard driver for collecting key presses, The Pager to provide a persistent memory space, and the heap manager for allocating window space to processes.
-
 \subsection{Keyboard Driver}
 
 The keyboard Driver handles keyboard input to the system, Its main job is to correctly pass signals along to the IO manager such that they can be sent to user space processes, however it may also detect system commands (like ctrl+tab and F1) and call the respective module to perform the expected action.
 
-The Keyboard driver interacts directly with hardware and so has no dependencies.
-
 \subsection{The Interrupt Handler}
 
 The interrupt handler is the module that will correctly catch and process all interrupts, this may be seen as the controller of the kernel to some extent as it is both how the kernel receives information from hardware (E.G. when a key is presses, or a hard drive finishes an operation) and the entry point from the user space into the kernel (all system calls occur through the interrupt handles.)
-
-Because of this it depends on many of the previous modules to provide services to user space, deliver information around the kernel, and control the state of the system. Namely, The File System, IO Manager, Pipe Manager, Scheduler, Keyboard Driver, and Event Manager.
-
 
 
 
@@ -846,12 +874,12 @@ We will discuss the more complex and central modules first, and then move onto t
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Scheduler_Structure}
-\caption{Schedulers Data Structures}
+\caption{The scheduler's data structures}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
 
-The Scheduler has a number of data structures. The central structure is the Process Table. This is a fixed size array of Process Entries. Each process entry stores all information pertinent to the processes' execution (More process information like `environment variables' may be stored on the disk). The position in the table corresponds to the PID of each process.
+The Scheduler has a number of data structures. The central structure is the Process Table. This is a fixed size array of Process Entries. Each process entry stores all information pertinent to the process' execution (More process information like `environment variables' may be stored on the disk). The position in the table corresponds to the PID of each process.
 
 This structure is very slow when searching for processes with specific attributes, and also contains no information about the order in which processes were created. For these reasons the Scheduler also contains a number of linked lists, each storing a list of PID's of processes that are `interesting' in some way.
 
@@ -871,7 +899,7 @@ Using separate lists for each of these `interesting' attributes means there is n
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Process_Entry_Structure}
-\caption{The Process Entry Structure}
+\caption{The process entry structure}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
@@ -895,6 +923,10 @@ The stack pointers are the only registers that need to be stored and restored wh
 
 The memory map stores the physical pages of memory that this process has been allocated. Most entries are direct pointers to the physical addresses of the page being used (or arrays of such addresses). However, the heap\_physical\_page is actually the physical page that stores a list of physical pages for the processes heap (see diagram above). This is due to the large memory demand that some processes have and allows for more dynamic scaling of memory allocation.
 
+\subsubsection{The IO part}
+
+The io part stores information about the processes IO, this information isused and managed by the IO manager which is discuessed next.
+
 
 
 
@@ -916,17 +948,17 @@ The memory map stores the physical pages of memory that this process has been al
 
 \section{The IO Manager}
 
-The IO manager manages all input and output to and from the user-space applications, All system calls that correspond to printing tot he screen or accessing keyboard input are part of this module.
+The IO manager manages all input and output to and from the user-space applications, All system calls that correspond to printing to the screen or accessing keyboard input are part of this module.
 
-The IO manager works quite closely with the scheduler as the Process Entry for each process contains an IO part, which stores all the information relevant to IO to and from he process.
+The IO manager works quite closely with the scheduler as the Process Entry for each process contains an IO part, which stores all the information relevant to IO to and from the process.
 
-The IO manager also contains thee lists (using the same process lists implementation as the scheduler does). One for all processes that can have keyboard focus (`inputable'), one for all processes that control a portion of the screen (`outputable'), and one for all the processes that should control a portion of the screen but are hidden (`hidden').
+The IO manager also contains three lists (using the same process lists implementation as the scheduler does). One for all processes that can have keyboard focus (`inputable'), one for all processes that control a portion of the screen (`outputable'), and one for all the processes that should control a portion of the screen but are hidden (`hidden').
 
 The use of this list means that when the user requests that keyboard input or terminal output be switched to a the next process, the IO manager simply has to push the currently focused processes into the back of this list, and pop the next one from the front. This means that switching the focused processes is always O(1).
 
 \subsection{Keyboard Input}
 
-When a user-space program wants it access keyboard input, it first creates a pipe (using the pipe system calls as discussed later) and registers this pipe with the IO Manager. This pipe descriptor is held in the IO part of the process table.
+When a user-space program wants access keyboard input, it first creates a pipe (using the pipe system calls as discussed later) and registers this pipe with the IO Manager. This pipe descriptor is held in the IO part of the process table.
 
 During this registration, the IO manager also adds the PID of the requesting process to its `inputable' list.
 
@@ -941,21 +973,21 @@ The output part of the IO Manager has more to do, since it is managing a finite 
 \item The user should have freedom to decide which processes they can interact with at any time.
 \end{itemize}
 
-The major problem with these rules is that rule one and two don't get along/ How can we always allow user space processes to get the part of the screen they want, and also never allow overlapping processes. The solution chosen is to hide processes if they overlap with new ones.
+The major problem with these rules is that rule one and two don't get along. How can we always allow user space processes to get the part of the screen they want, and also never allow overlapping processes. The solution chosen is to hide processes if they overlap with new ones.
 
 To acquire a portion of the screen the user space processes must register with the kernel a number of things; A pipe for printing in `progressive' mode, the coordinates for the top left corner of the requested are, and a width and height for this area.
 
 The IO manager first appends this process to its `outputable' list and populates the IO part of the respective processes table entry with the remainder of the metrics, filling the column and row potion with 0 and 0.
 
-It then checks for any overlapping processes, these are processes that are in the `outputable' list who's screen area collides with the new request. For any overlapping processes, the IO manager first pauses that processes, giving it the is\_hidden flag. Then it uses malloc() to request a portion of the kernels heap space of the same size as the old processes screen space. It copies the current state of this screen space into the new memory and assigns the pointer into the `snapshot' section of the IO part of the process entry. It then moves the processes from the `outputable' list to the `hidden' list. Finally it wipes the screen blank.
+It then checks for any overlapping processes, these are processes that are in the `outputable' list who's screen area collides with the new request. For any overlapping processes, the IO manager first pauses that processes, giving it the is\_hidden flag. Then it uses malloc() to request a portion of the kernels heap space of the same size as the old processes screen space. It copies the current state of this screen space into the new memory and assigns the pointer into the `snapshot' section of the IO part of the process entry. It then moves the processes from the `outputable' list to the `hidden' list. Finally it wipes the process' portion of the screen blank.
 
-The above process ensures that, from a processes perspective, it always has full control over a portion of the screen. This is because when it doesn't have control of that part of the screen, it is paused and cannot be executed.
+The above procedure ensures that, from a processes perspective, it always has full control over a portion of the screen. This is because when a process doesn't have control of that part of the screen, the process is paused and cannot be executed.
 
-When the user requests to see one of the hidden processes, the IO manager repeats the process above, but instead checking for overlapping with the process that the user want to bring to the front. Once any overlapping processes have been correctly hidden, it copies the snapshot of the requested process back to the correct area of the screen and unpauses it, moving it back to the `outputable' list.
+When the user requests to see one of the hidden processes, the IO manager repeats the process above, but instead checks for overlapping with the process that the user wants to bring to the front. Once any overlapping processes have been correctly hidden, it copies the snapshot of the requested process back to the correct area of the screen and unpauses it, moving it back to the `outputable' list.
 
-Above a print mode called `progressive' mode was mentioned. In this mode, the  IO Manager keeps track of the current position of each processes `caret'. Then, if a processes wants to print in this mode, the processes simply passes a character to the IO manager. The IO manager will use the column and row fields of the IO part of the process entry to place the character within the processes screen space. The IO manager will make sure to wrap when the end of the line is reached, and will also roll the entire process' terminal space up when the bottom is reached. This behaviors is very similar to that seen in Linux and Windows CLI's.
+The IO manager supports two output modes for processes; progressive and targeted. In progressive mode, the  IO Manager keeps track of the current position of each processes `caret'. Then, if a processes wants to print in this mode, the processes simply passes a character to the IO manager. The IO manager will use the column and row fields of the IO part of the process entry to place the character within the processes screen space. The IO manager will make sure to wrap when the end of the line is reached, and will also roll the entire process' terminal space up when the bottom is reached. This behavior is very similar to that seen in the Linux and Windows CLI's.
 
-The other print mode is called `targeted' print mode. Here the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the processes screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better gui's and update only portions of the screen space.
+In targeted mode the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the processes screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better gui's and update only portions of the screen space at a time.
 
 \section{The Flat vs List interlude}
 
@@ -984,25 +1016,42 @@ Below is an over view of the the kind of accelerations using lists affords.
 n is the total number of processes run for the entire uptime of the system
 p is the number of active processes
 o is the number of outputable processes
-i is the number of inputable processes
-
-it always holds that:
-o <= p
-i <= p
-p <= n
+i is the number of inputable processes\\
+it always holds that:\\
+o \textless= p\\
+i \textless= p\\
+p \textless= n\\
 
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/List_Speedup}
-\caption{Runtime speed-ups of flat vs list.}
+\caption{Runtime speed-up of flat vs list}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
 
+\clearpage
+
+\section{Event Manager}
+
+\subsectoion
 
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=400px]{images/Events_Structure}
+\caption{The event manager's structures}
+\label{fig:WinTitleBarScreen}
+\end{figure}
 
+The events manager maintains a list of events with the above structures. The events them selfs are stored in a flat array but use `next' pointers to create lists. This means the event needs to have one list for allocated events and one for free events. This implies a maximum number of events the system can handle.
+
+The events them selfs have both a time and some data. The event manager does not care what the data is and simply returns it on command.
+
+The events manager maintains time order in its events list, meaning that the next node is always the one that will `pass' next. This makes sure finding all the events that have occurred since the last call much faster.
+
+The function events\_get\_event(time) returns the data from the next event if the events time is less than the time passed to the function, that is if the event has passed. If there are no more events that have passed at the time given, this function returns -1.
 
 
 
@@ -1019,7 +1068,7 @@ p <= n
 
 The hardware access portion of the IDE driver was not created as part of this project as indicated in the code, It was simply simply adapted it to fit into MOS.
 
-however caching was added above the driver to massively increases read write speeds.
+However caching was added above the driver to massively increases read write speeds.
 
 The caching was necessary because hard drives are slow. But also the manner in which they are accessed is not ideal. In an IDE device, the only way of getting data on or off the disk is in 512 byte segments. This means if we want to write one byte, we must read 512 bytes into memory, change the target byte, then write all 512 bytes back to the disk. This is very slow. Especially as it is common to want to write sequential bytes to disk; writing 512 bytes would require 512 reads of disk, then 512 writes to and from the same section of the disk.
 
@@ -1029,13 +1078,13 @@ The caching was necessary because hard drives are slow. But also the manner in w
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Caching_Table}
-\caption{IDE driver Caching Table.}
+\caption{The IDE driver's caching table}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
 The primary structure here is the cache table, as above, it consists of a number of descriptors and a corresponding number of 512 sections of memory.
 
-The caching layer provides the functions request_read and request_write.
+The caching layer provides the functions request\_read and request\_write.
 
 When these functions are called, the cache first searches the cached blocks for a block corresponding to the requested read/write address. If a cache is found, the pointer to this block is returned. If there is no cache for the requested address, the data is off the disk into a new cache block.
 
@@ -1051,9 +1100,22 @@ It is very common for the same block to be requested repeatedly, this is due to 
 
 This search is slow. Especially as the block we need is almost always (511 out of 512 times) simple `the same one we used last time'. Because of this, the search algorithm remembers which block it served last request, and always checks that block first. That means that 511 out of 512 times the algorithm is O(1) instead of O(n), and the other 1 out of 512 time, its O(n+1) instead of O(n).
 
+\subsubsection{Speed up demonstration.}
+
+TODO
 
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=400px]{images/Caching_Speedup}
+\caption{Read write times for different caching levels}
+\label{fig:WinTitleBarScreen}
+\end{figure}
 
+******
+Martin:
+Here i will time the time it takes to run the MRFS stress tests with and without the cahcing. then make a graph and discuss the results. I may also add different levels of caching to show different curves, unfortunately as my laptop broke i have not had time to do this yet.
+******
 
 
 
@@ -1084,25 +1146,25 @@ These new abstractions were created due to the unsuitability of the old abstract
 
 Although MRFS was taken from a previously complete project, it was significantly modified #TODO
 
-\subsection{File Directory Structure}
+\subsubsection{File Directory Structure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=200px]{images/MRFS_Structure}
-\caption{Inode Structure #TODO : give source to image.}
+\caption{Example inode structure #TODO : give source to image.}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
 
 MRFS uses an inode structure, this means that every object on the disk is represented and described by an inode. Each inode can be either a directory or file. Directory have other file system objects as children whereas files have data blocks as children. Inode structures are very common structures and were therefore easy to find information on and implement. MRFS' implementation uses bitmaps for storing which inodes and data blocks have been allocated on the disk. It contains no caching as caching was done on a lower level (see IDE driver above). Every inode must be a child of another inode except for the root inode, called root or `/'. All inodes also must have names, unique to their parent node. This means that any file system object may be referenced by its name along with its inode number.
 
-\subsection{File Directory Kernel Abstractions}
+\subsubsection{File Directory Kernel Abstractions}
 
 The kernel abstractions are simple in nature, most take a directory path and a file name, and operate upon that file. Those that operate on directories still take 2 strings, one as the path to the parent directory and one as the name of the directory wanted.
 
 These abstractions all work `all at once' meaning that they deal with files as a whole; reading a whole file into memory, writing a section of memory as an entire file. This is method is fit for the kernel as it never needs to read/write sections of files off disk.
 
-\subsection{File Directory User Space abstractions}
+\subsubsection{File Directory User Space abstractions}
 
 These abstractions are the endpoints for all file/directory system calls. The follow the open, read, close pattern, except that there is no need to close a file. To open a file or directory, the full absolute path to the object is required. The file system then returns a structure describing the file; its Inode number, its size, its names size, and two pointers, one into its data and one into its name. This structure is the same for both directories and files. The pointers into the data are initialized to point to the end of the file or directory.
 
@@ -1156,7 +1218,7 @@ Other than the memory addresses, the pager is also responsible for paging physic
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Heap_Manager}
-\caption{Heap manager structures}
+\caption{The Heap manager's structures}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
@@ -1170,7 +1232,7 @@ When the kernel requests a portion of memory, the memory manager simply follows 
 
 If there are no nodes available, the Heap manager will request extra memory from the Pager and then retry.
 
-when freeing a node, the Heap manager sets the node to free, but must check the node immediately preceding and following the newly freed one. If either nodes are also free, the nodes will be merged into one larger node. This ensures that each free section of memory is not split into many smaller nodes meaning that its more likely the manager can find blocks of memory of larger sizes. It also means that if all the memory were freed, the structure would be identical to the initial state.
+When freeing a node, the Heap manager sets the node to free, but must check the node immediately preceding and following the newly freed one. If either nodes are also free, the nodes will be merged into one larger node. This ensures that each free section of memory is not split into many smaller nodes meaning that its more likely the manager can find blocks of memory of larger sizes. It also means that if all the memory were freed, the structure would be identical to the initial state.
 
 
 
@@ -1194,7 +1256,7 @@ when freeing a node, the Heap manager sets the node to free, but must check the 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Pipe_Manager}
-\caption{Pipe manager structures}
+\caption{The Pipe manager's structures}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
@@ -1202,7 +1264,7 @@ when freeing a node, the Heap manager sets the node to free, but must check the 
 
 The Pipe manager has one central data structure, the pipe table. The pipe table keeps track of all registered pipes on the system, This table has three fields per entry (as shown above); the PID is the id of the process that owns the pipe, this is needed since the pipe stays in user space memory and knowing which processes it belongs to allows us to locate the correct piece of memory to read and write into the pipe. The location is the memory address of the beginning of the pipe. The mode is whether or not the pipe is a read pipe or a write pipe.
 
-when pipe\_create is called, it gets passed a location for 256 bytes of continuous memory. This memory is the actual pipe its self. It creates two new records in the pipe table, one for reading and one for writing, the index of these two entries are the pipe handles that are returned to the calling process. 
+When pipe\_create is called, it gets passed a location for 256 bytes of continuous memory. This memory is the actual pipe its self. It creates two new records in the pipe table, one for reading and one for writing, the index of these two entries are the pipe handles that are returned to the calling process. 
 
 The pipe its self is then initialized. The First 4 bytes are the read pointer, and point to the next byte to be read in the pipe body. The next 4 bytes are the write pointer, that points to the next free byte in the pipe. The rest is the body of the pipe. (this structure is shown above). 
 
@@ -1285,13 +1347,13 @@ The program loader has no core data structures and can be seen as a sub module o
 
 Testing is an important part of any system and there exist many different techniques for testing any software package. As MOS is a significant project, tests were essential to ensure the code contained as few errors as possible. 
 
-Mos has two main different testing levels; Kernel level and user-space level. This is because, even if each kernel module was tested thoroughly and passed, the runtime structure of the system is vast and hard to predict at any time. This means making `offline' tests that cover all eventualities very difficult.
+MOS has two main different testing levels; Kernel level and user-space level. This is because, even if each kernel module was tested thoroughly and passed, the runtime structure of the system is vast and hard to predict at any time. This means making `offline' tests that cover all eventualities very difficult.
 
 The kernel tests can be run during boot and put the system into a special state where user space applications are not run. Instead, a series of tests are executed.
 
-The user-space tests are a series of programs that can be run at any time while the system is booted normally, This form of testing is far less automated, however allows testings to add their own intuition about how and when to run the test, and how to interpret the output. Some of the tests could bee seen to simply demonstrate a feature. Other tests try their hardest to break the system and are expected to prove the systems stability.
+The user-space tests are a series of programs that can be run at any time while the system is booted normally, This form of testing is far less automated, however allows testers to add their own intuition about how and when to run the test, and how to interpret the output. Some of the tests could be seen to simply demonstrate a feature. Other tests try their hardest to break the system and are expected to prove the systems stability.
 
-These user-space tests rely on a more `the proof is in the pudding' structure. That is, if i can show you it works, it works `no need to prove it further'. This is because from the user's perspective, this is how the system should be. By simply booting the default configuration, the system has already proved that it can print to the screen in both `progressive' and `targeted' mode, provide the time, accept keyboard input, read files, sleep processes, pause processes, fork and exec processes, and so on. Furthermore, the endpoints for all system calls are kernel modules, which have already been tested for behavior, limits, and stress. Therefore user-tests do not do that deep into testing. 
+These user-space tests rely on a more `the proof is in the pudding' structure. That is, if I can show you it works, it works `no need to prove it further'. This is because from the user's perspective, this is how the system should be. By simply booting the default configuration, the system has already proved that it can print to the screen in both `progressive' and `targeted' mode, provide the time, accept keyboard input, read files, sleep processes, pause processes, fork and exec processes, and so on. Furthermore, the endpoints for all system calls are kernel modules, which have already been tested for behavior, limits, and stress. Therefore user-tests do not go that deep into testing. 
 
 \section{Kernel Tests}
 
@@ -1360,6 +1422,40 @@ A fork bomb is a type of attack where a process forks itself, then execs itself.
 A memory bomb is an attack where the process tries to allocate as much memory as possible, starving the system of memory, forcing the kernel to take more and more drastic measures to provide memory to this process. This can put the kernel into `thrashing' where the system is taking more time to acquire more memory than it is running user space processes.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Project Conclusion}
+
+Overall the project was a success. All initial aims were completed and some of the extension aims were completed to different levels, including additional aims that arose during development. 
+
+The project produced an Operating System that can be deployed on real hardware and can be used in the day to day life of users. Although the number of user-space programs are limited, this was always out of the scope of the project.
+
+With further time and resources, a focus would be put on creating a larger set of builtin programs and creating a network interface for connecting to the internet.
+
+Throughout the project I have gained a lot of knowledge about how computers function and how common structures and procedures are employed in modern operating systems. Furthermore I have gathered experience in using the C language to create powerful, reliable code.
 
 
 

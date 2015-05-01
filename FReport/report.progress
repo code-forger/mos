@@ -2,7 +2,7 @@
 %\begin{itemize}
 -%\item Scheduler.
 -%\item Program Loader.
-?%\item Event manager.
+-%\item Event manager.
 -%\item Pager.
 ?%\item Physical Memory Manager.
 -%\item Heap Manager.

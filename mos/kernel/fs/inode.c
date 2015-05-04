@@ -336,7 +336,7 @@ uint32_t inode_lock_for_write(inode* nodeIn)
     }
     else
     {
-        return FILEISLOCKEDBYANNOTHERPROCESS;
+        return 0;
     }
 }
 

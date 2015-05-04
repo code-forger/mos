@@ -3,6 +3,7 @@
 #include "../paging/paging.h"
 #include "../kstdlib/kstdlib.h"
 #include "port.h"
+#include "../scheduler/plist.h"
 
 #define KERNEL_CONTEXT 1
 #define PROCESS_CONTEXT 0
@@ -23,6 +24,10 @@ static uint32_t context = PROCESS_CONTEXT;
 
 static int32_t active_process = -1;
 static int32_t last_shown = 0;
+
+static plist inputable;
+static plist outputable;
+static plist hidden;
 
 // ######  ########    ###    ######## ####  ######
 //##    ##    ##      ## ##      ##     ##  ##    ##
@@ -178,16 +183,22 @@ static int overlaps(uint32_t pid, uint32_t process)
 
 static void terminal_hide_overlapping(uint32_t pid)
 {
+    plist templist;
+    plist_init_list(&templist);
     //printf("[CALL] : terminal_hide_overlapping(%d)\n", pid);
-    uint32_t process = scheduler_get_next_process(0, FS_NONE, F_DEAD);
-    while (process != 0)
+    int32_t process = plist_pop_head(&outputable);
+    while (process >= 0)
     {
-        //printf("check for %d - ", process);
-        if (process != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
+        if (((uint32_t)process) != pid && !(scheduler_get_process_table_entry(pid).flags & F_IS_HIDDEN) && overlaps(pid, process))
             terminal_hide_process(process);
+        else
+            plist_push_tail(&templist, process);
 
-        process = scheduler_get_next_process(process, FS_NONE, F_DEAD);
+        process = plist_pop_head(&outputable);
     }
+
+    outputable.head = templist.head;
+    outputable.tail = templist.tail;
 }
 
 // ######   #######  ##    ## ######## ########   #######  ##
@@ -211,6 +222,10 @@ void terminal_init()
 {
     process_terminal = terminal = paging_get_terminal_buffer();
     kernel_terminal = paging_get_kernel_terminal_buffer();
+
+    plist_init_list(&inputable);
+    plist_init_list(&outputable);
+    plist_init_list(&hidden);
 
 
     current_row = 0;
@@ -338,6 +353,8 @@ void terminal_hide_process(uint32_t pid)
             return;
         }
 
+        plist_push_tail(&hidden, pid);
+
         ptb->io.snapshot = (uint16_t*)malloc(sizeof(uint16_t) * (ptb->io.wx+1) * (ptb->io.wy+1));
 
         for (uint32_t y = ptb->io.py; y < ptb->io.py + ptb->io.wy; y++)
@@ -359,6 +376,7 @@ void terminal_hide_process(uint32_t pid)
 
 void terminal_show_process(uint32_t pid)
 {
+    plist_push_tail(&outputable, pid);
     if (scheduler_get_process_table_entry_for_editing(pid) != 0)
     {
         last_shown = pid;
@@ -385,16 +403,43 @@ void terminal_show_process(uint32_t pid)
 
 void terminal_switch_input()
 {
+    //kprintf("Switching from %d\n", active_process);
+    plist_push_tail(&inputable, active_process);
     int32_t target;
-    if ((target = scheduler_get_next_process(terminal_get_active(), F_HAS_INPUT, F_DEAD | F_IS_HIDDEN)) >= 0)
-        terminal_set_active(target);
+    do
+    {
+        target = plist_pop_head(&inputable);
+        //kprintf("found target %d\n", target);
+        if(target <= 0)
+            return;
+        if (scheduler_get_process_table_entry(target).flags & F_IS_HIDDEN)
+        {
+            //kprintf("hidden\n");
+            plist_push_tail(&inputable, target);
+        }
+        if (target == active_process)
+            return;
+    } while((scheduler_get_process_table_entry(target).flags & F_IS_HIDDEN));
+    terminal_set_active(target);
+    //kprintf("set to %d\n", target);
 }
 
 void terminal_switch_hidden()
 {
     int32_t target;
-    if ((target = scheduler_get_next_process(terminal_get_last_shown(), F_IS_HIDDEN, F_DEAD)) >= 0)
+    if ((target = plist_pop_head(&hidden)) >= 0)
         terminal_show_process(target);
+}
+
+void terminal_remove_process(uint32_t pid)
+{
+    if ((uint32_t)active_process == pid)
+    {
+        terminal_switch_input();
+    }
+    plist_remove_from(&inputable, pid);
+    plist_remove_from(&outputable, pid);
+    plist_remove_from(&hidden, pid);
 }
 
 //##    ## ######## ########  ##    ## ######## ##
@@ -517,6 +562,7 @@ void pterminal_setout(PIPE* pipes)
     ptb->io.column = 0;
     ptb->io.row = 0;
     terminal_hide_overlapping(scheduler_get_pid());
+    plist_push_tail(&outputable, scheduler_get_pid());
 }
 
 void pterminal_setin(PIPE* pipes)
@@ -527,5 +573,8 @@ void pterminal_setin(PIPE* pipes)
     if (active_process == -1)
         active_process = scheduler_get_pid();
     else
+    {
+        plist_push_tail(&inputable, active_process);
         terminal_set_active(scheduler_get_pid());
+    }
 }

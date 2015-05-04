@@ -100,7 +100,7 @@ uint32_t mrfsRename(char* oldname, char* newname)
 
 void mrfsOpenFile(char* name, bool create, FILE* fout)
 {
-    //printf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
+    //kprintf("[CALL] : mrfsOpenFile(%s, %d, %h)\n", name, create,fout);
     uint32_t virtual_type = vfs_open_virtual(name, fout);
     if (virtual_type == 0)
         return;
@@ -109,6 +109,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
         fout->inode = -1;
         fout->index = fout->size = -1;
         fout->type = 2;
+        //kprintf("done\n");
         return;
     }
     char* namecpy = malloc(strlen(name)+1);
@@ -118,7 +119,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     inode file = getInodeByName(namecpy, fname = splitForLookup(namecpy));
     if (file.node.info.exists)
     {
-        //printf("EXISTS %s\n", name);
+        //kprintf("EXISTS %s\n", name);
         inode parent = getDirInodeByPath(namecpy);
         free(fname);
         free(namecpy);
@@ -127,11 +128,12 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
         fout->type = 0;
+        //kprintf("done\n");
         return;
     }
     else if (create)
     {
-        //printf("CREATING\n");
+        //kprintf("CREATING\n");
         kmrfsNewFile(namecpy, fname, "", 0);
         inode parent = getDirInodeByPath(namecpy);
         file = getInodeByName(namecpy, fname);
@@ -142,6 +144,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
         fout->index = fout->size = file.node.size;
         fout->nameindex = fout->namesize = strlen(fname);
         fout->type = 0;
+        //kprintf("done\n");
         return;
     }
     free(fname);
@@ -149,6 +152,7 @@ void mrfsOpenFile(char* name, bool create, FILE* fout)
     fout->inode = -1;
     fout->index = fout->size = -1;
     fout->type = 2;
+    //kprintf("done\n");
     return;
 }
 

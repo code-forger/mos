@@ -199,9 +199,11 @@ void scheduler_pause_process(uint32_t pid)
 
 void scheduler_wake_process(uint32_t pid)
 {
+    //kprintf("waking proc %d\n", pid);
     scheduler_unmark_process_as(pid, F_PAUSED);
     if(plist_remove_from(&inactive_list, pid))
         plist_push_head(&active_list, pid);
+    //kprintf("woke proc %d\n", pid);
 }
 
 void scheduler_mark_process_as(uint32_t pid, uint32_t flags)
@@ -219,8 +221,11 @@ void scheduler_kill(uint32_t pid)
     if (pid > 1 && pid < next_pid && !(process_table[pid].flags & F_DEAD))
     {
         terminal_clear_process(pid);
+        terminal_remove_process(pid);
 
         scheduler_mark_process_as(pid, F_DEAD);
+        plist_remove_from(&active_list, pid);
+        plist_remove_from(&inactive_list, pid);
 
         char procdir[7+7] = "/info/";
 
@@ -299,6 +304,7 @@ static void get_next_to_be_scheduled()
             continue;
         break;
     }*/
+    //kprintf("selecting\n");
     if(current_pid > 0 && !(process_table[current_pid].flags & F_DEAD))
         plist_push_tail(&active_list, current_pid);
     do
@@ -397,6 +403,8 @@ void scheduler_time_interupt()
     paging_map_phys_to_virtual(process_table[current_pid].heap_physical_page,PROCESS_HEAP_TABLE);
     for (uint32_t i = 0; i < process_table[current_pid].heap_size; i++)
         paging_map_phys_to_virtual(((uint32_t*)PROCESS_HEAP_TABLE)[i],0x80000000 + 0x1000 * i);
+
+    //kprintf("Leaving scheduler to %d", current_pid);
 
     asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");

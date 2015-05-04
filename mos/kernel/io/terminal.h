@@ -41,6 +41,7 @@ void terminal_show_process(uint32_t pid);
 
 void terminal_switch_input();
 void terminal_switch_hidden();
+void terminal_remove_process(uint32_t pid);
 
 //KERNEL METHODS
 void kprintf(const char* string, ...);

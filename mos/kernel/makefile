@@ -3,7 +3,7 @@ GCC = ../../buildtools/local/bin/i686-elf-gcc
 
 all: mos.bin
 
-mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/events.o scheduler/scheduler-asm.o IPC/pipe.o io/hdd.o fs/inode.o fs/block.o fs/mrfs.o fs/kmrfs.o fs/vfs.o kstdlib/malloc.o ELF/elf.o kerneltest.o kstdlib/string.o
+mos.bin: kernel.o kernel-asm.o pic/pic.o paging/paging.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o interupts/interupts-asm.o interupts/interupts.o io/terminal.o drivers/keyboard.o scheduler/scheduler.o scheduler/plist.o scheduler/events.o IPC/pipe.o io/hdd.o fs/inode.o fs/block.o fs/mrfs.o fs/kmrfs.o fs/vfs.o kstdlib/malloc.o ELF/elf.o kerneltest.o kstdlib/string.o
 	$(GCC) -T linker.ld -o mos.bin -ffreestanding -nostdlib $+ -lgcc
 
 kernel.o: kernel.c kernel.asm
@@ -39,8 +39,10 @@ init/idt.o: init/idt.c init/idt.h init/idt.asm
 	nasm -f elf32 init/idt.asm -o init/idt-asm.o
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
-scheduler/scheduler.o: scheduler/scheduler.c scheduler/scheduler.h scheduler/scheduler.asm
-	nasm -f elf32 scheduler/scheduler.asm -o scheduler/scheduler-asm.o
+scheduler/scheduler.o: scheduler/scheduler.c scheduler/scheduler.h
+	$(GCC) -c $< -o $@ $(CPPFLAGS)
+
+scheduler/plist.o: scheduler/plist.c scheduler/plist.h
 	$(GCC) -c $< -o $@ $(CPPFLAGS)
 
 scheduler/events.o: scheduler/events.c scheduler/events.h

@@ -299,7 +299,7 @@ void terminal_send_to_process(char data)
     {
         process_table_entry ptb = scheduler_get_process_table_entry(active_process);
         pipe_write(ptb.io.inpipe, data);
-        scheduler_unmark_process_as(active_process, (F_PAUSED | F_SKIP));
+        scheduler_wake_process(active_process);
     }
     last_char_pressed = data;
 }

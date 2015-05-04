@@ -2,6 +2,7 @@
 #include "fs/mrfs.h"
 #include "fs/kmrfs.h"
 #include "kstdlib/kstdlib.h"
+#include "scheduler/plist.h"
 
 int verbosity = 0;
 
@@ -12,7 +13,8 @@ int ktest_assert(char* test, int val, int cont)
         kprintf("FAILED : %s\n", test);
         if (!cont)
         {
-            kprintf("Non-continue test Failed, halting now.\n");
+            kprintf("Non-continue test Failed, halting now : ");
+            kprintf(test);
             asm("cli");
             asm("hlt");
         }
@@ -43,6 +45,7 @@ void kernel_test_mode(uint32_t test_level, uint32_t verbin)
     failures += call_test("malloc", malloc_behaviour_test);
     failures += call_test("mrfs", mrfs_behaviour_test);
     failures += call_test("kmrfs", kmrfs_behaviour_test);
+    failures += call_test("plist", plist_behaviour_test);
 
     if (test_level >= TEST_LIMITS)
     {

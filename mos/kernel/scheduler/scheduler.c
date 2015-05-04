@@ -10,7 +10,6 @@
 #include "scheduler.h"
 
 static uint32_t current_pid;
-static uint32_t starting_pid;
 static uint32_t next_pid;
 static uint32_t max_pid;
 static uint32_t source_pid;
@@ -20,6 +19,9 @@ static uint32_t kernel_esp, kernel_ebp;
 static uint64_t global_ms;
 
 static bool forking; // Are we waiting on a fork?
+
+static plist active_list;
+static plist inactive_list;
 
 int32_t fork()
 {
@@ -74,6 +76,8 @@ int32_t fork()
     free(parentPATH);
     free(parentcwd);
     free(f);
+
+    plist_push_tail(&active_list, fork_pid);
 
     //printf("[scheduler.c] RETE : fork = %d\n", fork_pid);
     return fork_pid; // That is all that is done for fork now, the rest will be dealt with in the next context shift.
@@ -191,12 +195,14 @@ void scheduler_sleep(uint32_t milliseconds)
 void scheduler_pause_process(uint32_t pid)
 {
     process_table[pid].flags |= F_PAUSED;
-}
+}*/
 
 void scheduler_wake_process(uint32_t pid)
 {
-    process_table[pid].flags &= ~(F_PAUSED | F_SKIP);
-}*/
+    scheduler_unmark_process_as(pid, F_PAUSED);
+    if(plist_remove_from(&inactive_list, pid))
+        plist_push_head(&active_list, pid);
+}
 
 void scheduler_mark_process_as(uint32_t pid, uint32_t flags)
 {
@@ -244,7 +250,7 @@ static void events()
     {
         if ((event >> 16) == E_WAKE)
         {
-            scheduler_unmark_process_as(event&0xFFFF, (F_PAUSED | F_SKIP));
+            scheduler_wake_process(event&0xFFFF);
         }
     }
 }
@@ -268,6 +274,52 @@ int32_t scheduler_get_next_process(uint32_t current_input, uint32_t required, ui
 
 static uint32_t process_history[10];
 static uint32_t process_history_count;
+
+static void get_next_to_be_scheduled()
+{
+    /*starting_pid = current_pid;
+    uint32_t failed = 0;
+    for (;;)
+    {
+        if (failed)
+        {
+            current_pid = 0;
+            break;
+        }
+        ++current_pid;
+        current_pid = (current_pid % next_pid);
+        if (current_pid == starting_pid)
+            failed = 1;
+        if (process_table[current_pid].flags & F_SKIP)
+        {
+            process_table[current_pid].flags -= F_SKIP;
+            continue;
+        }
+        if (process_table[current_pid].flags & FS_DONT_SCHEDULE)
+            continue;
+        break;
+    }*/
+    if(current_pid > 0 && !(process_table[current_pid].flags & F_DEAD))
+        plist_push_tail(&active_list, current_pid);
+    do
+    {
+        int32_t current_pid_next = plist_pop_head(&active_list);
+        if (current_pid_next == -1)
+            current_pid = 0;
+        else
+        {
+            current_pid = (uint32_t)current_pid_next;
+            if(process_table[current_pid].flags & FS_DONT_SCHEDULE)
+                plist_push_tail(&inactive_list, current_pid);
+            else
+                break;
+        }
+    }
+    while(current_pid);
+
+    //kprintf("Selected %d \n", current_pid);
+
+}
 
 void scheduler_time_interupt()
 {
@@ -335,28 +387,7 @@ void scheduler_time_interupt()
         }
     }
 
-    starting_pid = current_pid;
-    uint32_t failed = 0;
-    for (;;)
-    {
-        if (failed)
-        {
-            current_pid = 0;
-            break;
-        }
-        ++current_pid;
-        current_pid = (current_pid % next_pid);
-        if (current_pid == starting_pid)
-            failed = 1;
-        if (process_table[current_pid].flags & F_SKIP)
-        {
-            process_table[current_pid].flags -= F_SKIP;
-            continue;
-        }
-        if (process_table[current_pid].flags & FS_DONT_SCHEDULE)
-            continue;
-        break;
-    }
+    get_next_to_be_scheduled();
 
     for (uint32_t i = 0; i < process_table[current_pid].code_size; i++)
         paging_map_phys_to_virtual(process_table[current_pid].code_physical[i], 0x08048000 + 0x1000 * i);
@@ -377,6 +408,9 @@ void scheduler_time_interupt()
 
 void scheduler_init(uint32_t esp, uint32_t ebp)
 {
+    plist_init_list(&active_list);
+    plist_init_list(&inactive_list);
+
     kernel_esp = esp;
     kernel_ebp = ebp;
 

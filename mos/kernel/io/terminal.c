@@ -382,6 +382,7 @@ void terminal_show_process(uint32_t pid)
         last_shown = pid;
 
         scheduler_unmark_process_as(pid, F_IS_HIDDEN);
+        scheduler_wake_process(pid);
 
         terminal_hide_overlapping(pid);
 

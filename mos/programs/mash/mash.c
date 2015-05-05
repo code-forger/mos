@@ -134,7 +134,7 @@ void main(void)
 
     commandnode* current = 0;
 
-    bottom->next = 0;
+    bottom->next = bottom->prev = 0;
     bottom->command = "END OF HISTORY";
 
     init_history_from_file();
@@ -200,6 +200,8 @@ void main(void)
                         putcharat(buffer[j] = current->command[j], carret_base + j, 0);
                         caret_loc++;
                     }
+
+                    break;
 
                 }
             }

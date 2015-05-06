@@ -33,6 +33,18 @@ static int call_test(char* ruberic, uint32_t (*test_func)())
     return test_func();
 }
 
+void kernel_run_cache_timing()
+{
+    terminal_switch_context(1);
+    //paging_map_new_to_virtual(SCRATCH);
+    //kmrfsNewFile("/", "a", (char*)(SCRATCH), 0x1000);
+
+    mrfs_run_timing_test();
+
+    asm("cli");
+    asm("hlt");
+}
+
 void kernel_test_mode(uint32_t test_level, uint32_t verbin)
 {
 

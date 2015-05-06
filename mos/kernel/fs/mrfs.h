@@ -16,3 +16,4 @@ uint32_t mrfsDeleteDirWithDescriptor(FILE* dd);
 uint32_t mrfs_behaviour_test();
 uint32_t mrfs_limits_test();
 uint32_t mrfs_stress_test();
+void mrfs_run_timing_test();

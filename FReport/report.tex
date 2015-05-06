@@ -6,11 +6,17 @@
 \usepackage{framed}
 \usepackage{pdfpages}
 \usepackage{wrapfig}
+\usepackage{pgfplots}
 
-\addtolength{\oddsidemargin}{-.5in}
-\addtolength{\evensidemargin}{-.5in}
-\addtolength{\textwidth}{1in}
+\usepackage{geometry}
 
+\geometry
+{
+  left=1.2in,
+  right=1.2in,
+  top=1.2in,
+  bottom=30mm,
+}
 
 \title{MOS : A Multitasking Operating System}
 \date{\today}
@@ -53,13 +59,48 @@ We live in a world surrounded and controlled by machines, and software is our wa
 
 
 
-\clearpage
+
 \section{Understanding Operating Systems}
 
 
 Before this project can even begin, an understanding of what an Operating System is and does is required.
 
-Operating Systems come in all different shapes and sizes, however usually they contain three distinct parts:
+Operating Systems come in all different shapes and sizes, each with its own look, feel, and utility.
+
+For an every day user, the Operating System turns complex tasks into seemingly trivial ones. Even running a program is a complex task for a computer to achieve, however to most users `launch your favourite browser' might seem like the simplest task to accomplish. Operating Systems make these tasks easy by providing graphical menus and windows to `disguise' the complexity beneath. It may also provide a number of built in programs like file browsers and settings managers to make common tasks even more straight forward.
+
+An Operating system may also offer tailoring of a system to a specific user, like having certain programs start when the computer is turned on, or drawing the screen with a custom image as a background. To this extend, the Operating System can be seen as `anything that isn't a program' to the user.
+
+Below is a screen shot of the popular Windows operating system, It shows a number of programs; a web browser `firefox', a test editor `notepad++', a file browser `explorer'. The programs each own and control their `window' however all other parts of the screen are controlled by the Operating System. On the right, the portions of the screen controlled by the programs is blacked out, showing only the parts of the screen controlled by the operating system.
+
+
+\begin{figure}[ht]
+\centering
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=200px]{images/Windows}
+  \label{fig:WinProcManScreen}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=200px]{images/Windows-Black}
+  \label{fig:LinProcManScreen}
+\end{minipage}
+  \caption{A screen shot of the Windows operating system.}
+\end{figure}
+
+The operating system is doing more than just running 3 programs though. Each program can have any number of `processes'. A process is a piece of a program that can perform one action at a time. If a program wants to do two things at a time, it must have two processes. Furthermore there may be more processes running that don't belong to a graphical program and are needed to keep the system running often referred to a system processes. The Operating System must make sure each of these processes gets a fair share of the computer, to make sure each program can run correctly.
+
+Processes, whether they are program processes or system processes, need to access a number of resources to work. The most apparent are the screen, the keyboard, and the mouse. Operating systems gives the processes simple access to these resources to allow programs to show things to the user, and allows the user to interact with them. However, in the back ground, there are many other types or resources that the Operating System controls. Hard Drives are permanent storage services, they allow programs and users to create information that lasts even after a reboot. RAM is a temporary storage that allows programs to keep track of there current state (for example, storing the text and images for your current word document). Network devices such as ethernet cards and wifi cards allow programs to communicate with other programs on other computers and connect to the internet.
+
+These resources are not infinite. Hard Drives, RAM, and screen space, are restricted by size. Whereas network cards, and printers, are restricted by throughput (actions per minute). An Operating System tries to allow access to all these resources by all processes simultaneously. By denying a process access to a specific resource, the program may not be able to perform its task correctly. However, to a program, fair may not mean equal. A web browser my heavily use network card, but never write to the Hard Disk, Alternatively, A Photo Editor may never require network access, but may write very large amounts to the Hard Disk.
+
+This high level `user perspective' of an Operating System is important to keep in mind through out this project as ultimately the users are the target demographic of the system. However to produce an Operating System a much more in-depth understanding is required.
+
+
+
+
+An Operating System is higly a complex piece of software however all require 3 distinct sections:
 
 The kernel is the software that drives the hardware. It provides nice abstractions and interfaces to control the very fiddly underlying machine.
 
@@ -67,24 +108,7 @@ The Bootloader is the code that is run first. It gets things that the kernel mig
 
 The Final part is a collection of programs and other software that come with the Operating System. Although some people would argue this is not so much part of the Operating System, on some systems (namely Microsoft's Windows) a huge number of these programs are built right in, and seem from the outside to be part of the kernel.
 
-\subsection{The Bootloader}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=415px]{images/bootProcess.png}
-\caption{An example boot cycle.}
-\label{fig:theloader}
-\end{figure}
-
-The bootloader's job is to load the kernel. First off, the CPU has to begin executing code somewhere, most of the time this is done by the BIOS, which detects our bootloader and starts it running.
-
-The majority of the rest of the bootloader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the bootloader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
-
-The final steps of the bootloader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
-
-Finally the bootloader can jump to the start of the kernel and it's job is finished.
-
-\clearpage
 \subsection{The Kernel}
 
 \begin{wrapfigure}{r}{150px}
@@ -95,21 +119,40 @@ Finally the bootloader can jump to the start of the kernel and it's job is finis
 \label{fig:thekernel}
 \end{wrapfigure}
 
-Once the bootloader has passed control to the kernel, the kernel begins to prepare for executing programs. It will create tables of information, most of which will be empty to begin with, but they will quickly be filled. Some of the more important tasks are keeping track of which processes are currently executing and deciding which should go next, as well as ensuring that all processes think they have enough memory to operate correctly.
+The kernels job is to both control the hardware and mediate the execution of processes. To begin with it will initialise its modules, each there to control one piece of hardware or provide one service to the kernel or user-space. Some of the more important task these modules perform are keeping track of which processes are currently executing, deciding which processes should go next, as well as ensuring that all processes think they have enough memory to operate correctly.
 
-Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes are pieces of code that perform some form of task, each having a unique environment. As far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
+Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes each having a unique environment. In fact as far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
 
+
+
+\clearpage
+\subsection{The Bootloader}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=415px]{images/bootProcess.png}
+\caption{An example boot cycle.}
+\label{fig:theloader}
+\end{figure}
+
+The bootloader's job is to load the kernel. The CPU has to begin executing code somewhere, this is the boot loader.
+
+The majority of the bootloader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the bootloader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
+
+The final steps of the bootloader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
+
+Finally the bootloader can start the kernel and it's job is finished.
 
 \subsection{The Built in Programs}
 
-\begin{wrapfigure}{r}{250px}
+\begin{wrapfigure}{r}{200px}
 \centering
-\includegraphics[width=250px]{images/windowing}
+\includegraphics[width=200px]{images/windowing}
 \caption{An example windowing server architecture.}
 \label{fig:theserver}
 \end{wrapfigure}
 
-After the kernel starts process 0, process 0 is free to spawn many other programs. Many of these programs will come `built in' to an Operating System to create a richer platform for users.
+After the kernel starts the first process, it is free to spawn many other processes, some of which will be the programs that the user interacts with. Many of these programs will come `built in' to an Operating System to create a richer platform for users.
 
 Some would argue that these programs are not part of the Operating System its self. For example, in the Linux terminology, a kernel plus a collection of programs is referred to as a `Distro' or distribution of Linux. In Windows however, many of these programs are well integrated into the kernel and are considered part of the Operating System.
 
@@ -233,7 +276,7 @@ This project is a technical exercise in understanding the low level relationship
 
 
 
-\clearpage
+
 \chapter{Requirements Analysis}
 
 In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
@@ -366,7 +409,7 @@ Figure \ref{fig:WinWinNavScreen} and \ref{fig:LinWinNavScreen} give example of t
 \end{figure}
 
 
-\clearpage
+
 \section{The Program Developers}
 
 To understand how program developers interact with Operating Systems The Linux distribution remix `Gnomebuntu' was studied. Only one system here was studied as Linux is an open source system. This meant that the system could be looked at in more depth.
@@ -421,7 +464,7 @@ Linux provides the free call to deallocate memory.
 
 Free is passed a pointer to memory that was received from malloc, it frees this memory allowing for it to be allocated during future calls to malloc.
 
-\clearpage
+
 
 \subsection{Managing screen space in Linux}
 
@@ -483,7 +526,7 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 
 
-\clearpage
+
 \chapter{Design}
 
 As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in TODO Link to apendix here.
@@ -491,6 +534,7 @@ As with the Analysis, the Design phase was separated into End User and Program D
 Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ascii drawing and focussing on delivering the service provided in a quick and clean manner.
 
 Program Developer design was constructed with a `many simple tools' structure. Each system call the standard library contained was made to perform one task, rather than bunching many tasks into one more complex call. This allows developers to maintain simple, intuitive control over their resources.
+
 
 \clearpage
 \section{The End User}
@@ -587,7 +631,7 @@ Notes supports common cursor key commands for navigating the cursor and saves wh
 
 
 
-\clearpage
+
 
 \section{The Program Developers}
 
@@ -599,42 +643,60 @@ MOS will provide a very similar set of system calls to Linux, however their beha
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together.
 
-\textbf{Creating a new process}
+\subsubsection{Creating a new process}
 
 Similar to Linux the process creation pattern MOS was designed to follow the `fork and exec' pattern. Therefore MOS provides two system calls:
 
+\vspace{1.5mm}
+\noindent
 `fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish themselves by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
 
+\vspace{1.5mm}
+\noindent
 `exec(name)' takes the absolute path of the target program to be loaded. It does not return. On failure the current process will not continue.
 
-\textbf{Destroying processes}
+\subsubsection{Destroying processes}
 
 Unlike in Linux, where destroying, pausing, and restarting processes uses one system call, MOS will use three separate calls.
 
+\vspace{1.5mm}
+\noindent
 `kill(pid)' will kill the target process, freeing all its memory and removing it from the scheduler.
 
-\textbf{Pausing and Restarting programs}
+\subsubsection{Pausing and Restarting programs}
 
 Pausing programs is important for efficiency, therefore MOS provides the following calls.
 
+\vspace{1.5mm}
+\noindent
 `pause()' and `pause(pid)' will pause the target process until `wake()' is called. With `pause()' the current process will be paused and immediately revoke controls to the scheduler.
 
+\vspace{1.5mm}
+\noindent
 `wake(pid)' will wake the target process and allow it to be scheduled again. It will NOT cause the target process to be executed next.
 
+\vspace{1.5mm}
+\noindent
 `sleep(time)' will pause the current processes for the specified time in ms. The process will wake early if the wake system call is called on this process.
 
 \subsection{Managing memory}
 
 The memory managemnt API will be identical to that of Linux. Therefore MOS will provide two system calls:
 
+\vspace{1.5mm}
+\noindent
 `malloc(size)' will allocate a memory location of size, and return a pointer to that location.
 
+\vspace{1.5mm}
+\noindent
 `free(pointer)' will deallocate the memory at a pointer.
 
 \subsection{Managing screen space}
 
 As the Linux screen management system cannot be mimicked in the MOS, a new one entirely was invented. This lead to one system call:
 
+\vspace{1.5mm}
+\noindent
 `setio(px,py,wx,wy)' will allocate the portion of the screen using the starting coordinate (px,py) and the size (wx,wy).
 
 
@@ -642,14 +704,24 @@ As the Linux screen management system cannot be mimicked in the MOS, a new one e
 
 The Interprocess Communication process will be very similar to Linux's system with one key addition; wait to read
 
+\vspace{1.5mm}
+\noindent
 `pipe(size, \&readpipe, \&writepipe)' will set up a communication channel of the requested size. On failure it will return one of a number of errors: -1 will indicate that the pipe cannot be created due to a lack of space, -2 will indicate that the system pipe table is full. This call will fill readpipe and writepipe with descriptors that can be passed to all the other pipe calls.
 
+\vspace{1.5mm}
+\noindent
 Once a pipe is set up three calls will be able to interact with it:
 
+\vspace{1.5mm}
+\noindent
 `write(pipe, byte)' will write the byte into the pipe. On failure it will return an error message; 1 will mean the pipe is full and 2 will mean the pipe is of the wrong type (a read-pipe not a write-pipe).
 
+\vspace{1.5mm}
+\noindent
 `read(pipe)' will return a positive byte representing the byte at the front of the pipe, or a negative error message; -1 will mean the pipe is empty and -2 will mean the pipe is of the wrong type.
 
+\vspace{1.5mm}
+\noindent
 `waitToRead(pipe)' will return a positive byte representing the byte at the front of the pipe or a negative error message; -2 will mean the pipe is of the wrong type. Note, if the pipe is empty, this call will block the process until the pipe is written to.
 
 
@@ -657,28 +729,48 @@ Once a pipe is set up three calls will be able to interact with it:
 
 The File access functions will use a similarly idea to linux's however will be far simpler.
 
+\vspace{1.5mm}
+\noindent
 `fopen(name, \&file\_handle, create)' will open the file specified by the absolute path `name' and store the relelvent information into the file handle provided. If the file does not exist and the `create' parameter is true, the file will be created. If the directory does not exists, no action will be taken. If the file does not exist or any other error occurs, the type field of the file handle will be set to 2. The rest of the structure will be considered invalid.
 
+\vspace{1.5mm}
+\noindent
 Once a file handle has been retrieved, the file can be modified through the handle.
 
+\vspace{1.5mm}
+\noindent
 `fputc(\&file\_handle, char)' and `char = fgetc(\&file\_handle)' will write and get characters from the file, the file handle must be valid and well formed else the function will take no action and return an error code. The read/write will be performed at the file handles current data index.
 
+\vspace{1.5mm}
+\noindent
 `fseek(\&file\_handle, position)' will seek the data index of the file to the desired location, the index will be clipped to the bounds of the file and so will always be positive and \textless = the file's size.
 
+\vspace{1.5mm}
+\noindent
 `char = fgetnamec(\&file\_handle)' and `fnameseek(\&file\_handle, position)' will act the same as the corresponding functions above however operating on the name of the file.
 
+\vspace{1.5mm}
+\noindent
 `fdelete(\&file\_handle)' will delete the file at this file handle if it exists.
 
+\vspace{1.5mm}
+\noindent
 `frename(oldname, newname)' will move and rename the file at oldname to newname. If either the source file doesn not exist or the target directory does not exist the function will take no action.
 
 
 \subsection{Directory Access}
 
+\vspace{1.5mm}
+\noindent
 `fopendir(name, \&dir\_handle, create)' will open the directory in the same manner as files are opened above.
 
 
+\vspace{1.5mm}
+\noindent
 `file\_handle = fgetfile(\&dir\_handle)' Will get the file handle at the directories current file index. This file will be a valid file handle to be used will all file functions.
 
+\vspace{1.5mm}
+\noindent
 `fseek(\&dir\_handle, position)', `char = fgetnamec(\&dir\_handle)', `fnameseek(\&dir\_handle, position)', and `fdeletedir(\&dir\_handle)' will act on directories exactly as on files.
 
 
@@ -702,7 +794,7 @@ Once a file handle has been retrieved, the file can be modified through the hand
 
 
 
-\clearpage
+
 \section{The Kernel}
 
 The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one peice of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realised that some modules could be brought `closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the io descriptors, these io descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures `cross module'.
@@ -864,8 +956,9 @@ We will discuss the more complex and central modules first, and then move onto t
 
 
 
-\clearpage
 
+
+\clearpage
 \section{The Scheduler}
 
 
@@ -892,6 +985,7 @@ The Decision to keep sleeping processes in this list is due to fairness of execu
 The Scheduler also maintains a list for any paused processes.
 
 Using separate lists for each of these `interesting' attributes means there is never any need to search the process table for this information. The lists (by being utilized as queue's) can also be seen to keep the order in which the process gained the specific attribute stored.
+
 
 \clearpage
 \subsection{The Process Entry}
@@ -944,6 +1038,7 @@ The io part stores information about the processes IO, this information isused a
 
 
 
+
 \clearpage
 
 \section{The IO Manager}
@@ -966,7 +1061,7 @@ When a key is pressed and the keyboard driver decides the key press is for the u
 
 \subsection{Screen Output}
 
-The output part of the IO Manager has more to do, since it is managing a finite and very scarce resource. To consider the screen manager `fair' we say that; 
+The output part of the IO Manager has more to do, since it is managing a finite and very scarce resource. To consider the screen manager `fair' we say that;
 \begin{itemize}
 \item Any request for a portion of the screen by a user space process must by accepted and fulfilled.
 \item A portion of the screen can only be under the control of one user space processes at any one time.
@@ -989,6 +1084,7 @@ The IO manager supports two output modes for processes; progressive and targeted
 
 In targeted mode the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the processes screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better gui's and update only portions of the screen space at a time.
 
+\clearpage
 \section{The Flat vs List interlude}
 
 During the discussion of the scheduler and the IO manager I have mentioned the use of lists to store PID's in a number of situations. These lists are an acceleration structure over the process table its self. In the first design, the scheduler and IO manager dealt only with the process table, however as noted above this table is very slow to use for many operations, namely searching for attributes.
@@ -997,9 +1093,7 @@ For example, when scheduling a new processes, the scheduler would have to do a l
 
 Secondly, when a process requested a portion of the screen, the IO manager would also have to search the entire process table to see if any other processes overlapped.
 
-The solution was to introduce a number of single linked lists, and maintain pointers to the head and tail of these lists.
-
-By storing the process information in lists, we could accelerate the access algorithms in many different places.
+The solution was to introduce a number of single linked lists, and maintain pointers to the head and tail of these lists. By storing the process information in lists, the access algorithms were accelerated in many different places.
 
 The scheduler no longer has to search the process table at all, it simply needs to pull the next process out the front of the respective list. And although the IO manager still needs to search its list, the algorithm now need only to search the number of processes that have output, not every processes that has ever been run.
 
@@ -1031,11 +1125,11 @@ p \textless= n\\
 \end{figure}
 
 
-\clearpage
 
+\clearpage
 \section{Event Manager}
 
-\subsectoion
+\subsection{Data Structure}
 
 
 \begin{figure}[ht]
@@ -1060,8 +1154,9 @@ The function events\_get\_event(time) returns the data from the next event if th
 
 
 
-\clearpage
 
+
+\clearpage
 \section{The Hard Drive: Drivers and File systems}
 
 \subsection{The IDE Driver}
@@ -1102,9 +1197,6 @@ This search is slow. Especially as the block we need is almost always (511 out o
 
 \subsubsection{Speed up demonstration.}
 
-TODO
-
-
 \begin{figure}[ht]
 \centering
 \includegraphics[width=400px]{images/Caching_Speedup}
@@ -1112,13 +1204,30 @@ TODO
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
-******
-Martin:
-Here i will time the time it takes to run the MRFS stress tests with and without the cahcing. then make a graph and discuss the results. I may also add different levels of caching to show different curves, unfortunately as my laptop broke i have not had time to do this yet.
-******
-
-
-
+\begin{figure}[h!]
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+          width=\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Caching Levels, % Set the labels
+          ylabel=Time for 200 actions,
+          legend style={at={(0.845,0.558)},anchor=south}, % Put the legend below the plot
+          %x tick label style={rotate=90,anchor=east} % Display labels sideways
+          xtick={0, 1, 2},
+          xticklabels={No caching, Block caching, Search Caching},
+          height=150
+        ]
+        \addplot coordinates {(0,203) (1,18) (2,8)};
+        \addplot coordinates {(0,305) (1,20) (2,9)};
+        \addplot coordinates {(0,217) (1,20) (2,9)};
+        \legend{Reading files , Writing files, Mixed read/writes}
+      \end{axis}
+    \end{tikzpicture}
+    \caption{Graph of read write times for different caching levels}
+  \end{center}
+\end{figure}
 
 
 
@@ -1209,7 +1318,7 @@ Other than the memory addresses, the pager is also responsible for paging physic
 
 
 
-\clearpage
+
 
 \section{Heap manager}
 
@@ -1242,7 +1351,7 @@ When freeing a node, the Heap manager sets the node to free, but must check the 
 
 
 
-\clearpage
+
 
 
 
@@ -1264,9 +1373,9 @@ When freeing a node, the Heap manager sets the node to free, but must check the 
 
 The Pipe manager has one central data structure, the pipe table. The pipe table keeps track of all registered pipes on the system, This table has three fields per entry (as shown above); the PID is the id of the process that owns the pipe, this is needed since the pipe stays in user space memory and knowing which processes it belongs to allows us to locate the correct piece of memory to read and write into the pipe. The location is the memory address of the beginning of the pipe. The mode is whether or not the pipe is a read pipe or a write pipe.
 
-When pipe\_create is called, it gets passed a location for 256 bytes of continuous memory. This memory is the actual pipe its self. It creates two new records in the pipe table, one for reading and one for writing, the index of these two entries are the pipe handles that are returned to the calling process. 
+When pipe\_create is called, it gets passed a location for 256 bytes of continuous memory. This memory is the actual pipe its self. It creates two new records in the pipe table, one for reading and one for writing, the index of these two entries are the pipe handles that are returned to the calling process.
 
-The pipe its self is then initialized. The First 4 bytes are the read pointer, and point to the next byte to be read in the pipe body. The next 4 bytes are the write pointer, that points to the next free byte in the pipe. The rest is the body of the pipe. (this structure is shown above). 
+The pipe its self is then initialized. The First 4 bytes are the read pointer, and point to the next byte to be read in the pipe body. The next 4 bytes are the write pointer, that points to the next free byte in the pipe. The rest is the body of the pipe. (this structure is shown above).
 
 The pipe uses a pointer chase method to allow for a seemingly continuous stream of data. This involves the write pointer progressing along the pipe body until it reaches the top, it then simply wraps to the bottom and continues progressing. In tandem, the read pointer also progresses along until the top, wrapping in a similar fashion.
 
@@ -1289,6 +1398,7 @@ Because this special area does not have the same base memory address as the proc
 
 
 
+\clearpage
 
 \section{Interrupts handler}
 
@@ -1345,7 +1455,7 @@ The program loader has no core data structures and can be seen as a sub module o
 
 \chapter{Testing}
 
-Testing is an important part of any system and there exist many different techniques for testing any software package. As MOS is a significant project, tests were essential to ensure the code contained as few errors as possible. 
+Testing is an important part of any system and there exist many different techniques for testing any software package. As MOS is a significant project, tests were essential to ensure the code contained as few errors as possible.
 
 MOS has two main different testing levels; Kernel level and user-space level. This is because, even if each kernel module was tested thoroughly and passed, the runtime structure of the system is vast and hard to predict at any time. This means making `offline' tests that cover all eventualities very difficult.
 
@@ -1353,11 +1463,11 @@ The kernel tests can be run during boot and put the system into a special state 
 
 The user-space tests are a series of programs that can be run at any time while the system is booted normally, This form of testing is far less automated, however allows testers to add their own intuition about how and when to run the test, and how to interpret the output. Some of the tests could be seen to simply demonstrate a feature. Other tests try their hardest to break the system and are expected to prove the systems stability.
 
-These user-space tests rely on a more `the proof is in the pudding' structure. That is, if I can show you it works, it works `no need to prove it further'. This is because from the user's perspective, this is how the system should be. By simply booting the default configuration, the system has already proved that it can print to the screen in both `progressive' and `targeted' mode, provide the time, accept keyboard input, read files, sleep processes, pause processes, fork and exec processes, and so on. Furthermore, the endpoints for all system calls are kernel modules, which have already been tested for behavior, limits, and stress. Therefore user-tests do not go that deep into testing. 
+These user-space tests rely on a more `the proof is in the pudding' structure. That is, if I can show you it works, it works `no need to prove it further'. This is because from the user's perspective, this is how the system should be. By simply booting the default configuration, the system has already proved that it can print to the screen in both `progressive' and `targeted' mode, provide the time, accept keyboard input, read files, sleep processes, pause processes, fork and exec processes, and so on. Furthermore, the endpoints for all system calls are kernel modules, which have already been tested for behavior, limits, and stress. Therefore user-tests do not go that deep into testing.
 
 \section{Kernel Tests}
 
-The kernel test module provides a number of useful functions to any module that wants tests. 
+The kernel test module provides a number of useful functions to any module that wants tests.
 
 First is kernel\_assert. This function performs a boolean check and acts upon its result. It allows for two types of tests, a continue test and a halt test. These modes allow testers to create tests that will halt the system if they fail, in case failure of that test indicates a significant issue with the system. Alternatively tests can be allowed to fail with out preventing other tests from executing, this can be useful when a failed test is not a critical issue, and the tester want to see all tests run before deciding how to respond.
 
@@ -1449,7 +1559,7 @@ A memory bomb is an attack where the process tries to allocate as much memory as
 
 \chapter{Project Conclusion}
 
-Overall the project was a success. All initial aims were completed and some of the extension aims were completed to different levels, including additional aims that arose during development. 
+Overall the project was a success. All initial aims were completed and some of the extension aims were completed to different levels, including additional aims that arose during development.
 
 The project produced an Operating System that can be deployed on real hardware and can be used in the day to day life of users. Although the number of user-space programs are limited, this was always out of the scope of the project.
 

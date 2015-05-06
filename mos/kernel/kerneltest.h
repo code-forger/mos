@@ -13,3 +13,5 @@
 int ktest_assert(char* test, int val, int cont);
 
 void kernel_test_mode(uint32_t test_level, uint32_t verbosity);
+
+void kernel_run_cache_timing();

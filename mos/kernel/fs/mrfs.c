@@ -3,6 +3,8 @@
 #include "vfs.h"
 //#include "fileexceptions.h"
 #include "../io/terminal.h"
+#include "../paging/paging.h"
+#include "kmrfs.h"
 
 //These three functions  are  helper functions that allow the caller to get inodes off the by name and path, they are used to abstract the name → inode relationship
 
@@ -664,4 +666,70 @@ uint32_t mrfs_stress_test()
     hdd_write_cache();
 
     return failures;
+}
+void mrfs_run_timing_test()
+{
+
+    char name[50];
+
+    int seconds;
+
+    paging_map_new_to_virtual(SCRATCH);
+
+    seconds = scheduler_seconds();
+
+    for (uint32_t i = 0; i < 200; i++)
+    {
+        sprintf(name,"test%d", i);
+        kmrfsNewFile("/", name, (char*)(SCRATCH), 0x1000);
+    }
+
+    kprintf("200 writes %d\n", scheduler_seconds() - seconds);
+
+    seconds = scheduler_seconds();
+
+    for (uint32_t i = 0; i < 200; i++)
+    {
+        sprintf(name,"test%d", i);
+        free(kmrfsReadFile("/", name));
+    }
+
+    kprintf("200 reads %d\n", scheduler_seconds() - seconds);
+
+    seconds = scheduler_seconds();
+
+    for (uint32_t i = 0; i < 100; i++)
+    {
+        sprintf(name,"test1%d", i);
+        kmrfsNewFile("/", name, (char*)(SCRATCH), 0x1000);
+        free(kmrfsReadFile("/", name));
+    }
+
+    kprintf("200 read writes %d\n", scheduler_seconds() - seconds);
+
+
+    /*for (uint32_t i = 0; i < 50; i++)
+    {
+        kprintf("Read file %d\n", i);
+        sprintf(name,"/test%d", i);
+        mrfsOpenFile(name, true, &fd);
+        char* data = testing_read_file(fd);
+        char str[200];
+        sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
+        mrfsDeleteFileWithDescriptor(&fd);
+    }
+    for (uint32_t i = 0; i < 50; i++)
+    {
+        kprintf("Read file %d\n", i);
+        sprintf(name,"/td/test%d", i);
+        mrfsOpenFile(name, true, &fd);
+        char* data = testing_read_file(fd);
+        char str[200];
+        sprintf(str,"[MRFS] : file content should be same as what was written %s == %s", name, data);
+    }
+
+    mrfsOpenDir("/td/", true, &fd);
+    mrfsDeleteDirWithDescriptor(&fd);
+    mrfsOpenDir("/td/", false, &fd);
+    hdd_write_cache();*/
 }

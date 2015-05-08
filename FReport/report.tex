@@ -7,6 +7,15 @@
 \usepackage{pdfpages}
 \usepackage{wrapfig}
 \usepackage{pgfplots}
+\usepackage{afterpage}
+
+
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
+
 
 \usepackage{geometry}
 
@@ -21,7 +30,7 @@
 \title{MOS : A Multitasking Operating System}
 \date{\today}
 \author{Michael Rochester\\ Candidate: 23344\\ University of Sussex
-        \and Supervisor:\\ Martin Berger}
+        \and Supervisor:\\ Dr. Martin Berger}
 
 
 \setcounter{tocdepth}{4}
@@ -34,17 +43,96 @@
 
 \maketitle
 
+
+
+
+
+\blankpage
+
+\clearpage
+\section*{Statement of Originality}
+This report is submitted as part requirement for the degree of ... at the University of Sussex. It is the product of my own labour except where indicated in the text. The report may be freely copied and distributed provided the source is acknowledged
+
+\clearpage
+
+
+\blankpage
+
+\clearpage
+\section*{Acknowledgments}
+
+I would like to thank Dr. Martin Berger for his encouragement in choosing as dissertation topic that has been both challenging and exciting and for his support and advice throughout the project. I would furthermore like to express my gratitude to `maxdev' and the entire operating system development community for their help during the initial phases of the project.
+
+I would also like to thank Dr. John Rochester for providing me with the physical resources required to test and demonstrate the project's Operating System.
+
+\clearpage
+
+
+\blankpage
+
+\clearpage
+\section*{Summary}
+
+
+We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviors by providing simple high level abstractions over the intricate low level hardware. This project involves creating an Operating System with the aim of exploring low level hardware and software relation ships and creating a platform upon which others can develop arbitrarily complex software.
+
+This dissertation describes the processes of creating such this Operating System (herein called MOS) in the C programming language along with a set of supporting programs, including an analysis of similar systems and a look into the implementation of MOS.
+
+The main sections of this dissertation include:
+\begin{itemize}
+\item An introduction to Operating Systems.
+\item Professional and ethical considerations for the project.
+\item Requirements analysis for the Operating System including a look at other modern operating systems
+\item The implementation of the system.
+\item The testing techniques used to ensure the system produces is of high quality
+\item A conclusion to the project.
+\end{itemize}
+
+
+
+
 \tableofcontents
 \listoffigures
 
+\clearpage
+
+\section{Glossary}
+
+Operating Systems come with a large variety of terms and phrases that are unique to their nature, This section serves as a description of the terms that may be required to understand the remainder of this document:
+
+\begin{minipage}{.5\textwidth}
+  \centering
+  Technical terms:
+  \begin{itemize}
+  \item CPU : Central Processing Unit, This is the part of the physical computer that performs all the operations that processes contain.
+  \item BIOS : The BIOS is the part of the physical computer that is started when the computer is turned on, it has limit functionality and its job is to get the CPU started.
+  \item IO : Input/Output, IO refers to a processes ability to interact with external services such as receiving keyboard keys(input) or displaying information to a screen(output)
+  \item RAM : Random Access Memory, This is the part of the physical computer that stores temporary information such as the state of running processes.
+  \item HDD/Hard Drive : This is the part of the physical computer that can store information that remains persistent even if the computer is turned off.
+  \item MOS : Michael's Operating System, the name of the Operating System produced as part of this project.
+  \end{itemize}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  Descriptive terms:
+  \begin{itemize}
+  \item Kernel : The kernel is the main part of the Operating System that allows access to hardware and provides services to the user space.
+  \item Kernel space : This is the part of the running system that is only accessible by the kernel, here the kernel keeps track of system state and other useful informations.
+  \item User space : This is the part of the running system in which programs and processes are executed. Here these programs can keep track of their state. In this area, there is less direct access to the hardware of the computer.
+  \item System Call : System calls are the way that user space applications gain access to the kernel, they each provide access to a different kernel service or to a piece of hardware.
+  \item Process : A processes is one set of instructions and a current state. A processes is `run' by the CPU.
+  \item Program / Application : A program is a tool that users can use to perform tasks in the system. Typically a program will consist of one process that is to be run by the system. Programs are ofter interactive or take `parameters' to customize the task they perform. Programs can also consist of many processes if they with to do more than one thing at once.
+  \item Interrupts : These are events in the kernel space that take place when either a piece of hardware want attention (a key is pressed on the keyboard or a hard drive finishes writing some data). Or when a piece of software misbehaves (dividing by zero or attempting to access kernel space.)
+  \end{itemize}
+\end{minipage}
+
+
+\clearpage
+
+
 \chapter{Introduction}
 
-The overall aim for this project is to produce a simple Multitasking Operating System (herein called MOS) to study structure, allocation, and management of different classes of hardware resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach taken.
-
-We live in a world surrounded and controlled by machines, and software is our way of telling those machines how to act. As our machines and needs become more complex, so must the software that runs them. An Operating System is a software package that allows for others to easily create complex behaviors by providing simple high level abstractions over the intricate low level hardware.
-
-
-
+The overall aim for this project is to produce a simple Multitasking Operating System to study structure, allocation, and management of different classes of hardware resource. This section provides a brief introduction to Operating Systems, Discusses the project aims, and looks at the approach taken.
 
 
 
@@ -67,11 +155,13 @@ Before this project can even begin, an understanding of what an Operating System
 
 Operating Systems come in all different shapes and sizes, each with its own look, feel, and utility.
 
-For an every day user, the Operating System turns complex tasks into seemingly trivial ones. Even running a program is a complex task for a computer to achieve, however to most users `launch your favourite browser' might seem like the simplest task to accomplish. Operating Systems make these tasks easy by providing graphical menus and windows to `disguise' the complexity beneath. It may also provide a number of built in programs like file browsers and settings managers to make common tasks even more straight forward.
+For an every day user, the Operating System turns complex tasks into seemingly trivial ones. Even running a program is a complex task for a computer to achieve, however to most users `launch your favorite browser' might seem like the simplest task to accomplish. Operating Systems make these tasks easy by providing graphical menus and windows to `disguise' the complexity beneath. It may also provide a number of built in programs like file browsers and settings managers to make common tasks even more straight forward.
 
-An Operating system may also offer tailoring of a system to a specific user, like having certain programs start when the computer is turned on, or drawing the screen with a custom image as a background. To this extend, the Operating System can be seen as `anything that isn't a program' to the user.
+An Operating system may also offer tailoring of a system to a specific user, like having certain programs start when the computer is turned on, or drawing the screen with a custom image as a background. To this extent, the Operating System can be seen as `anything that isn't a program' to the user.
 
-Below is a screen shot of the popular Windows operating system, It shows a number of programs; a web browser `firefox', a test editor `notepad++', a file browser `explorer'. The programs each own and control their `window' however all other parts of the screen are controlled by the Operating System. On the right, the portions of the screen controlled by the programs is blacked out, showing only the parts of the screen controlled by the operating system.
+As in the title, this project is concerned with multitasking operating systems. A multitasking system is one that can perform more than one task at once. Most major consumer Operating systems are multitasking (from PC operating systems like Microsoft's Window to mobile operating systems such as Google's Android). However not all are, many systems require only one task to be performed at one time, for example ATM's or self checkouts at supermarkets.
+
+Below is a screen shot of the popular Windows operating system, It shows a number of programs; a web browser `firefox', a test editor `notepad++', a file browser `explorer'. The programs each own and control their `window' however all other parts of the screen are controlled by the Operating System. On the right, the portions of the screen controlled by the programs are blacked out, showing only the parts of the screen controlled by the operating system.
 
 
 \begin{figure}[ht]
@@ -89,22 +179,26 @@ Below is a screen shot of the popular Windows operating system, It shows a numbe
   \caption{A screen shot of the Windows operating system.}
 \end{figure}
 
-The operating system is doing more than just running 3 programs though. Each program can have any number of `processes'. A process is a piece of a program that can perform one action at a time. If a program wants to do two things at a time, it must have two processes. Furthermore there may be more processes running that don't belong to a graphical program and are needed to keep the system running often referred to a system processes. The Operating System must make sure each of these processes gets a fair share of the computer, to make sure each program can run correctly.
+The operating system is doing more than just running 3 programs though. Each program can have any number of `processes'. A process is a piece of a program that can perform one action at a time. If a program wants to do two things at once, it must have two processes. Furthermore there may be more processes running that don't belong to a graphical program and are needed to keep the system running often referred to a system processes. Here the importance of a multitasking system is even more apparent, Windows may be running up to 60 system processes simultaneously just to keep the system ready to respond to the users requests. The Operating System must make sure each of these processes gets a fair share of the computer, to make sure each program can run correctly.
 
-Processes, whether they are program processes or system processes, need to access a number of resources to work. The most apparent are the screen, the keyboard, and the mouse. Operating systems gives the processes simple access to these resources to allow programs to show things to the user, and allows the user to interact with them. However, in the back ground, there are many other types or resources that the Operating System controls. Hard Drives are permanent storage services, they allow programs and users to create information that lasts even after a reboot. RAM is a temporary storage that allows programs to keep track of there current state (for example, storing the text and images for your current word document). Network devices such as ethernet cards and wifi cards allow programs to communicate with other programs on other computers and connect to the internet.
+Processes, whether they are program processes or system processes, need to access a number of resources to work. The most apparent are the screen, the keyboard, and the mouse. Operating systems gives the processes simple access to these resources to allow programs to show things to the user, and allows the user to interact with them. However, in the background, there are many other types or resources that the Operating System controls. Hard Drives are permanent storage services, they allow programs and users to create information that lasts even after a reboot. RAM is a temporary storage that allows programs to keep track of there current state (for example, storing the text and images for your current word document). Network devices such as Ethernet cards and wifi cards allow programs to communicate with other programs on other computers and connect to the Internet.
 
-These resources are not infinite. Hard Drives, RAM, and screen space, are restricted by size. Whereas network cards, and printers, are restricted by throughput (actions per minute). An Operating System tries to allow access to all these resources by all processes simultaneously. By denying a process access to a specific resource, the program may not be able to perform its task correctly. However, to a program, fair may not mean equal. A web browser my heavily use network card, but never write to the Hard Disk, Alternatively, A Photo Editor may never require network access, but may write very large amounts to the Hard Disk.
+These resources are not infinite. Hard Drives, RAM, and screen space, are restricted by size. Whereas network cards, and printers, are restricted by throughput (actions per minute). An Operating System tries to allow access to all these resources by all processes simultaneously. By denying a process access to a specific resource, the program may not be able to perform its task correctly. However, to a program, fair may not mean equal. A web browser may heavily use network card, but never write to the Hard Drives, Alternatively, A Photo Editor may never require network access, but may write very large amounts to the Hard Drives.
 
+
+
+\vspace{1.5mm}
+\noindent
 This high level `user perspective' of an Operating System is important to keep in mind through out this project as ultimately the users are the target demographic of the system. However to produce an Operating System a much more in-depth understanding is required.
 
 
 
 
-An Operating System is higly a complex piece of software however all require 3 distinct sections:
+An Operating System is highly a complex piece of software however all require 3 distinct sections:
 
 The kernel is the software that drives the hardware. It provides nice abstractions and interfaces to control the very fiddly underlying machine.
 
-The Bootloader is the code that is run first. It gets things that the kernel might need set up, for example, getting the CPU into the correct operation mode.
+The Boot-loader is the code that is run first. It gets things that the kernel might need set up, for example, getting the CPU into the correct operation mode.
 
 The Final part is a collection of programs and other software that come with the Operating System. Although some people would argue this is not so much part of the Operating System, on some systems (namely Microsoft's Windows) a huge number of these programs are built right in, and seem from the outside to be part of the kernel.
 
@@ -119,14 +213,14 @@ The Final part is a collection of programs and other software that come with the
 \label{fig:thekernel}
 \end{wrapfigure}
 
-The kernels job is to both control the hardware and mediate the execution of processes. To begin with it will initialise its modules, each there to control one piece of hardware or provide one service to the kernel or user-space. Some of the more important task these modules perform are keeping track of which processes are currently executing, deciding which processes should go next, as well as ensuring that all processes think they have enough memory to operate correctly.
+The kernel's job is to both control the hardware and mediate the execution of processes. To begin with it will initialize its modules, each there to control one piece of hardware or provide one service to the kernel or user-space. Some of the more important task these modules perform are keeping track of which processes are currently executing, deciding which processes should go next, as well as ensuring that all processes think they have enough resources to operate correctly.
 
 Once the kernel is happy that everything is in order, it will begin execution of the first process. For the rest of the time the computer is on, `processes' will be run. These processes each having a unique environment. In fact as far as a process is concerned, it owns the whole computer. However, as programmers are aware that each process does not own the whole computer, they can program complex interprocess interactions, with the kernels help of course.
 
 
 
 \clearpage
-\subsection{The Bootloader}
+\subsection{The Boot-loader}
 
 \begin{figure}[ht]
 \centering
@@ -135,13 +229,13 @@ Once the kernel is happy that everything is in order, it will begin execution of
 \label{fig:theloader}
 \end{figure}
 
-The bootloader's job is to load the kernel. The CPU has to begin executing code somewhere, this is the boot loader.
+The boot-loader's job is to load the kernel. The CPU has to begin executing code somewhere, this is the boot loader.
 
-The majority of the bootloader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the bootloader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
+The majority of the boot-loader's job is to get the hardware ready for the kernel to take over. Tasks like detecting the available physical memory of a machine is up to the boot-loader, once it has gathered such information, the loader will store it somewhere the kernel can find it.
 
-The final steps of the bootloader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
+The final steps of the boot-loader are to get the CPU into the right mode. It does this by first setting up some important `tables' in memory. One of these tells the CPU what to do if an interrupt is produced. Another tells the CPU where it can find physical addresses in RAM when virtual addresses are looked up.
 
-Finally the bootloader can start the kernel and it's job is finished.
+Finally the boot-loader can start the kernel and it's job is finished.
 
 \subsection{The Built in Programs}
 
@@ -181,7 +275,7 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \textbf {Primary Objectives:}
 
 \begin{itemize}
-\item Create a bootloader to boot a kernel.
+\item Create a boot-loader to boot a kernel.
 \item Create a kernel that should be able to:
 \begin{itemize}
 \item Load multiple `programs' into memory.
@@ -190,7 +284,7 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \item Allow for the management of the execution state of each `program'.
 \item Allow each `program' access to a unique memory space.
 \item Allow `programs' to asynchronously send data to each other.
-\item Handle all common cpu interrupts and resolve them correctly.
+\item Handle all common CPU interrupts and resolve them correctly.
 \item Handle keyboard input and allow programs to `collect' keyboard inputs.
 \end{itemize}
 \item Create a small set of `programs' with which to test the kernel.
@@ -213,7 +307,7 @@ The project was begun with a number of Primary and Extended Objectives, however 
 \begin{itemize}
 \item \lbrack Complete\rbrack Create a user manual.
 \item \lbrack Complete\rbrack Create a developers manual.
-\item \lbrack Complete\rbrack Create set of scripts for getting the source code, Building the project, and deploying it to a computer.
+\item \lbrack Complete\rbrack Create set of scripts for building the project, and deploying it to a computer.
 \end{itemize}
 
 
@@ -232,7 +326,7 @@ The project was begun with a number of Primary and Extended Objectives, however 
 
 \chapter{Professional Considerations}
 
-As this project falls within the bound of Computer Science, It will comply with the British Society of Computing (BSC) Code of Conduct \cite{CoC}. Although there is no contractual obligation to follow this code, it is important to recognize and comply with them to ensure the integrity of the project.
+As this project falls within the bound of Computer Science, it will comply with the British Society of Computing (BSC) Code of Conduct \cite{CoC}. Although there is no contractual obligation to follow this code, it is important to recognize and comply with them to ensure the integrity of the project.
 
 \section{Public Interest}
 
@@ -279,7 +373,7 @@ This project is a technical exercise in understanding the low level relationship
 
 \chapter{Requirements Analysis}
 
-In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analysed to assist in the designing of MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
+In preparation of producing an Operating System, current generation systems were studied in detail. The features and interfaces of the systems were analyzed to assist in the designing of MOS. Although It was known in advanced that MOS was not going to be complex enough to incorporate all features of the reference systems, it was important to study what current systems do, such that their most important features could be mimicked.
 
 Modern Operating Systems are such that there are two user groups.
 
@@ -287,7 +381,7 @@ Modern Operating Systems are such that there are two user groups.
 The End Users are the people using the Operating System and its programs to assist in achieving an assortment of tasks. To them, the Operating System provides a few simple mechanisms to interact with the system, E.G. Launching programs, closing programs, and switching between the `focused' program. Most of the inner workings of the Operating System are hidden from the end user, and they mainly interact with the `User space programs', which are not defined by the Operating System Developer.
 
 
-The Program Developers use an Operating System as a platform to create the programs the End User will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviours like creating new processes, Allocating dynamic memory, allocating screen space to the programs, and accesing the hard drive. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
+The Program Developers use an Operating System as a platform to create the programs the End User will use. To them, the Operating System is a Resource Manager and Scheduler and provides some crucial functionality for complex behaviors like creating new processes, Allocating dynamic memory, allocating screen space to the programs, and accessing the hard drive. Many of the complexities of the Operating System (especially hardware control) are abstracted away from the Program Developers, however it is expected that they have some awareness of how the system is structured to successfully integrate with the kernel.
 
 
 
@@ -298,7 +392,7 @@ The Program Developers use an Operating System as a platform to create the progr
 \section{The End User}
 The reference systems that were studied with the End Users in mind are: The Linux distribution remix `Gnomebuntu' and the Microsoft Operating System `Windows 8'. These systems were chosen to get a spread in our sample. The systems are both popular desktop systems, however: One, (Linux) is stemmed from an open source mentality, where the source code is freely available and the system is free, and the other (Windows) is produced by a company with the aim to provide paying business, and home customers with a usable system.
 
-The parts of the reference systems that were analysed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the MOS.
+The parts of the reference systems that were analyzed from the end users perspective are; program launching, process management, and program interaction as these are the main sections that will be implemented in the MOS.
 
 \subsection{Launching programs in Linux and Windows}
 
@@ -315,13 +409,13 @@ In Linux, the interface is a alphabetized list (with icons) of installed program
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Windows_Program_Launcher_Screenshot}
-  \caption{Windows Program Launcher Interface}
+  \caption{Windows program launcher interface}
   \label{fig:WinLaunchScreen}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Linux_Program_Launcher_Screenshot}
-  \caption{Linux Program Launcher Interface}
+  \caption{Linux program launcher interface}
   \label{fig:LinLaunchScreen}
 \end{minipage}
 \end{figure}
@@ -331,9 +425,9 @@ In Linux, the interface is a alphabetized list (with icons) of installed program
 
 Both reference systems provide a way of interacting directly with the process manager to give the user power over which programs are running on their system.
 
-In each system, the process manager is very similar, as the tasks they perform are identical. Both systems provide a window that lists processes and some relevant information about each process like PID, cpu usage, memory usage, disk usage, and network usage. It was found that the majority of these fields are concerned with what resources a process is using. This is the case because an Operating System's purpose is to manage the physical resources available to the software.
+In each system, the process manager is very similar, as the tasks they perform are identical. Both systems provide a window that lists processes and some relevant information about each process like PID, CPU usage, memory usage, disk usage, and network usage. It was found that the majority of these fields are concerned with what resources a process is using. This is the case because an Operating System's purpose is to manage the physical resources available to the software.
 
-Each system also provides the ability to change what information is provided for each process, these extra informations include many other physical resource usages (I.E. Nice value, or cpu time) as well as a more in depth view of the default informations (I.E. separating `memory usage' into: Virtual, Resident, Writeable, Shared, and Xserver memory.)
+Each system also provides the ability to change what information is provided for each process, these extra informations include many other physical resource usages (I.E. Nice value, or CPU time) as well as a more in depth view of the default informations (I.E. separating `memory usage' into: Virtual, Resident, Write-able, Shared, and X server memory.)
 
 In each system this list was scrollable, allowing for many more processes that can fit in the window, furthermore the window becomes horizontally scrollable if the information exceeds the width of the screen.
 
@@ -346,13 +440,13 @@ Figures \ref{fig:WinProcManScreen} and \ref{fig:LinProcManScreen} show the proce
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Windows_Program_Manager_Screenshot}
-  \caption{Windows Program Manager Interface}
+  \caption{Windows program manager interface}
   \label{fig:WinProcManScreen}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Linux_Program_Manager_Screenshot}
-  \caption{Linux Program Manager Interface}
+  \caption{Linux program manager interface}
   \label{fig:LinProcManScreen}
 \end{minipage}
 \end{figure}
@@ -364,7 +458,7 @@ Interacting with programs is what users spend the majority of their time on a co
 
 In both the reference systems, the programs were presented in `floating', overlapping windows. These windows share the screen space by having the `active' window draw on top of all other windows. The system provides a way or moving, hiding, and resizing the windows to customize your workspace. Both systems provide similar mechanics for achieving this. They each provide a `title bar' that can be grabbed and dragged around to move the window. Each also provide the ability to grab the very edge of any side of any window, or the corners, to resize the window to the desired size. Finally, each system provides buttons to manipulate the windows more directly. This is where the systems begin to differ.
 
-The Windows Operating System provides three buttons; The first Button allows the user to minimize the window to hide it from the work space. The second button is to maximize/un-maximize the window, this makes the window occupy the entirety of the screen. The final button exits the application.
+The Windows Operating System provides three buttons; The first Button allows the user to minimize the window to hide it from the work space. The second button is to maximize/unmaximize the window, this makes the window occupy the entirety of the screen. The final button exits the application.
 
 The Linux Operating System only provides an exit button.
 
@@ -373,22 +467,22 @@ Figures \ref{fig:WinTitleBarScreen} and \ref{fig:LinTitleBarScreen} give example
 \begin{figure}[ht]
 \centering
 \includegraphics[width=200px]{images/Windows_title_bar_screenshot}
-\caption{Windows Title Bar Example}
+\caption{Windows title bar example}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=200px]{images/Linux_title_bar_screenshot}
-\caption{Linux Title Bar Example}
+\caption{Linux title bar example}
 \label{fig:LinTitleBarScreen}
 \end{figure}
 
 Because of the nature of overlapping windows on both systems, it is possible for one window to be drawn entirely `under' another window. In Windows it is in fact possible to choose to hide a window from the workspace completely. In this situation the systems both provide different ways to navigate back to the `hidden' window.
 
-On windows, There is a `task bar'. This is a portion of the screen, (often located at the bottom of the screen), that stores small icons for each running program. Clicking on one of these icons will bring that program to the front, un-minimize it, and make it the `active' program.
+On windows, There is a `task bar'. This is a portion of the screen, (often located at the bottom of the screen), that stores small icons for each running program. Clicking on one of these icons will bring that program to the front, unminimize it, and make it the `active' program.
 
-On Linux, Pressing the windows key, or pointing your mouse cursor to the corner of the screen shows you all of the open programs by `zooming out' and separating all the programs from each other. Selecting a program from this `exploded' view will un-minimize this window, bring it to the front, and make it the active window.
+On Linux, Pressing the windows key, or pointing your mouse cursor to the corner of the screen shows you all of the open programs by `zooming out' and separating all the programs from each other. Selecting a program from this `exploded' view will unminimize this window, bring it to the front, and make it the active window.
 
 Figure \ref{fig:WinWinNavScreen} and \ref{fig:LinWinNavScreen} give example of these Navigation features.
 
@@ -397,13 +491,13 @@ Figure \ref{fig:WinWinNavScreen} and \ref{fig:LinWinNavScreen} give example of t
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Windows_Window_Navigation_Screenshot}
-  \caption{Windows Program Navigation Interface}
+  \caption{Windows program navigation interface}
   \label{fig:WinWinNavScreen}
 \end{minipage}%
 \begin{minipage}{.5\textwidth}
   \centering
   \includegraphics[width=200px]{images/Linux_Window_Navigation_Screenshot}
-  \caption{Linux Program Navigation Interface}
+  \caption{Linux program navigation interface}
   \label{fig:LinWinNavScreen}
 \end{minipage}
 \end{figure}
@@ -414,9 +508,11 @@ Figure \ref{fig:WinWinNavScreen} and \ref{fig:LinWinNavScreen} give example of t
 
 To understand how program developers interact with Operating Systems The Linux distribution remix `Gnomebuntu' was studied. Only one system here was studied as Linux is an open source system. This meant that the system could be looked at in more depth.
 
-The parts of the Linux system that were analysed are the; Process management system, the memory management system, the windowing system, and Inter Process Communication.
+The parts of the Linux system that were analyzed are the; Process management system, the memory management system, the windowing system, and Inter Process Communication.
 
 \subsection{Managing processes in Linux}
+
+Managing processes for the program developers is a very import tool in multitasking systems. Being able to create new processes and define their behavior allows for true programs to perform more than one task at once, even if one process is waiting on a resource or some user input, another processes from the same program can be performing calculations or updating the screen. Being able to destroy processes allows for resources to be freed explicitly and allows for the killing of malicious programs. Pausing processes for sections of time allow program developers to temporarily free up resources to make way for other processes, this can be to allow faster execution of other services or to save power on mobile devices.
 
 Linux exposes a number of system calls to the program developers to allow them to create, destroy, and pause processes, and also change the current `executable' to allow for new programs to be run.
 
@@ -425,7 +521,7 @@ Linux exposes a number of system calls to the program developers to allow them t
 
 To create a new process, Linux provide the fork system call. \cite{manFork}
 
-Fork will spawn a new processes with a perfect copy of the calling processes memory and cpu state. This effectively means that fork will return twice, once into the caller and once into the child. It will return 0 to the child and the child pid to the parent.
+Fork will spawn a new processes with a perfect copy of the calling processes memory and CPU state. This effectively means that fork will return twice, once into the caller and once into the child. It will return 0 to the child and the child PID to the parent.
 
 \noindent
 \textbf{Changing executable}
@@ -447,6 +543,8 @@ In Linux, kill is not just for killing processes. It allows the caller to send a
 To pause and continue processes in Linux, the kill system call is reused, but now the caller sends the SIGSTOP signal.
 
 \subsection{Managing memory in Linux}
+
+Memory management is a useful tool for allowing processes to gain access to more memory on demand. It is often used as a way to initially provide processes with a very tiny memory space to conserver memory for other uses, and allow them to expand to whatever size they please. A good memory management system also ensures that very little memory is wasted or rendered unusable.
 
 Linux provides two functions for memory management, one to allocate memory and one to free it.
 
@@ -472,7 +570,13 @@ The screen space is not managed by the Linux kernel and so is not useful as a st
 
 \subsection{Inter Process Communication in Linux}
 
-Communication between processes is an important part of creating complex behaviours in user space programs. Linux provides some simple calls to create channels of communication between processes.
+Communication between processes is an important part of creating complex behaviors in user space programs however it is one of the more complex sub-systems of an operating system. This is due to the idea that each processes should believe it has total access to the computer and not be able to directly interact with another processes memory. Because of this many different versions of IPC have been formulated. Some create a special portion of the kernel to hold all the information in the communication channels and then give it to the processes on demand. Others create a piece of user-space memory that is accessible by two or more processes. Finally some systems copy the memory from one process' space to the others.
+
+Furthermore some system also implement different policies for reading and writing to pipes; Some systems use `blocking' system calls, meaning that if the pipe is empty, the read system call will wait until the pipe is no longer empty, effectively pausing the calling processes until this time.
+
+Linux can be said to use the first method for storing the pipe. When a pipe is created Linux creates a file in a virtual file system (a file system that lives only in kernel memory). Any process that has the handle to this virtual file (aka has the pipe handle) can write or write to the pipe. Linux also does not include blocking system calls for pipes, this is because it believes the user space should have control over when it is blocked or not.
+
+Linux provides some simple calls to create channels of communication between processes.
 
 \noindent
 \textbf{Creating a pipe.}
@@ -492,7 +596,7 @@ These system calls will read and write using the pipe, allowing process to send 
 
 It was found that in end user design, many systems share similar design features. These features are very rich and operate do to a wide collection of tool, utilities, and applications. The most important of these feature should be mimicked in new systems to assist new users in understanding how the the system works, However due to time constraints MOS will target much simpler versions of these features.
 
-From the programmers perspective. The system API's or modern Operating Systems have been well thought out and have stood the test of time, however sometimes represent behaviours far more complex than that which MOS targets. The studied API's will be mimicked both to follow tried and tested ideas, and also so that program developers feel at home developing for MOS.
+From the programmers perspective. The system API's on modern Operating Systems have been well thought out and have stood the test of time, however sometimes represent behaviors far more complex than that which MOS targets. The studied API's will be mimicked both to follow tried and tested ideas, and also so that program developers feel at home developing for MOS.
 
 
 
@@ -529,9 +633,9 @@ From the programmers perspective. The system API's or modern Operating Systems h
 
 \chapter{Design}
 
-As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in TODO Link to apendix here.
+As with the Analysis, the Design phase was separated into End User and Program Developer sections. However here the structure of the kernel itself was also considered and planned. The designs presented here are the final designs for the system, some earlier versions can be found in TODO Link to appendix here.
 
-Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ascii drawing and focussing on delivering the service provided in a quick and clean manner.
+Design for the end user focused on similar tools, looks, and controls to existing systems; The Linux CLI was referenced for a lot of the simple command line tools as MOS' text mode graphics share a common interface to Linux terminals. MOS programs also targeted a clean workspace, avoiding unnecessary ASCII drawing and focusing on delivering the service provided in a quick and clean manner.
 
 Program Developer design was constructed with a `many simple tools' structure. Each system call the standard library contained was made to perform one task, rather than bunching many tasks into one more complex call. This allows developers to maintain simple, intuitive control over their resources.
 
@@ -550,7 +654,7 @@ The following actions will be possible using the built in tools.
 \item File editing.
 \end{itemize}
 
-\subsection {Process Creations : MASH}
+\subsection {Process creation : `MASH'}
 
 MASH will be MOS' built in shell. Using MASH, users can launch any other process.
 
@@ -558,7 +662,7 @@ MASH will support passing parameters to launched processes, and a persistent fil
 
 Since MASH will cover Process Creation. All other actions that user can perform with build in tools are achieved through different built in programs. The user can use MASH to launch these programs passing any desired parameters.
 
-\subsection{Process Management : processes}
+\subsection{Process management : `processes'}
 
 The program called processes will serve as the users tool for killing processes.
 
@@ -585,11 +689,11 @@ The proposed design for this program is given by the following example screen.
 
 As shown, this tool will show the user information about each running processes and afford them the ability to kill these processes.
 
-\subsection{File/Directory creation: mkdir and touch}
+\subsection{File/Directory creation: `mkdir' and `touch'}
 
 MOS will provide two programs for creating files and directories. touch will create empty files and mkdir will create directories. Both programs will operate in a similar way, taking an absolute path as their only parameter. Neither will create anything unless the parent directory of the wanted object exists, and the parameter is well formed (with a trailing / for directories).
 
-\subsection{File/Directory Management: rm and mv}
+\subsection{File/Directory management: `rm' and `mv'}
 
 For file and directory management MOS will provide two functions.
 
@@ -597,7 +701,7 @@ The first is rm. rm will try to delete the object at the absolute path path pass
 
 The second is mv. mv will take two parameters, the first will be the path to an existing file system object (file or directory) and the second will be the path to an existing directory. mv will move the specified object (and all of its children in the case of a directory) into the target directory.
 
-\subsection{File Editing: notes}
+\subsection{File Editing: `notes'}
 
 MOS' will provide a simple multi-line text editor for editing text files. The program will take one parameter which is a path to the file you wish to edit. If the file does not exist notes will create it.
 
@@ -635,11 +739,11 @@ Notes supports common cursor key commands for navigating the cursor and saves wh
 
 \section{The Program Developers}
 
-As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very similar to that of the Linux kernel that was analysed.
+As program developers are very familiar with how to create programs for other systems, the API for the project system was designed to be very similar to that of the Linux kernel that was analyzed.
 
 \subsection{Managing processes}
 
-MOS will provide a very similar set of system calls to Linux, however their behaviour may be simpler.
+MOS will provide a very similar set of system calls to Linux, however their behavior may be simpler.
 
 These features were considered independently of each other except for creating a new process and changing the current executable, as these calls are so commonly used together.
 
@@ -649,7 +753,7 @@ Similar to Linux the process creation pattern MOS was designed to follow the `fo
 
 \vspace{1.5mm}
 \noindent
-`fork()' will return the child pid to both the parent and the child, allowing for the processes to distinguish themselves by comparing this value to the value of the `get\textunderscore pid()' system call. On failure it will return -1.
+`fork()' will return the child PID to both the parent and the child, allowing for the processes to distinguish themselves by comparing this value to the value of the `get\textunderscore PID()' system call. On failure it will return -1.
 
 \vspace{1.5mm}
 \noindent
@@ -661,7 +765,7 @@ Unlike in Linux, where destroying, pausing, and restarting processes uses one sy
 
 \vspace{1.5mm}
 \noindent
-`kill(pid)' will kill the target process, freeing all its memory and removing it from the scheduler.
+`kill(PID)' will kill the target process, freeing all its memory and removing it from the scheduler.
 
 \subsubsection{Pausing and Restarting programs}
 
@@ -669,11 +773,11 @@ Pausing programs is important for efficiency, therefore MOS provides the followi
 
 \vspace{1.5mm}
 \noindent
-`pause()' and `pause(pid)' will pause the target process until `wake()' is called. With `pause()' the current process will be paused and immediately revoke controls to the scheduler.
+`pause()' and `pause(PID)' will pause the target process until `wake()' is called. With `pause()' the current process will be paused and immediately revoke controls to the scheduler.
 
 \vspace{1.5mm}
 \noindent
-`wake(pid)' will wake the target process and allow it to be scheduled again. It will NOT cause the target process to be executed next.
+`wake(PID)' will wake the target process and allow it to be scheduled again. It will not necessarily cause the target process to be executed next.
 
 \vspace{1.5mm}
 \noindent
@@ -681,7 +785,7 @@ Pausing programs is important for efficiency, therefore MOS provides the followi
 
 \subsection{Managing memory}
 
-The memory managemnt API will be identical to that of Linux. Therefore MOS will provide two system calls:
+The memory management API will be identical to that of Linux. Therefore MOS will provide two system calls:
 
 \vspace{1.5mm}
 \noindent
@@ -727,11 +831,11 @@ Once a pipe is set up three calls will be able to interact with it:
 
 \subsection{File Access}
 
-The File access functions will use a similarly idea to linux's however will be far simpler.
+The File access functions will use a similarly idea to Linux's however will be far simpler.
 
 \vspace{1.5mm}
 \noindent
-`fopen(name, \&file\_handle, create)' will open the file specified by the absolute path `name' and store the relelvent information into the file handle provided. If the file does not exist and the `create' parameter is true, the file will be created. If the directory does not exists, no action will be taken. If the file does not exist or any other error occurs, the type field of the file handle will be set to 2. The rest of the structure will be considered invalid.
+`fopen(name, \&file\_handle, create)' will open the file specified by the absolute path `name' and store the relevant information into the file handle provided. If the file does not exist and the `create' parameter is true, the file will be created. If the directory does not exists, no action will be taken. If the file does not exist or any other error occurs, the type field of the file handle will be set to 2. The rest of the structure will be considered invalid.
 
 \vspace{1.5mm}
 \noindent
@@ -755,7 +859,7 @@ Once a file handle has been retrieved, the file can be modified through the hand
 
 \vspace{1.5mm}
 \noindent
-`frename(oldname, newname)' will move and rename the file at oldname to newname. If either the source file doesn not exist or the target directory does not exist the function will take no action.
+`frename(oldname, newname)' will move and rename the file at oldname to newname. If either the source file doesn't not exist or the target directory does not exist the function will take no action.
 
 
 \subsection{Directory Access}
@@ -797,7 +901,7 @@ Once a file handle has been retrieved, the file can be modified through the hand
 
 \section{The Kernel}
 
-The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one peice of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realised that some modules could be brought `closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the io descriptors, these io descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures `cross module'.
+The kernel was split into a number of discrete modules, each performing one simple task, or over seeing the access to one piece of hardware. These modules were originally designed to be self contained, not relying on any other modules, however it was quickly realized that some modules could be brought `closer together' to help streamline the kernel. The most notable case of this is the scheduler and the terminal manger, the scheduler contains the process entries for each running application, including the IO descriptors, these IO descriptors are required by the terminal to operate, therefore the scheduler allows write access to these data structures `cross module'.
 
 The Kernel Loader can also be seen as a kernel module however it is special in that it does its job once at boot, and then does nothing for the remainder of the computers uptime.
 
@@ -806,8 +910,8 @@ The kernel design was a living structure throughout the project as it was hard t
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=400px]{images/Kernel_Modules}
-\caption{Kernel Module Dependencies}
+\includegraphics[width=400px]{images/Kernel_Moduels}
+\caption{Kernel module dependencies}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
@@ -832,7 +936,7 @@ As this module is different from the others we will discuss it first.
 
 The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job is to to correctly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
 
-It has its own smaller Physical Memory Manager, IO Manager and XXX, To assist in its task. It then maps the kernel to the correct location in memory and jumps to the kernels entry point.
+It has its own smaller Physical Memory Manager and IO Manager, To assist in its task. It then maps the kernel to the correct location in memory and jumps to the kernels entry point.
 
 Since the kernel only executes in Protected mode, it has less direct access to physical memory, therefore the kernel loader must initialize the memory map for the Physical Memory Manager module and map this memory map into a suitable Virtual memory location.
 
@@ -842,11 +946,11 @@ The scheduler's task will be to maintain and update all relevant information abo
 
 \subsection{The Program Loader}
 
-The program loaders job is to prepare a Program for execution; Loading the binary into memory in an appropriate manner, setting all process table fields to correct values, and ensuring all other system modules correctly reflect the execution of a new program.
+The program loader's job is to prepare a Program for execution; Loading the binary into memory in an appropriate manner, setting all process table fields to correct values, and ensuring all other system modules correctly reflect the execution of a new program.
 
 \subsection{The Event Manager}
 
-The event managers job is to track timed events. It will allow for the registration of certain types of events with an event deadline. Once the deadline is passed the Event manager will perform the requested action. This module requires that its main function 'events()' be called with some frequency.
+The event manager's job is to track timed events. It will allow for the registration of certain types of events with an event deadline. Once the deadline is passed the Event manager will perform the requested action. This module requires that its main function `events()' be called with some frequency.
 
 \subsection{The Pager}
 
@@ -878,9 +982,8 @@ The pipe manager will maintain information on any pipes that user space programs
 
 \subsection{The IO Manager}
 
-The IO manager will control all IO for user interaction with processes, as well as any outputting the kernel may do. It must maintain a current rendering of all running processes screen space, and deliver keyboard input to user space processes at the users command. It should also maintain different kernel space and user space windows, allowing for the user to switch between the kernel and user process view.
-
-\subsection{Keyboard Driver}
+The IO manager will control all IO for user interaction with processes, as well as any outputting the kernel may do. It must maintain a current rendering of all running process' screen space, and deliver keyboard input to user space processes at the users command. It should also maintain different kernel space and user space windows, allowing for the user to switch between the kernel and user process view.
+7
 
 The keyboard Driver handles keyboard input to the system, Its main job is to correctly pass signals along to the IO manager such that they can be sent to user space processes, however it may also detect system commands (like ctrl+tab and F1) and call the respective module to perform the expected action.
 
@@ -976,7 +1079,7 @@ The Scheduler has a number of data structures. The central structure is the Proc
 
 This structure is very slow when searching for processes with specific attributes, and also contains no information about the order in which processes were created. For these reasons the Scheduler also contains a number of linked lists, each storing a list of PID's of processes that are `interesting' in some way.
 
-The active process list contains all processes that either want CPU time, or are known to want CPU time in the future. The list is ordered in such that the process at the front is always the lest recent to have had CPU time.
+The active process list contains all processes that either want CPU time, or are known to want CPU time in the future. The list is ordered in such that the process at the front is always the least recent to have had CPU time.
 
 Using a linked list to store the active processes makes it very fast to select a new process to run, and as the scheduler maintains a handle to both ends of the list, both getting the first item in the list and putting something at the back of the list is O(1) time.
 
@@ -1019,7 +1122,7 @@ The memory map stores the physical pages of memory that this process has been al
 
 \subsubsection{The IO part}
 
-The io part stores information about the processes IO, this information isused and managed by the IO manager which is discuessed next.
+The IO part stores information about the processes IO, this information issued and managed by the IO manager which is discussed next.
 
 
 
@@ -1074,15 +1177,15 @@ To acquire a portion of the screen the user space processes must register with t
 
 The IO manager first appends this process to its `outputable' list and populates the IO part of the respective processes table entry with the remainder of the metrics, filling the column and row potion with 0 and 0.
 
-It then checks for any overlapping processes, these are processes that are in the `outputable' list who's screen area collides with the new request. For any overlapping processes, the IO manager first pauses that processes, giving it the is\_hidden flag. Then it uses malloc() to request a portion of the kernels heap space of the same size as the old processes screen space. It copies the current state of this screen space into the new memory and assigns the pointer into the `snapshot' section of the IO part of the process entry. It then moves the processes from the `outputable' list to the `hidden' list. Finally it wipes the process' portion of the screen blank.
+It then checks for any overlapping processes, these are processes that are in the `outputable' list who's screen area collides with the new request. For any overlapping processes, the IO manager first pauses that processes, giving it the is\_hidden flag. Then it uses malloc() to request a portion of the kernels heap space of the same size as the old process' screen space. It copies the current state of this screen space into the new memory and assigns the pointer into the `snapshot' section of the IO part of the process entry. It then moves the processes from the `outputable' list to the `hidden' list. Finally it wipes the process' portion of the screen blank.
 
 The above procedure ensures that, from a processes perspective, it always has full control over a portion of the screen. This is because when a process doesn't have control of that part of the screen, the process is paused and cannot be executed.
 
 When the user requests to see one of the hidden processes, the IO manager repeats the process above, but instead checks for overlapping with the process that the user wants to bring to the front. Once any overlapping processes have been correctly hidden, it copies the snapshot of the requested process back to the correct area of the screen and unpauses it, moving it back to the `outputable' list.
 
-The IO manager supports two output modes for processes; progressive and targeted. In progressive mode, the  IO Manager keeps track of the current position of each processes `caret'. Then, if a processes wants to print in this mode, the processes simply passes a character to the IO manager. The IO manager will use the column and row fields of the IO part of the process entry to place the character within the processes screen space. The IO manager will make sure to wrap when the end of the line is reached, and will also roll the entire process' terminal space up when the bottom is reached. This behavior is very similar to that seen in the Linux and Windows CLI's.
+The IO manager supports two output modes for processes; progressive and targeted. In progressive mode, the  IO Manager keeps track of the current position of each processes `caret'. Then, if a processes wants to print in this mode, the processes simply passes a character to the IO manager. The IO manager will use the column and row fields of the IO part of the process entry to place the character within the process' screen space. The IO manager will make sure to wrap when the end of the line is reached, and will also roll the entire process' terminal space up when the bottom is reached. This behavior is very similar to that seen in the Linux and Windows CLI's.
 
-In targeted mode the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the processes screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better gui's and update only portions of the screen space at a time.
+In targeted mode the process sends the IO manager both a character and a coordinate for that character. The IO manager will then check if the coordinate is within the bounds of the process' screen space and if so, draw it to the screen. This draw mode allows more sophisticated user-space applications to `draw' better GUI's and update only portions of the screen space at a time.
 
 \clearpage
 \section{The Flat vs List interlude}
@@ -1116,6 +1219,8 @@ o \textless= p\\
 i \textless= p\\
 p \textless= n\\
 
+For typical usage of my home computer, n == ~18000, p == ~113, i == ~10, o == ~10
+
 
 \begin{figure}[ht]
 \centering
@@ -1127,7 +1232,7 @@ p \textless= n\\
 
 
 \clearpage
-\section{Event Manager}
+\section{The Event Manager}
 
 \subsection{Data Structure}
 
@@ -1247,7 +1352,7 @@ This search is slow. Especially as the block we need is almost always (511 out o
 
 
 
-\subsection{File System}
+\subsection{The File System}
 
 The file system used (called MRFS from here on out) was a modification of a piece of second year coursework. This coursework required the creation of a file system along with a set of file read write interfaces. These parts will therefore only be discussed briefly. A new set of abstractions were created from scratch for the user space system and these abstractions will be discussed in more detail.
 
@@ -1260,7 +1365,7 @@ Although MRFS was taken from a previously complete project, it was significantly
 \begin{figure}[ht]
 \centering
 \includegraphics[width=200px]{images/MRFS_Structure}
-\caption{Example inode structure #TODO : give source to image.}
+\caption{Example inode structure}
 \label{fig:WinTitleBarScreen}
 \end{figure}
 
@@ -1300,7 +1405,7 @@ These abstractions mean that storing this information and any mallocing must be 
 
 
 
-\section{Pager}
+\section{The Pager}
 
 The pager has no central data structure, however it does maintain a list of constants, each being the virtual memory address assigned to a specific kernel subsystem.
 
@@ -1320,7 +1425,7 @@ Other than the memory addresses, the pager is also responsible for paging physic
 
 
 
-\section{Heap manager}
+\section{The Heap manager}
 
 \subsection{Data Structure}
 
@@ -1358,7 +1463,7 @@ When freeing a node, the Heap manager sets the node to free, but must check the 
 
 
 
-\section{Pipe Manager}
+\section{The Pipe Manager}
 
 \subsection{Data Structure}
 
@@ -1400,7 +1505,7 @@ Because this special area does not have the same base memory address as the proc
 
 \clearpage
 
-\section{Interrupts handler}
+\section{The Interrupts handler}
 
 The Interrupts handler has no core data structures.
 
@@ -1442,7 +1547,7 @@ This procedure ensures a number of things; First off, the kernel cannot be inter
 
 
 
-\section{Program Loader}
+\section{The Program Loader}
 
 The program loader has no core data structures and can be seen as a sub module of the scheduler. When called it initializes the process entry for the selected processes, loads an ELF-Binary of the disk into memory, maps that memory to virtual addresses, storing these addresses in the process entry, and finally returns the entry point for that binary for the scheduler to jump to.
 
@@ -1563,9 +1668,13 @@ Overall the project was a success. All initial aims were completed and some of t
 
 The project produced an Operating System that can be deployed on real hardware and can be used in the day to day life of users. Although the number of user-space programs are limited, this was always out of the scope of the project.
 
-With further time and resources, a focus would be put on creating a larger set of builtin programs and creating a network interface for connecting to the internet.
+The system successfully achieves fair sharing of all incorporated hardware resources and acts as a platform under which program developers could produce arbitrary complex programs.
 
-Throughout the project I have gained a lot of knowledge about how computers function and how common structures and procedures are employed in modern operating systems. Furthermore I have gathered experience in using the C language to create powerful, reliable code.
+With further time and resources, a focus would be put on creating a larger set of built-in programs, for example some more playable games, a more sophisticated file editor, and some presentation software.
+
+Along side this creating a network interface for connecting to the Internet would vastly improve the utility of the system.
+
+Throughout the project I have gained a lot of knowledge about how computers function and how common structures and procedures are employed in Modern Operating Systems. Furthermore I have gathered experience in using the C language to create powerful, reliable code.
 
 
 
@@ -1586,7 +1695,6 @@ Throughout the project I have gained a lot of knowledge about how computers func
 \item Bound all interrupts to stubs.
 \item Created simple kernel threading.
 \item Created a `printf' like utility.
-\item Supervisor Meeting 1: This week we discussed the state of the project, some goals to hit in the upcoming weeks and the proposal report due in next week.
 \end{itemize}
 
 \section*{Week 3}
@@ -1594,14 +1702,12 @@ Throughout the project I have gained a lot of knowledge about how computers func
 \item Implemented Paging.
 \item Moved to a higher half kernel.
 \item Loaded my first `user space' program.
-\item Supervisor Meeting 2: This week we discussed how process creation was handled in linux and other Operating Systems, and how to move forward with concurrency.
 \end{itemize}
 
 \section*{Week 4}
 \begin{itemize}
 \item implemented fork system call.
 \item implemented exec system call.
-\item Supervisor Meeting 3: This week we discussed how IPC was handled on many different system and how I could think about going ahead with IPC.
 \end{itemize}
 
 \section*{Week 5}
@@ -1614,7 +1720,6 @@ Throughout the project I have gained a lot of knowledge about how computers func
 \item created proposal for IPC.
 \item implemented IPC.
 \item began work on interim report.
-\item Supervisor Meeting 4: This week we discussed how to continue work on IPC and the next steps of using the IPC to abstract general process I/O.
 \end{itemize}
 
 \section*{Week 7}
@@ -1680,10 +1785,10 @@ Throughout the project I have gained a lot of knowledge about how computers func
 \begin{itemize}
 \item Scheduler now reuses old PID's
 \item Created much better notes program with multi line editing capabilities.
-\item Added cpu time metric for all processes.
+\item Added CPU time metric for all processes.
 \item Created `ls' and `less' programs
 \item Improved processes program.
-\item Added better testing for memory manager and file sytem.
+\item Added better testing for memory manager and file system.
 \item Fixed many misc bugs.
 \end{itemize}
 
@@ -1725,7 +1830,7 @@ Throughout the project I have gained a lot of knowledge about how computers func
 \item Created Developer docs.
 \item Bound remainder of CPU interrupts.
 \item Improved Processes program/
-\item Fixed many bugs with fork cycle and mrfs edge cases.
+\item Fixed many bugs with fork cycle and MRFS edge cases.
 \end{itemize}
 
 \section*{Week 21}
@@ -1739,7 +1844,7 @@ Throughout the project I have gained a lot of knowledge about how computers func
 
 \section*{Week 22}
 \begin{itemize}
-\item Code Refactor.
+\item Code Re-factor.
 \end{itemize}
 
 \section*{Week 23}

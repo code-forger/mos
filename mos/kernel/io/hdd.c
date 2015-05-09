@@ -334,12 +334,12 @@ static uint8_t* find_cached_block(uint32_t dirty)
     uint32_t cache_target = ((hdd_index + 0x8000000) >> 9);
 
     // This lookup cache either speeds up this algorithm 32 times or slows it down by 1 32nd. Not a bad trade off.
-    /*if (cache_target == last_found_cache) // this is the MOST likely case (about 512 in 513 lookups will be this case!)
+    if (cache_target == last_found_cache) // this is the MOST likely case (about 512 in 513 lookups will be this case!)
     {
         if (block_table->blocks[last_found_index].dirty == 0)
             block_table->blocks[last_found_index].dirty = dirty;
         return block_table->block[last_found_index].data;
-    }*/
+    }
 
     for (uint32_t i = 0; i < 31; i++) // search for the cache.
     {
@@ -435,15 +435,11 @@ static uint8_t* request_read()
 void hdd_write(uint8_t data)
 {
     request_write()[(hdd_index++ & 0x1FF)] = data;
-    hdd_write_cache();
-    purge_cache();
 }
 
 uint8_t hdd_read()
 {
     char a = request_read()[(hdd_index++ & 0x1FF)];
-    hdd_write_cache();
-    purge_cache();
     return a;
 
 }

@@ -1,4 +1,26 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{Kernel}
+A high level look at a kernel.
+\newblock
+  http://www.itechcode.com/wp-content/uploads/2012/01/382px-Kernel\_Layout.svg\_.png.
+\newblock Accessed: 2015-4-9.
+
+\bibitem{Boot}
+An example boot cycle.
+\newblock http://duartes.org/gustavo/blog/post/how-computers-boot-up/.
+\newblock Accessed: 2015-4-9.
+
+\bibitem{Windowing}
+An example windowing server architecture.
+\newblock
+  http://unix.stackexchange.com/questions/101074/how-does-mounting-on-the-gui-work-under-the-hood.
+\newblock Accessed: 2015-4-9.
+
+\bibitem{Inode}
+Inode pointer structure.
+\newblock http://en.wikipedia.org/wiki/Inode\_pointer\_structure.
+\newblock Accessed: 2015-4-9.
 
 \bibitem{CoC}
 Code of conduct | membership | bcs - the chartered institute for it.

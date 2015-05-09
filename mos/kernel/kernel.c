@@ -52,9 +52,9 @@ void init_kernel()
 
     kprintf("HERE\n");
 
-    if(keyboard_get_a_byte() != 't')
-        //kernel_test_mode(TEST_STRESS, TEST_QUIET);
-        kernel_run_cache_timing();
+    if(keyboard_get_a_byte() == 't')
+        kernel_test_mode(TEST_STRESS, TEST_QUIET);
+        //kernel_run_cache_timing();
 
     uint32_t esp, ebp;
 

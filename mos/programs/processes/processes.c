@@ -232,7 +232,7 @@ void main(int argc, char** argv)
             pnum = malloc(num_processes * sizeof(int));
             fseek(&dd, 0);
 
-            this_ticks = ticks_ms() + 200;
+            this_ticks = ticks_ms() + (delta_ms-1000);
             int i = 0;
             for (fgetfile(&dd, &process_dir);process_dir.type != 2 && i < num_processes; fgetfile(&dd, &process_dir))
             {

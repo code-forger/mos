@@ -43,7 +43,6 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ memory_bomb file programs/memory_bomb/memory_bomb
 
 ./mrfs-write mrfs-disk.img / user raw "Default User"
-./mrfs-write mrfs-disk.img / todo file todo
 
 ./mrfs-write mrfs-disk.img / docs dir unused
 

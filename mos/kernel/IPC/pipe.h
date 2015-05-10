@@ -9,6 +9,7 @@
 
 typedef uint32_t PIPE;
 
+// the central pipe structure
 typedef struct pd
 {
     uint16_t pid;

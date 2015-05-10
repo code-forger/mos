@@ -37,6 +37,8 @@ typedef struct program_header_t
     uint32_t flags;
 } __attribute__ ((packed)) program_header;
 
+
+// Sets the given ptb to suitable initial values.
 static void set_ptb(process_table_entry* ptb)
 {
     ptb->flags = 0;
@@ -59,6 +61,8 @@ static void set_ptb(process_table_entry* ptb)
     ptb->io.snapshot = 0;
 }
 
+// A loose wrapper to convert a single full path into a directory and file name,
+// then open and return a file.
 static char* load_file(const char* name)
 {
     int n_length = strlen(name);

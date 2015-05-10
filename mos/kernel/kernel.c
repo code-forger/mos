@@ -32,8 +32,12 @@ void kernel_set_pit(void);
 
 void init_kernel()
 {
+
+    // clean up after the bios
     uint32_t* directory = (uint32_t*)0xfffff000;
     directory[0] = 0 | R_W_NP;
+
+    //initialize entire kernel
     memory_init();
     paging_init();
     keyboard_init();
@@ -45,14 +49,14 @@ void init_kernel()
     hdd_init();
     init_mem();
 
+
+    //ensure hardrive is ready
     kmrfsFormatHdd(4*1024, 0);
 
+    // set the timer to 10ms
     kernel_set_pit();
-    for(int i = 0 ; i < 0000001; i++);
 
-    kprintf("HERE\n");
-
-    if(keyboard_get_a_byte() == 't')
+    if(keyboard_get_a_byte() == 't') // check for test mode
         kernel_test_mode(TEST_STRESS, TEST_QUIET);
         //kernel_run_cache_timing();
 
@@ -61,5 +65,5 @@ void init_kernel()
     asm("movl %%esp, %0":"=r"(esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(ebp)::"ebx");
 
-    scheduler_init(esp, ebp);
+    scheduler_init(esp, ebp);// start the scheduler into the first process.
 }

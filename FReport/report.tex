@@ -312,14 +312,13 @@ The project was begun with a number of Primary and Extended Objectives, however 
 
 \textbf {New Objectives:}
 
-
 \begin{itemize}
 \item \lbrack Complete\rbrack Create a user manual.
 \item \lbrack Complete\rbrack Create a developers manual.
 \item \lbrack Complete\rbrack Create set of scripts for building the project, and deploying it to a computer.
 \end{itemize}
 
-
+The code produced to implement MOS can be found attached to the electronic submission of this report. The user manuals are in web form, in mos/www/index.html.
 
 
 
@@ -943,9 +942,9 @@ The kernel design was a living structure throughout the project as it was hard t
 
 As this module is different from the others we will discuss it first.
 
-The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job is to to correctly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
+The Kernel Loader can actual be seen as more of a kernel in its own right. It is the code that is loaded by our Boot loader (GRUB). The loaders job will be to correctly configure the hardware in the CPU's Real Mode and then switch over to Protected Mode for the rest of the uptime of the CPU.
 
-It has its own smaller Physical Memory Manager and IO Manager, To assist in its task. It then maps the kernel to the correct location in memory and jumps to the kernels entry point.
+It will require its own smaller Physical Memory Manager and IO Manager, To assist in its task. It should map the kernel to the correct location in memory and jump to the kernels entry point.
 
 Since the kernel only executes in Protected mode, it has less direct access to physical memory, therefore the kernel loader must initialize the memory map for the Physical Memory Manager module and map this memory map into a suitable Virtual memory location.
 
@@ -979,7 +978,7 @@ The file system will create a file/directory tree abstraction over the IDE drive
 
 The kernel functions will be to read entire files/directories into memory, or write sections of memory into files. These functions are designed for speed and elegance and the kernel always wants to load/save entire files to disk at once.
 
-The user space abstractions are centred around giving out handles to files, and letting programs read those programs like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
+The user space abstractions are centred around giving out handles to files, and letting programs read those files like character pipes. These abstractions focus on requiring a significantly lower memory footprint, and building input and output piece by piece.
 
 \subsection{The IDE Driver}
 
@@ -992,7 +991,9 @@ The pipe manager will maintain information on any pipes that user space programs
 \subsection{The IO Manager}
 
 The IO manager will control all IO for user interaction with processes, as well as any outputting the kernel may do. It must maintain a current rendering of all running process' screen space, and deliver keyboard input to user space processes at the users command. It should also maintain different kernel space and user space windows, allowing for the user to switch between the kernel and user process view.
-7
+
+
+\subsection{The Keyboard Driver}
 
 The keyboard Driver handles keyboard input to the system, Its main job is to correctly pass signals along to the IO manager such that they can be sent to user space processes, however it may also detect system commands (like ctrl+tab and F1) and call the respective module to perform the expected action.
 
@@ -1601,9 +1602,9 @@ This kind of test is useful for detecting regressions in functionality, and also
 
 \subsection{Limit tests}
 
-Limit tests are similar to behavioural tests except that they call functions with incorrect or `limit' input. I.E. If a function can take a number between 1 and 10, Behavioural tests will call the function with perhaps 2, 5, and 7 as inputs, however limit tests will call the function with 0, 1, 10, 11, -34, 2345,and `H' as inputs. They ensure that they correct limit on functions are obeyed, and that functions correctly deal with incorrect input.
+Limit tests are similar to behavioural tests except that they call functions with incorrect or `limit' input. I.E. If a function can take a number between 1 and 10, Behavioural tests will call the function with perhaps 2, 5, and 7 as inputs, however limit tests will call the function with 0, 1, 10, 11, -34, 2345,and `H' as inputs. They ensure that the correct limits on function parameters are obeyed, and that functions correctly deal with incorrect input.
 
-As examples, In the file system, limit tests try to create files in directories that don't exist, create empty files, create files with invalid names, create files with very long names, and so on. In the kernel heap manager, limit tests try to allocated memory of negative sized 0 size and very large sizes as well as trying to free memory twice, or that was never allocated in the first place.
+As examples, In the file system, limit tests try to create files in directories that don't exist, create empty files, create files with invalid names, create files with very long names, and so on. In the kernel heap manager, limit tests try to allocated memory of negative size, 0 size, and very large sizes as well as trying to free memory twice, or free memory that was never allocated in the first place.
 
 This kind of test is useful for detecting where the system may be unable to handle error, and where certain bounds are not enforced.
 
@@ -1646,7 +1647,11 @@ A fork bomb is a type of attack where a process forks itself, then execs itself.
 A memory bomb is an attack where the process tries to allocate as much memory as possible, starving the system of memory, forcing the kernel to take more and more drastic measures to provide memory to this process. This can put the kernel into `thrashing' where the system is taking more time to acquire more memory than it is running user space processes.
 
 
+\section{Testing in MOS}
 
+The above techniques are applied in MOS to assist in finding and fixing issues with the system. However, due to a limited time budget, the coverage of testing in the kernel space is limited. Furthermore, Although every user-space test is `passed' many of the more complex features remain untested or are only partially tested.
+
+However, there is a framework in place for adding testing to any kernel module and some important modules are thoroughly tested. Therefore if issues were to arrise with the system during future development, adding further testing would be trivial.
 
 
 
@@ -1680,6 +1685,10 @@ Overall the project was a success. All initial aims were completed and some of t
 The project produced an Operating System that can be deployed on real hardware and can be used in the day to day life of users. Although the number of user-space programs are limited, this was always out of the scope of the project. However even with a limited set of user space programs, it is easy to demonstrate the potential use of the project, as can be seen in section \ref{sec:projdem} of this report.
 
 The system successfully achieves fair sharing of all incorporated hardware resources and acts as a platform under which program developers could produce arbitrary complex programs. Many different styles of resource sharing were applied, each relevant to the resource it was being applied to (e.g. one at a time sharing for the keyboard, exclusive ownership over portions of RAM, and full concurrent access to hard drives).
+
+The project contains 9'376 source lines of code; 8'847 in the C language, 47 in the assembly language, and 58 in shell scripting languages. This code along with the remainder of the deliverables for the project can be found attached to the electronic submission of this report.
+
+\section{Future Development}
 
 With further time and resources, a focus would be put on creating a larger set of built-in programs, for example some more playable games, a more sophisticated file editor, and some presentation software. However as this project is open source, it would be exciting to see what the open-source community can create using MOS as a platform.
 

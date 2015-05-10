@@ -12,6 +12,7 @@ static uint32_t is_virtual(char*path)
         path[5] == '/';
 }
 
+// this function willcheck to see if the requested path is virtual, if it is it will create a temporary file pointing to the virtual object and return it.
 uint32_t vfs_open_virtual(char* path, FILE *fd)
 {
     int ret;
@@ -49,7 +50,6 @@ uint32_t vfs_open_virtual(char* path, FILE *fd)
             int len = strlen(cputime);
             for(int i = 0; i < len;i++)
                 mrfsPutC(fd, cputime[i]);
-            //printf("FULL RETURN %d\n", fd->inode);
             ret = 0;
         }
         else if(strcmp(name,"state") == 0)
@@ -60,7 +60,6 @@ uint32_t vfs_open_virtual(char* path, FILE *fd)
             sprintf(procpath, "/temp/%d-%s", pid, "state");
             mrfsOpenFile(procpath, true, fd);
             fd->index = 0;
-            //printf("puting %b\n", scheduler_get_process_table_entry(pid).flags);
             mrfsPutC(fd, scheduler_get_process_table_entry(pid).flags);
             ret = 0;
         }
@@ -72,7 +71,6 @@ uint32_t vfs_open_virtual(char* path, FILE *fd)
     }
     else
     {
-        //printf("no vfs\n");
         fd->type = 2;
         ret = 1;
     }

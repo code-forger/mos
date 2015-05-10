@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.5.5)  9 MAY 2015 17:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.5.5)  10 MAY 2015 10:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -706,355 +706,355 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 1.
 [4
 
-])
+] [5])
 \tf@toc=\write4
 \openout4 = `report.toc'.
 
-[5] (./report.lof)
+[6] (./report.lof)
 \tf@lof=\write5
 \openout5 = `report.lof'.
 
-[6
+[7
 
 ]
 Overfull \hbox (15.0pt too wide) in paragraph at lines 111--137
 []$[]$$[]$ 
  []
 
-[7
+[8
 
 ]
 Chapter 1.
-<images/Windows.png, id=46, 1444.64719pt x 902.6222pt>
+<images/Windows.png, id=49, 1444.64719pt x 902.6222pt>
 File: images/Windows.png Graphic file (type png)
 <use images/Windows.png>
 Package pdftex.def Info: images/Windows.png used on input line 180.
 (pdftex.def)             Requested size: 200.75073pt x 125.42969pt.
-<images/Windows-Black.png, id=48, 1444.64719pt x 902.6222pt>
+<images/Windows-Black.png, id=51, 1444.64719pt x 902.6222pt>
 File: images/Windows-Black.png Graphic file (type png)
 <use images/Windows-Black.png>
 Package pdftex.def Info: images/Windows-Black.png used on input line 185.
 (pdftex.def)             Requested size: 200.75073pt x 125.42969pt.
-[8
+[9
 
 
- <./images/Windows.png> <./images/Windows-Black.png>] <images/kernel.png, id=54
+ <./images/Windows.png> <./images/Windows-Black.png>] <images/kernel.png, id=58
 , 383.4325pt x 303.1325pt>
 File: images/kernel.png Graphic file (type png)
 <use images/kernel.png>
 Package pdftex.def Info: images/kernel.png used on input line 219.
 (pdftex.def)             Requested size: 150.56305pt x 119.03064pt.
-[9 <./images/kernel.png>] <images/bootProcess.png, id=60, 676.5275pt x 242.9075
-pt>
+[10 <./images/kernel.png>] <images/bootProcess.png, id=63, 676.5275pt x 242.907
+5pt>
 File: images/bootProcess.png Graphic file (type png)
 <use images/bootProcess.png>
 Package pdftex.def Info: images/bootProcess.png used on input line 236.
 (pdftex.def)             Requested size: 416.55777pt x 149.57068pt.
-<images/windowing.png, id=61, 2007.5pt x 1505.625pt>
+<images/windowing.png, id=64, 2007.5pt x 1505.625pt>
 File: images/windowing.png Graphic file (type png)
 <use images/windowing.png>
 Package pdftex.def Info: images/windowing.png used on input line 253.
 (pdftex.def)             Requested size: 200.75073pt x 150.54834pt.
-[10
+[11
 
- <./images/bootProcess.png> <./images/windowing.png>] [11
+ <./images/bootProcess.png> <./images/windowing.png>] [12
 
 ]
 Chapter 2.
-[12
+[13
 
 ]
 Chapter 3.
-[13
+[14
 
-] <images/Windows_Program_Launcher_Screenshot.png, id=75, 1606.0pt x 903.375pt>
+] <images/Windows_Program_Launcher_Screenshot.png, id=78, 1606.0pt x 903.375pt>
 File: images/Windows_Program_Launcher_Screenshot.png Graphic file (type png)
 <use images/Windows_Program_Launcher_Screenshot.png>
 Package pdftex.def Info: images/Windows_Program_Launcher_Screenshot.png used on
- input line 420.
+ input line 419.
 (pdftex.def)             Requested size: 200.75073pt x 112.9216pt.
-<images/Linux_Program_Launcher_Screenshot.png, id=76, 1445.4pt x 903.375pt>
+<images/Linux_Program_Launcher_Screenshot.png, id=79, 1445.4pt x 903.375pt>
 File: images/Linux_Program_Launcher_Screenshot.png Graphic file (type png)
 <use images/Linux_Program_Launcher_Screenshot.png>
 Package pdftex.def Info: images/Linux_Program_Launcher_Screenshot.png used on i
-nput line 426.
+nput line 425.
 (pdftex.def)             Requested size: 200.75073pt x 125.46538pt.
-[14
+[15
 
  <./images/Windows_Program_Launcher_Screenshot.png> <./images/Linux_Program_Lau
-ncher_Screenshot.png>] <images/Windows_Program_Manager_Screenshot.png, id=81, 6
+ncher_Screenshot.png>] <images/Windows_Program_Manager_Screenshot.png, id=85, 6
 02.25pt x 385.44pt>
 File: images/Windows_Program_Manager_Screenshot.png Graphic file (type png)
 <use images/Windows_Program_Manager_Screenshot.png>
 Package pdftex.def Info: images/Windows_Program_Manager_Screenshot.png used on 
-input line 451.
+input line 450.
 (pdftex.def)             Requested size: 200.75073pt x 128.47772pt.
 
-<images/Linux_Program_Manager_Screenshot.png, id=82, 715.67375pt x 452.69125pt>
+<images/Linux_Program_Manager_Screenshot.png, id=86, 715.67375pt x 452.69125pt>
 File: images/Linux_Program_Manager_Screenshot.png Graphic file (type png)
 <use images/Linux_Program_Manager_Screenshot.png>
 Package pdftex.def Info: images/Linux_Program_Manager_Screenshot.png used on in
-put line 457.
+put line 456.
 (pdftex.def)             Requested size: 200.75073pt x 126.98062pt.
 
-Overfull \hbox (3.01451pt too wide) in paragraph at lines 470--471
+Overfull \hbox (3.01451pt too wide) in paragraph at lines 469--470
 \OT1/cmr/m/n/10 min-i-mize the win-dow to hide it from the work space. The sec-
 ond but-ton is to max-i-mize/unmaximize
  []
 
-<images/Windows_title_bar_screenshot.PNG, id=83, 508.14844pt x 24.09pt>
+<images/Windows_title_bar_screenshot.PNG, id=87, 508.14844pt x 24.09pt>
 File: images/Windows_title_bar_screenshot.PNG Graphic file (type png)
 <use images/Windows_title_bar_screenshot.PNG>
 Package pdftex.def Info: images/Windows_title_bar_screenshot.PNG used on input 
-line 478.
+line 477.
 (pdftex.def)             Requested size: 200.75073pt x 9.51709pt.
-<images/Linux_title_bar_screenshot.png, id=84, 720.6925pt x 36.135pt>
+<images/Linux_title_bar_screenshot.png, id=88, 720.6925pt x 36.135pt>
 File: images/Linux_title_bar_screenshot.png Graphic file (type png)
 <use images/Linux_title_bar_screenshot.png>
 Package pdftex.def Info: images/Linux_title_bar_screenshot.png used on input li
-ne 485.
+ne 484.
 (pdftex.def)             Requested size: 200.75073pt x 10.06534pt.
-[15 <./images/Windows_Program_Manager_Screenshot.png> <./images/Linux_Program_M
+[16 <./images/Windows_Program_Manager_Screenshot.png> <./images/Linux_Program_M
 anager_Screenshot.png> <./images/Windows_title_bar_screenshot.PNG> <./images/Li
 nux_title_bar_screenshot.png>]
-<images/Windows_Window_Navigation_Screenshot.png, id=93, 1606.0pt x 903.375pt>
+<images/Windows_Window_Navigation_Screenshot.png, id=96, 1606.0pt x 903.375pt>
 File: images/Windows_Window_Navigation_Screenshot.png Graphic file (type png)
 <use images/Windows_Window_Navigation_Screenshot.png>
 Package pdftex.def Info: images/Windows_Window_Navigation_Screenshot.png used o
-n input line 502.
+n input line 501.
 (pdftex.def)             Requested size: 200.75073pt x 112.9216pt.
-<images/Linux_Window_Navigation_Screenshot.png, id=94, 1445.4pt x 903.375pt>
+<images/Linux_Window_Navigation_Screenshot.png, id=97, 1445.4pt x 903.375pt>
 File: images/Linux_Window_Navigation_Screenshot.png Graphic file (type png)
 <use images/Linux_Window_Navigation_Screenshot.png>
 Package pdftex.def Info: images/Linux_Window_Navigation_Screenshot.png used on 
-input line 508.
+input line 507.
 (pdftex.def)             Requested size: 200.75073pt x 125.46538pt.
-[16 <./images/Windows_Window_Navigation_Screenshot.png> <./images/Linux_Window_
-Navigation_Screenshot.png>] [17] [18]
+[17 <./images/Windows_Window_Navigation_Screenshot.png> <./images/Linux_Window_
+Navigation_Screenshot.png>] [18] [19]
 Chapter 4.
-[19
+[20
 
 ]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 670.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 669.
 
 (/usr/local/texlive/2014/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 670.
-[20
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 669.
+[21
 
-] [21] [22] <images/Kernel_Moduels.pdf, id=120, 1333.98375pt x 1008.76875pt>
+] [22] [23] <images/Kernel_Moduels.pdf, id=123, 1333.98375pt x 1008.76875pt>
 File: images/Kernel_Moduels.pdf Graphic file (type pdf)
 <use images/Kernel_Moduels.pdf>
-Package pdftex.def Info: images/Kernel_Moduels.pdf used on input line 922.
+Package pdftex.def Info: images/Kernel_Moduels.pdf used on input line 921.
 (pdftex.def)             Requested size: 401.50146pt x 303.61809pt.
-[23] [24 <./images/Kernel_Moduels.pdf>] [25]
+[24] [25 <./images/Kernel_Moduels.pdf>] [26]
 Chapter 5.
-[26
-
-] <images/Scheduler_Structure.pdf, id=135, 1625.07124pt x 490.83376pt>
-File: images/Scheduler_Structure.pdf Graphic file (type pdf)
-<use images/Scheduler_Structure.pdf>
-Package pdftex.def Info: images/Scheduler_Structure.pdf used on input line 1081
-.
-(pdftex.def)             Requested size: 401.50146pt x 121.26265pt.
 [27
 
+] <images/Scheduler_Structure.pdf, id=139, 1625.07124pt x 490.83376pt>
+File: images/Scheduler_Structure.pdf Graphic file (type pdf)
+<use images/Scheduler_Structure.pdf>
+Package pdftex.def Info: images/Scheduler_Structure.pdf used on input line 1082
+.
+(pdftex.def)             Requested size: 401.50146pt x 121.26265pt.
+[28
+
  <./images/Scheduler_Structure.pdf>] <images/Process_Entry_Structure.pdf, id=14
-2, 1483.5425pt x 945.5325pt>
+5, 1483.5425pt x 945.5325pt>
 File: images/Process_Entry_Structure.pdf Graphic file (type pdf)
 <use images/Process_Entry_Structure.pdf>
 Package pdftex.def Info: images/Process_Entry_Structure.pdf used on input line 
-1107.
+1108.
 (pdftex.def)             Requested size: 401.50146pt x 255.88872pt.
-[28
+[29
 
- <./images/Process_Entry_Structure.pdf>] [29] [30
+ <./images/Process_Entry_Structure.pdf>] [30] [31
 
-] [31]
-Underfull \hbox (badness 10000) in paragraph at lines 1222--1230
+] [32]
+Underfull \hbox (badness 10000) in paragraph at lines 1223--1231
 
  []
 
-<images/List_Speedup.pdf, id=157, 1198.4775pt x 348.30125pt>
+<images/List_Speedup.pdf, id=160, 1198.4775pt x 348.30125pt>
 File: images/List_Speedup.pdf Graphic file (type pdf)
 <use images/List_Speedup.pdf>
-Package pdftex.def Info: images/List_Speedup.pdf used on input line 1236.
+Package pdftex.def Info: images/List_Speedup.pdf used on input line 1237.
 (pdftex.def)             Requested size: 401.50146pt x 116.68297pt.
-[32
+[33
 
- <./images/List_Speedup.pdf>] <images/Events_Structure.pdf, id=163, 1108.14pt x
+ <./images/List_Speedup.pdf>] <images/Events_Structure.pdf, id=167, 1108.14pt x
  433.62pt>
 File: images/Events_Structure.pdf Graphic file (type pdf)
 <use images/Events_Structure.pdf>
-Package pdftex.def Info: images/Events_Structure.pdf used on input line 1251.
+Package pdftex.def Info: images/Events_Structure.pdf used on input line 1252.
 (pdftex.def)             Requested size: 401.50146pt x 157.10878pt.
-[33
+[34
 
- <./images/Events_Structure.pdf>] <images/Caching_Table.pdf, id=170, 998.73125p
+ <./images/Events_Structure.pdf>] <images/Caching_Table.pdf, id=173, 998.73125p
 t x 234.8775pt>
 File: images/Caching_Table.pdf Graphic file (type pdf)
 <use images/Caching_Table.pdf>
-Package pdftex.def Info: images/Caching_Table.pdf used on input line 1289.
+Package pdftex.def Info: images/Caching_Table.pdf used on input line 1290.
 (pdftex.def)             Requested size: 401.50146pt x 94.42241pt.
-[34
+[35
 
- <./images/Caching_Table.pdf>] <images/Caching_Speedup.pdf, id=176, 857.2025pt 
+ <./images/Caching_Table.pdf>] <images/Caching_Speedup.pdf, id=179, 857.2025pt 
 x 291.0875pt>
 File: images/Caching_Speedup.pdf Graphic file (type pdf)
 <use images/Caching_Speedup.pdf>
-Package pdftex.def Info: images/Caching_Speedup.pdf used on input line 1316.
+Package pdftex.def Info: images/Caching_Speedup.pdf used on input line 1317.
 (pdftex.def)             Requested size: 401.50146pt x 136.34032pt.
 
-Overfull \hbox (2.17429pt too wide) in paragraph at lines 1341--1342
+Overfull \hbox (2.17429pt too wide) in paragraph at lines 1342--1343
  [] 
  []
 
-[35 <./images/Caching_Speedup.pdf>] <images/MRFS_Structure.png, id=182, 457.71p
+[36 <./images/Caching_Speedup.pdf>] <images/MRFS_Structure.png, id=185, 457.71p
 t x 287.0725pt>
 File: images/MRFS_Structure.png Graphic file (type png)
 <use images/MRFS_Structure.png>
-Package pdftex.def Info: images/MRFS_Structure.png used on input line 1376.
+Package pdftex.def Info: images/MRFS_Structure.png used on input line 1377.
 (pdftex.def)             Requested size: 200.75073pt x 125.90929pt.
-[36 <./images/MRFS_Structure.png>] <images/Heap_Manager.pdf, id=187, 1283.79625
+[37 <./images/MRFS_Structure.png>] <images/Heap_Manager.pdf, id=190, 1283.79625
 pt x 348.30125pt>
 File: images/Heap_Manager.pdf Graphic file (type pdf)
 <use images/Heap_Manager.pdf>
-Package pdftex.def Info: images/Heap_Manager.pdf used on input line 1443.
+Package pdftex.def Info: images/Heap_Manager.pdf used on input line 1444.
 (pdftex.def)             Requested size: 401.50146pt x 108.9289pt.
-[37 <./images/Heap_Manager.pdf>] <images/Pipe_Manager.pdf, id=193, 1314.9125pt 
+[38 <./images/Heap_Manager.pdf>] <images/Pipe_Manager.pdf, id=197, 1314.9125pt 
 x 301.125pt>
 File: images/Pipe_Manager.pdf Graphic file (type pdf)
 <use images/Pipe_Manager.pdf>
-Package pdftex.def Info: images/Pipe_Manager.pdf used on input line 1481.
+Package pdftex.def Info: images/Pipe_Manager.pdf used on input line 1482.
 (pdftex.def)             Requested size: 401.50146pt x 91.94637pt.
-[38 <./images/Pipe_Manager.pdf>] [39
+[39 <./images/Pipe_Manager.pdf>] [40
 
 ]
 Chapter 6.
-[40
+[41
 
-] [41] [42]
+] [42] [43]
 Chapter 7.
-[43
+[44
 
 ]
 Chapter 8.
-<demoimages/processes.png, id=216, 724.7075pt x 491.8375pt>
+<demoimages/processes.png, id=219, 724.7075pt x 491.8375pt>
 File: demoimages/processes.png Graphic file (type png)
 <use demoimages/processes.png>
-Package pdftex.def Info: demoimages/processes.png used on input line 1711.
+Package pdftex.def Info: demoimages/processes.png used on input line 1720.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-<demoimages/full-screen-pong.png, id=217, 724.7075pt x 491.8375pt>
+<demoimages/full-screen-pong.png, id=220, 724.7075pt x 491.8375pt>
 File: demoimages/full-screen-pong.png Graphic file (type png)
 <use demoimages/full-screen-pong.png>
-Package pdftex.def Info: demoimages/full-screen-pong.png used on input line 171
-7.
+Package pdftex.def Info: demoimages/full-screen-pong.png used on input line 172
+6.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-<demoimages/creating-a-shopping-list.png, id=218, 724.7075pt x 491.8375pt>
+<demoimages/creating-a-shopping-list.png, id=221, 724.7075pt x 491.8375pt>
 File: demoimages/creating-a-shopping-list.png Graphic file (type png)
 <use demoimages/creating-a-shopping-list.png>
 Package pdftex.def Info: demoimages/creating-a-shopping-list.png used on input 
-line 1728.
+line 1737.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-<demoimages/shopping-list-on-disk.png, id=219, 724.7075pt x 491.8375pt>
+<demoimages/shopping-list-on-disk.png, id=222, 724.7075pt x 491.8375pt>
 File: demoimages/shopping-list-on-disk.png Graphic file (type png)
 <use demoimages/shopping-list-on-disk.png>
 Package pdftex.def Info: demoimages/shopping-list-on-disk.png used on input lin
-e 1734.
+e 1743.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-<demoimages/less-shopping-list.png, id=220, 724.7075pt x 491.8375pt>
+<demoimages/less-shopping-list.png, id=223, 724.7075pt x 491.8375pt>
 File: demoimages/less-shopping-list.png Graphic file (type png)
 <use demoimages/less-shopping-list.png>
 Package pdftex.def Info: demoimages/less-shopping-list.png used on input line 1
-745.
+754.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-<demoimages/multiple-running-programs.png, id=221, 724.7075pt x 491.8375pt>
+<demoimages/multiple-running-programs.png, id=224, 724.7075pt x 491.8375pt>
 File: demoimages/multiple-running-programs.png Graphic file (type png)
 <use demoimages/multiple-running-programs.png>
 Package pdftex.def Info: demoimages/multiple-running-programs.png used on input
- line 1751.
+ line 1760.
 (pdftex.def)             Requested size: 195.73196pt x 132.83542pt.
-[44
+[45
 
  <./demoimages/processes.png> <./demoimages/full-screen-pong.png> <./demoimages
 /creating-a-shopping-list.png> <./demoimages/shopping-list-on-disk.png> <./demo
 images/less-shopping-list.png> <./demoimages/multiple-running-programs.png>] [4
-5
+6
 
-] [46] [47] [48] <images/proposal_doc.pdf, id=244, 597.23125pt x 845.1575pt>
+] [47] [48] [49] <images/proposal_doc.pdf, id=247, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 1937.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 1946.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf>
-Package pdftex.def Info: images/proposal_doc.pdf used on input line 1937.
+Package pdftex.def Info: images/proposal_doc.pdf used on input line 1946.
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
-[49
+[50
 
-] <images/proposal_doc.pdf, id=250, page=1, 597.23125pt x 845.1575pt>
+] <images/proposal_doc.pdf, id=253, page=1, 597.23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.22978pt x 845.15544pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 1>
-Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page1 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[50 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=291, page=2, 597.
+[51 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=295, page=2, 597.
 23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 2>
-Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page2 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[51 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=297, page=3, 597.
+[52 <./images/proposal_doc.pdf>] <images/proposal_doc.pdf, id=300, page=3, 597.
 23125pt x 845.1575pt>
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
 File: images/proposal_doc.pdf Graphic file (type pdf)
 <use images/proposal_doc.pdf, page 3>
-Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1937
+Package pdftex.def Info: images/proposal_doc.pdf, page3 used on input line 1946
 .
 (pdftex.def)             Requested size: 597.25711pt x 845.19412pt.
-[52 <./images/proposal_doc.pdf>] (./report.bbl
+[53 <./images/proposal_doc.pdf>] (./report.bbl
 Underfull \hbox (badness 10000) in paragraph at lines 4--8
 []\OT1/cmr/m/n/10 A high level look at a ker-nel.  http://www.itechcode.com/wp-
 
@@ -1078,7 +1078,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 46--49
 
  []
 
-) [53
+) [54
 
 ] (./report.aux)
 
@@ -1101,10 +1101,10 @@ sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr
 /local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/l
 ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/lo
 cal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on report.pdf (57 pages, 5896858 bytes).
+Output written on report.pdf (58 pages, 5897763 bytes).
 PDF statistics:
- 334 PDF objects out of 1000 (max. 8388607)
- 198 compressed objects within 2 object streams
+ 337 PDF objects out of 1000 (max. 8388607)
+ 200 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  188 words of extra memory for PDF output out of 10000 (max. 10000000)
 

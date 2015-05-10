@@ -1,37 +1,37 @@
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces A screen shot of the Windows operating system.}}{8}
-\contentsline {figure}{\numberline {1.2}{\ignorespaces A high level look at a kernel. (Source \cite {Kernel})}}{9}
-\contentsline {figure}{\numberline {1.3}{\ignorespaces An example boot cycle. (Source \cite {Boot})}}{10}
-\contentsline {figure}{\numberline {1.4}{\ignorespaces An example windowing server architecture. (Source \cite {Windowing})}}{10}
+\contentsline {figure}{\numberline {1.1}{\ignorespaces A screen shot of the Windows operating system.}}{9}
+\contentsline {figure}{\numberline {1.2}{\ignorespaces A high level look at a kernel. (Source \cite {Kernel})}}{10}
+\contentsline {figure}{\numberline {1.3}{\ignorespaces An example boot cycle. (Source \cite {Boot})}}{11}
+\contentsline {figure}{\numberline {1.4}{\ignorespaces An example windowing server architecture. (Source \cite {Windowing})}}{11}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Windows program launcher interface}}{14}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Linux program launcher interface}}{14}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Windows program manager interface}}{15}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Linux program manager interface}}{15}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Windows title bar example}}{15}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Linux title bar example}}{15}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Windows program navigation interface}}{16}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Linux program navigation interface}}{16}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Windows program launcher interface}}{15}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Linux program launcher interface}}{15}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Windows program manager interface}}{16}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Linux program manager interface}}{16}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Windows title bar example}}{16}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Linux title bar example}}{16}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Windows program navigation interface}}{17}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Linux program navigation interface}}{17}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Kernel module dependencies}}{24}
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Kernel module dependencies}}{25}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces The scheduler's data structures}}{27}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces The process entry structure}}{28}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Runtime speed-up of flat vs list}}{32}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces The event manager's structures}}{33}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces The IDE driver's caching table}}{34}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Read write times for different caching levels}}{35}
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Graph of read write times for different caching levels}}{35}
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Example inode structure (Source \cite {Inode})}}{36}
-\contentsline {figure}{\numberline {5.9}{\ignorespaces The Heap manager's structures}}{37}
-\contentsline {figure}{\numberline {5.10}{\ignorespaces The Pipe manager's structures}}{38}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces The scheduler's data structures}}{28}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces The process entry structure}}{29}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Runtime speed-up of flat vs list}}{33}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces The event manager's structures}}{34}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces The IDE driver's caching table}}{35}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Read write times for different caching levels}}{36}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Graph of read write times for different caching levels}}{36}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Example inode structure (Source \cite {Inode})}}{37}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces The Heap manager's structures}}{38}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces The Pipe manager's structures}}{39}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {8.1}{\ignorespaces `processes' running full screen.}}{44}
-\contentsline {figure}{\numberline {8.2}{\ignorespaces `pong' running full screen.}}{44}
-\contentsline {figure}{\numberline {8.3}{\ignorespaces Creating a shopping list with notes.}}{44}
-\contentsline {figure}{\numberline {8.4}{\ignorespaces The shopping list in the file system.}}{44}
-\contentsline {figure}{\numberline {8.5}{\ignorespaces Showing the shopping list with less.}}{44}
-\contentsline {figure}{\numberline {8.6}{\ignorespaces Showing multiple programs running.}}{44}
+\contentsline {figure}{\numberline {8.1}{\ignorespaces `processes' running full screen.}}{45}
+\contentsline {figure}{\numberline {8.2}{\ignorespaces `pong' running full screen.}}{45}
+\contentsline {figure}{\numberline {8.3}{\ignorespaces Creating a shopping list with notes.}}{45}
+\contentsline {figure}{\numberline {8.4}{\ignorespaces The shopping list in the file system.}}{45}
+\contentsline {figure}{\numberline {8.5}{\ignorespaces Showing the shopping list with less.}}{45}
+\contentsline {figure}{\numberline {8.6}{\ignorespaces Showing multiple programs running.}}{45}

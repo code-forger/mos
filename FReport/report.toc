@@ -1,103 +1,106 @@
-\contentsline {section}{\numberline {0.1}Glossary}{7}
-\contentsline {chapter}{\numberline {1}Introduction}{8}
-\contentsline {section}{\numberline {1.1}Understanding Operating Systems}{8}
-\contentsline {subsection}{\numberline {1.1.1}The Kernel}{9}
-\contentsline {subsection}{\numberline {1.1.2}The Boot-loader}{10}
-\contentsline {subsection}{\numberline {1.1.3}The Built in Programs}{10}
-\contentsline {section}{\numberline {1.2}Project Aims}{11}
-\contentsline {chapter}{\numberline {2}Professional Considerations}{12}
-\contentsline {section}{\numberline {2.1}Public Interest}{12}
-\contentsline {section}{\numberline {2.2}Professional Competence and Integrity}{12}
-\contentsline {section}{\numberline {2.3}Duty to Relevant Authority}{12}
-\contentsline {section}{\numberline {2.4}Duty to the Profession}{12}
-\contentsline {section}{\numberline {2.5}Requirement for ethical review}{12}
-\contentsline {chapter}{\numberline {3}Requirements Analysis}{13}
-\contentsline {section}{\numberline {3.1}The End User}{14}
-\contentsline {subsection}{\numberline {3.1.1}Launching programs in Linux and Windows}{14}
-\contentsline {subsection}{\numberline {3.1.2}Managing running programs in Linux and Windows}{14}
-\contentsline {subsection}{\numberline {3.1.3}Using programs in Linux and Windows}{15}
-\contentsline {section}{\numberline {3.2}The Program Developers}{16}
-\contentsline {subsection}{\numberline {3.2.1}Managing processes in Linux}{16}
-\contentsline {subsection}{\numberline {3.2.2}Managing memory in Linux}{17}
-\contentsline {subsection}{\numberline {3.2.3}Managing screen space in Linux}{17}
-\contentsline {subsection}{\numberline {3.2.4}Inter Process Communication in Linux}{17}
-\contentsline {section}{\numberline {3.3}Analysis conclusion}{18}
-\contentsline {chapter}{\numberline {4}Design}{19}
-\contentsline {section}{\numberline {4.1}The End User}{20}
-\contentsline {subsection}{\numberline {4.1.1}Process creation : `MASH'}{20}
-\contentsline {subsection}{\numberline {4.1.2}Process management : `processes'}{20}
-\contentsline {subsection}{\numberline {4.1.3}File/Directory creation: `mkdir' and `touch'}{20}
-\contentsline {subsection}{\numberline {4.1.4}File/Directory management: `rm' and `mv'}{21}
-\contentsline {subsection}{\numberline {4.1.5}File Editing: `notes'}{21}
-\contentsline {section}{\numberline {4.2}The Program Developers}{21}
-\contentsline {subsection}{\numberline {4.2.1}Managing processes}{21}
-\contentsline {subsubsection}{\numberline {4.2.1.1}Creating a new process}{21}
-\contentsline {subsubsection}{\numberline {4.2.1.2}Destroying processes}{21}
-\contentsline {subsubsection}{\numberline {4.2.1.3}Pausing and Restarting programs}{21}
-\contentsline {subsection}{\numberline {4.2.2}Managing memory}{22}
-\contentsline {subsection}{\numberline {4.2.3}Managing screen space}{22}
-\contentsline {subsection}{\numberline {4.2.4}Inter Process Communication}{22}
-\contentsline {subsection}{\numberline {4.2.5}File Access}{22}
-\contentsline {subsection}{\numberline {4.2.6}Directory Access}{23}
-\contentsline {section}{\numberline {4.3}The Kernel}{23}
-\contentsline {subsection}{\numberline {4.3.1}The Kernel Loader}{23}
-\contentsline {subsection}{\numberline {4.3.2}The Scheduler}{23}
-\contentsline {subsection}{\numberline {4.3.3}The Program Loader}{24}
-\contentsline {subsection}{\numberline {4.3.4}The Event Manager}{24}
-\contentsline {subsection}{\numberline {4.3.5}The Pager}{24}
-\contentsline {subsection}{\numberline {4.3.6}The Physical Memory Manager}{24}
-\contentsline {subsection}{\numberline {4.3.7}The Heap Manager}{25}
-\contentsline {subsection}{\numberline {4.3.8}The File System}{25}
-\contentsline {subsection}{\numberline {4.3.9}The IDE Driver}{25}
-\contentsline {subsection}{\numberline {4.3.10}Pipe Manager}{25}
-\contentsline {subsection}{\numberline {4.3.11}The IO Manager}{25}
-\contentsline {subsection}{\numberline {4.3.12}The Interrupt Handler}{25}
-\contentsline {chapter}{\numberline {5}Project Implementation}{26}
-\contentsline {section}{\numberline {5.1}The Scheduler}{27}
-\contentsline {subsection}{\numberline {5.1.1}Data Structure}{27}
-\contentsline {subsection}{\numberline {5.1.2}The Process Entry}{28}
-\contentsline {subsubsection}{\numberline {5.1.2.1}The Flags}{28}
-\contentsline {subsubsection}{\numberline {5.1.2.2}The Stack Pointers}{28}
-\contentsline {subsubsection}{\numberline {5.1.2.3}The Memory Map}{28}
-\contentsline {subsubsection}{\numberline {5.1.2.4}The IO part}{29}
-\contentsline {section}{\numberline {5.2}The IO Manager}{30}
-\contentsline {subsection}{\numberline {5.2.1}Keyboard Input}{30}
-\contentsline {subsection}{\numberline {5.2.2}Screen Output}{30}
-\contentsline {section}{\numberline {5.3}The Flat vs List interlude}{32}
-\contentsline {section}{\numberline {5.4}The Event Manager}{33}
-\contentsline {subsection}{\numberline {5.4.1}Data Structure}{33}
-\contentsline {section}{\numberline {5.5}The Hard Drive: Drivers and File systems}{34}
-\contentsline {subsection}{\numberline {5.5.1}The IDE Driver}{34}
-\contentsline {subsubsection}{\numberline {5.5.1.1}Data Structure}{34}
-\contentsline {subsubsection}{\numberline {5.5.1.2}Speed up demonstration.}{35}
-\contentsline {subsection}{\numberline {5.5.2}The File System}{35}
-\contentsline {subsubsection}{\numberline {5.5.2.1}File Directory Structure}{36}
-\contentsline {subsubsection}{\numberline {5.5.2.2}File Directory Kernel Abstractions}{36}
-\contentsline {subsubsection}{\numberline {5.5.2.3}File Directory User Space abstractions}{36}
-\contentsline {section}{\numberline {5.6}The Pager}{37}
-\contentsline {section}{\numberline {5.7}The Heap manager}{37}
-\contentsline {subsection}{\numberline {5.7.1}Data Structure}{37}
-\contentsline {section}{\numberline {5.8}The Pipe Manager}{38}
-\contentsline {subsection}{\numberline {5.8.1}Data Structure}{38}
-\contentsline {section}{\numberline {5.9}The Interrupts handler}{39}
-\contentsline {section}{\numberline {5.10}The Program Loader}{39}
-\contentsline {chapter}{\numberline {6}Testing}{40}
-\contentsline {section}{\numberline {6.1}Kernel Tests}{40}
-\contentsline {subsection}{\numberline {6.1.1}Behavioural tests}{40}
-\contentsline {subsection}{\numberline {6.1.2}Limit tests}{41}
-\contentsline {subsection}{\numberline {6.1.3}Stress tests}{41}
-\contentsline {section}{\numberline {6.2}User-space tests}{41}
-\contentsline {subsection}{\numberline {6.2.1}Feature tests}{41}
-\contentsline {subsubsection}{\numberline {6.2.1.1}Parameter test}{41}
-\contentsline {subsubsection}{\numberline {6.2.1.2}Input test}{41}
-\contentsline {subsubsection}{\numberline {6.2.1.3}Pipe test}{41}
-\contentsline {subsection}{\numberline {6.2.2}User Space Attacks}{41}
-\contentsline {subsubsection}{\numberline {6.2.2.1}Fork bomb}{41}
-\contentsline {subsubsection}{\numberline {6.2.2.2}Memory bomb}{42}
-\contentsline {chapter}{\numberline {7}Project Conclusion}{43}
-\contentsline {section}{\numberline {7.1}Project evaluation}{43}
-\contentsline {section}{\numberline {7.2}Personal evaluation}{43}
-\contentsline {chapter}{\numberline {8}Appendices}{44}
-\contentsline {section}{\numberline {8.1}Project demonstration}{44}
-\contentsline {section}{\numberline {8.2}Log}{45}
-\contentsline {section}{\numberline {8.3}Proposal document}{49}
+\contentsline {section}{\numberline {0.1}Glossary}{8}
+\contentsline {chapter}{\numberline {1}Introduction}{9}
+\contentsline {section}{\numberline {1.1}Understanding Operating Systems}{9}
+\contentsline {subsection}{\numberline {1.1.1}The Kernel}{10}
+\contentsline {subsection}{\numberline {1.1.2}The Boot-loader}{11}
+\contentsline {subsection}{\numberline {1.1.3}The Built in Programs}{11}
+\contentsline {section}{\numberline {1.2}Project Aims}{12}
+\contentsline {chapter}{\numberline {2}Professional Considerations}{13}
+\contentsline {section}{\numberline {2.1}Public Interest}{13}
+\contentsline {section}{\numberline {2.2}Professional Competence and Integrity}{13}
+\contentsline {section}{\numberline {2.3}Duty to Relevant Authority}{13}
+\contentsline {section}{\numberline {2.4}Duty to the Profession}{13}
+\contentsline {section}{\numberline {2.5}Requirement for ethical review}{13}
+\contentsline {chapter}{\numberline {3}Requirements Analysis}{14}
+\contentsline {section}{\numberline {3.1}The End User}{15}
+\contentsline {subsection}{\numberline {3.1.1}Launching programs in Linux and Windows}{15}
+\contentsline {subsection}{\numberline {3.1.2}Managing running programs in Linux and Windows}{15}
+\contentsline {subsection}{\numberline {3.1.3}Using programs in Linux and Windows}{16}
+\contentsline {section}{\numberline {3.2}The Program Developers}{17}
+\contentsline {subsection}{\numberline {3.2.1}Managing processes in Linux}{17}
+\contentsline {subsection}{\numberline {3.2.2}Managing memory in Linux}{18}
+\contentsline {subsection}{\numberline {3.2.3}Managing screen space in Linux}{18}
+\contentsline {subsection}{\numberline {3.2.4}Inter Process Communication in Linux}{18}
+\contentsline {section}{\numberline {3.3}Analysis conclusion}{19}
+\contentsline {chapter}{\numberline {4}Design}{20}
+\contentsline {section}{\numberline {4.1}The End User}{21}
+\contentsline {subsection}{\numberline {4.1.1}Process creation : `MASH'}{21}
+\contentsline {subsection}{\numberline {4.1.2}Process management : `processes'}{21}
+\contentsline {subsection}{\numberline {4.1.3}File/Directory creation: `mkdir' and `touch'}{21}
+\contentsline {subsection}{\numberline {4.1.4}File/Directory management: `rm' and `mv'}{22}
+\contentsline {subsection}{\numberline {4.1.5}File Editing: `notes'}{22}
+\contentsline {section}{\numberline {4.2}The Program Developers}{22}
+\contentsline {subsection}{\numberline {4.2.1}Managing processes}{22}
+\contentsline {subsubsection}{\numberline {4.2.1.1}Creating a new process}{22}
+\contentsline {subsubsection}{\numberline {4.2.1.2}Destroying processes}{22}
+\contentsline {subsubsection}{\numberline {4.2.1.3}Pausing and Restarting programs}{22}
+\contentsline {subsection}{\numberline {4.2.2}Managing memory}{23}
+\contentsline {subsection}{\numberline {4.2.3}Managing screen space}{23}
+\contentsline {subsection}{\numberline {4.2.4}Inter Process Communication}{23}
+\contentsline {subsection}{\numberline {4.2.5}File Access}{23}
+\contentsline {subsection}{\numberline {4.2.6}Directory Access}{24}
+\contentsline {section}{\numberline {4.3}The Kernel}{24}
+\contentsline {subsection}{\numberline {4.3.1}The Kernel Loader}{24}
+\contentsline {subsection}{\numberline {4.3.2}The Scheduler}{24}
+\contentsline {subsection}{\numberline {4.3.3}The Program Loader}{25}
+\contentsline {subsection}{\numberline {4.3.4}The Event Manager}{25}
+\contentsline {subsection}{\numberline {4.3.5}The Pager}{25}
+\contentsline {subsection}{\numberline {4.3.6}The Physical Memory Manager}{25}
+\contentsline {subsection}{\numberline {4.3.7}The Heap Manager}{26}
+\contentsline {subsection}{\numberline {4.3.8}The File System}{26}
+\contentsline {subsection}{\numberline {4.3.9}The IDE Driver}{26}
+\contentsline {subsection}{\numberline {4.3.10}Pipe Manager}{26}
+\contentsline {subsection}{\numberline {4.3.11}The IO Manager}{26}
+\contentsline {subsection}{\numberline {4.3.12}The Keyboard Driver}{26}
+\contentsline {subsection}{\numberline {4.3.13}The Interrupt Handler}{26}
+\contentsline {chapter}{\numberline {5}Project Implementation}{27}
+\contentsline {section}{\numberline {5.1}The Scheduler}{28}
+\contentsline {subsection}{\numberline {5.1.1}Data Structure}{28}
+\contentsline {subsection}{\numberline {5.1.2}The Process Entry}{29}
+\contentsline {subsubsection}{\numberline {5.1.2.1}The Flags}{29}
+\contentsline {subsubsection}{\numberline {5.1.2.2}The Stack Pointers}{29}
+\contentsline {subsubsection}{\numberline {5.1.2.3}The Memory Map}{29}
+\contentsline {subsubsection}{\numberline {5.1.2.4}The IO part}{30}
+\contentsline {section}{\numberline {5.2}The IO Manager}{31}
+\contentsline {subsection}{\numberline {5.2.1}Keyboard Input}{31}
+\contentsline {subsection}{\numberline {5.2.2}Screen Output}{31}
+\contentsline {section}{\numberline {5.3}The Flat vs List interlude}{33}
+\contentsline {section}{\numberline {5.4}The Event Manager}{34}
+\contentsline {subsection}{\numberline {5.4.1}Data Structure}{34}
+\contentsline {section}{\numberline {5.5}The Hard Drive: Drivers and File systems}{35}
+\contentsline {subsection}{\numberline {5.5.1}The IDE Driver}{35}
+\contentsline {subsubsection}{\numberline {5.5.1.1}Data Structure}{35}
+\contentsline {subsubsection}{\numberline {5.5.1.2}Speed up demonstration.}{36}
+\contentsline {subsection}{\numberline {5.5.2}The File System}{36}
+\contentsline {subsubsection}{\numberline {5.5.2.1}File Directory Structure}{37}
+\contentsline {subsubsection}{\numberline {5.5.2.2}File Directory Kernel Abstractions}{37}
+\contentsline {subsubsection}{\numberline {5.5.2.3}File Directory User Space abstractions}{37}
+\contentsline {section}{\numberline {5.6}The Pager}{38}
+\contentsline {section}{\numberline {5.7}The Heap manager}{38}
+\contentsline {subsection}{\numberline {5.7.1}Data Structure}{38}
+\contentsline {section}{\numberline {5.8}The Pipe Manager}{39}
+\contentsline {subsection}{\numberline {5.8.1}Data Structure}{39}
+\contentsline {section}{\numberline {5.9}The Interrupts handler}{40}
+\contentsline {section}{\numberline {5.10}The Program Loader}{40}
+\contentsline {chapter}{\numberline {6}Testing}{41}
+\contentsline {section}{\numberline {6.1}Kernel Tests}{41}
+\contentsline {subsection}{\numberline {6.1.1}Behavioural tests}{41}
+\contentsline {subsection}{\numberline {6.1.2}Limit tests}{42}
+\contentsline {subsection}{\numberline {6.1.3}Stress tests}{42}
+\contentsline {section}{\numberline {6.2}User-space tests}{42}
+\contentsline {subsection}{\numberline {6.2.1}Feature tests}{42}
+\contentsline {subsubsection}{\numberline {6.2.1.1}Parameter test}{42}
+\contentsline {subsubsection}{\numberline {6.2.1.2}Input test}{42}
+\contentsline {subsubsection}{\numberline {6.2.1.3}Pipe test}{42}
+\contentsline {subsection}{\numberline {6.2.2}User Space Attacks}{42}
+\contentsline {subsubsection}{\numberline {6.2.2.1}Fork bomb}{42}
+\contentsline {subsubsection}{\numberline {6.2.2.2}Memory bomb}{43}
+\contentsline {section}{\numberline {6.3}Testing in MOS}{43}
+\contentsline {chapter}{\numberline {7}Project Conclusion}{44}
+\contentsline {section}{\numberline {7.1}Project evaluation}{44}
+\contentsline {section}{\numberline {7.2}Future Development}{44}
+\contentsline {section}{\numberline {7.3}Personal evaluation}{44}
+\contentsline {chapter}{\numberline {8}Appendices}{45}
+\contentsline {section}{\numberline {8.1}Project demonstration}{45}
+\contentsline {section}{\numberline {8.2}Log}{46}
+\contentsline {section}{\numberline {8.3}Proposal document}{50}

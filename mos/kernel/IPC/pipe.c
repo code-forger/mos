@@ -7,6 +7,8 @@ static uint32_t next_pipe;
 static uint32_t max_pipes;
 static pipe_descriptor *pipe_table;
 
+
+// initialise this modele
 void pipe_init()
 {
     next_pipe = 0;
@@ -14,7 +16,7 @@ void pipe_init()
     max_pipes = 0x1000 / sizeof(pipe_descriptor);
 }
 
-
+// end create a pipe at the given location, loc should point to 256b of reserved ram
 uint32_t pipe_create(uint32_t loc, uint32_t* pipe_head_out, uint32_t* pipe_tail_out)
 {
     *pipe_head_out = next_pipe++;
@@ -35,9 +37,9 @@ uint32_t pipe_create(uint32_t loc, uint32_t* pipe_head_out, uint32_t* pipe_tail_
     return 0;
 }
 
+// a local helper function to load a foreign (other processes) piece of memory and recalculate the pipes location.
 static uint32_t pipe_map_foreign_heap(PIPE pipe)
 {
-
         paging_map_phys_to_virtual(scheduler_get_process_table_entry(pipe_table[pipe].pid).heap_physical_page, SCRATCH); // Get the heap table for the process.
 
         uint32_t pipe_heap_index = ((pipe_table[pipe].location&0xfffff000) - 0x80000000) / 0x1000; // Figure out which heap page the pipe starts in.
@@ -83,9 +85,9 @@ uint32_t pipe_write(PIPE pipe, uint8_t data_in)
     return 0;
 }
 
-uint32_t pipe_read(PIPE pipe, uint8_t *data_out) // Pipe in wrong mode.
+uint32_t pipe_read(PIPE pipe, uint8_t *data_out)
 {
-    if (pipe_table[pipe].mode != PIPE_READ)
+    if (pipe_table[pipe].mode != PIPE_READ) // Pipe in wrong mode.
         return 2;
 
     uint32_t location;

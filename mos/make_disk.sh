@@ -22,6 +22,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img / init-files file init-files
 
 ./mrfs-write mrfs-disk.img / bin dir unused
+./mrfs-write mrfs-disk.img / p dir unused
 ./mrfs-write mrfs-disk.img /bin/ init file programs/init/init
 ./mrfs-write mrfs-disk.img /bin/ banner_left file programs/banner_left/banner_left
 ./mrfs-write mrfs-disk.img /bin/ notes file programs/notes/notes
@@ -41,6 +42,13 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ kill file programs/kill/kill
 ./mrfs-write mrfs-disk.img /bin/ fork_bomb file programs/fork_bomb/fork_bomb
 ./mrfs-write mrfs-disk.img /bin/ memory_bomb file programs/memory_bomb/memory_bomb
+./mrfs-write mrfs-disk.img /bin/ slides file programs/slides/slides
+
+./mrfs-write mrfs-disk.img /p/ 1 file 1
+./mrfs-write mrfs-disk.img /p/ 2 file 2
+./mrfs-write mrfs-disk.img /p/ 3 file 3
+
+
 
 ./mrfs-write mrfs-disk.img / user raw "Default User"
 

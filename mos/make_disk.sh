@@ -45,7 +45,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ slides file programs/slides/slides
 
 
-for i in `seq 1 6`;
+for i in `seq 1 16`;
 do
     ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
 done

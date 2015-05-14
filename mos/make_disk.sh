@@ -22,7 +22,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img / init-files file init-files
 
 ./mrfs-write mrfs-disk.img / bin dir unused
-./mrfs-write mrfs-disk.img / p dir unused
+./mrfs-write mrfs-disk.img / talk dir unused
 ./mrfs-write mrfs-disk.img /bin/ init file programs/init/init
 ./mrfs-write mrfs-disk.img /bin/ banner_left file programs/banner_left/banner_left
 ./mrfs-write mrfs-disk.img /bin/ notes file programs/notes/notes
@@ -44,13 +44,15 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ memory_bomb file programs/memory_bomb/memory_bomb
 ./mrfs-write mrfs-disk.img /bin/ slides file programs/slides/slides
 
-./mrfs-write mrfs-disk.img /p/ 1 file 1
-./mrfs-write mrfs-disk.img /p/ 2 file 2
-./mrfs-write mrfs-disk.img /p/ 3 file 3
+
+for i in `seq 1 6`;
+do
+    ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
+done
 
 
 
-./mrfs-write mrfs-disk.img / user raw "Default User"
+./mrfs-write mrfs-disk.img / user raw "Michael Rochester"
 
 ./mrfs-write mrfs-disk.img / docs dir unused
 

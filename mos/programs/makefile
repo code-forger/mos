@@ -1,4 +1,4 @@
-all: init-code name-code banner_left-code time-code notes-code parameter_test-code mash-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code memory_bomb-code slides-code man-code
+all: init-code name-code banner_left-code time-code timer-code notes-code parameter_test-code mash-code processes-code less-code ls-code pong-code mv-code mkdir-code rm-code touch-code kill-code fork_bomb-code memory_bomb-code slides-code man-code
 
 .PHONY init-code:
 	$(MAKE) -C init
@@ -11,6 +11,9 @@ all: init-code name-code banner_left-code time-code notes-code parameter_test-co
 
 .PHONY time-code:
 	$(MAKE) -C time
+
+.PHONY timer-code:
+	$(MAKE) -C timer
 
 .PHONY notes-code:
 	$(MAKE) -C notes

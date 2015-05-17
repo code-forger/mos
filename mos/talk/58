@@ -1,0 +1,23 @@
+````````````````````````````````````````````````````````````````````````````````
+``````````````````````````The Flat vs List Interlude!```````````````````````````
+``````````````````````````````````````````````````````````````````````````````
+````Originally, the scheduler stored all process information in one big table``
+````````````````````````````````````````````````````````````````````````````````
+````However, this lead to a terrible asymptotic time complexity : 0(n)```````````
+````````````````````````````````````````````````````````````````````````````````
+````'n' here isn't the number of running processes, its the number of run`
+`````processes. That means it includes dead processes too.``````````````````````
+````````````````````````````````````````````````````````````````````````````````
+`````When creating this presentation I quickly checked, and my computer had`````
+`````~18'000 dead processes and only 100 running ones!`````````````````````
+````````````````````````````````````````````````````````````````````````````````
+`````This means that the scheduler was hundreds of times slower than it `````
+`````could be```````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````
+`````The scheduler also inst the only module that used the process table either
+````````````````````````````````````````````````````````````````````````````````
+`````The IO manager uses it heavily for keeping track of which processes`
+`````have IO and which are hidden for example`````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````
+`````We needed a fix: LISTS!``````````````````````````````````````````````````
+`````````````````````````````````````````````````````````````````````````058/???

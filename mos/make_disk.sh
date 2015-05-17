@@ -43,9 +43,10 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ fork_bomb file programs/fork_bomb/fork_bomb
 ./mrfs-write mrfs-disk.img /bin/ memory_bomb file programs/memory_bomb/memory_bomb
 ./mrfs-write mrfs-disk.img /bin/ slides file programs/slides/slides
+./mrfs-write mrfs-disk.img /bin/ timer file programs/timer/timer
 
 
-for i in `seq 1 16`;
+for i in `seq 1 46`;
 do
     ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
 done
@@ -82,5 +83,5 @@ dd if=grub_disk.img of=mos_disk.img bs=1024 count=131072
 dd if=mrfs-disk.img of=mos_disk.img bs=1024 count=131072 seek=131072
 
 sudo sync
-sudo dd if=mos_disk.img of=/dev/sdc
+#sudo dd if=mos_disk.img of=/dev/sdc
 sudo sync

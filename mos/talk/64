@@ -1,0 +1,23 @@
+````````````````````````````````````````````````````````````````````````````````
+``````````````````````````The Flat vs List Interlude!```````````````````````````
+``````````````````````````````````````````````````````````````````````````````
+````By using single linked lists, and keeping a pointer to both ends, we```````
+````can make all useful operations on these lists 0(1) time.``````````````````
+`````````````````````````````````````````````````````````````````````````````````
+````Further more, we can use the order of the list as the schedulers order.````
+```````````````````````````````````````````````````````````````````````````
+````This means that for the scheduler to choose the next process, It simply```
+````has to move the front process to the back! `````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````
+````This makes the scheduler 0(1) time rather than 0(n) time!````````
+````````````````````````````````````````````````````````````````````````````````
+````This also allowed the IO manager to reduce its time complexities too
+````````````````````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````
+````````````````````````````````````````````````````````````````````````````````
+````So our scheduler is now complete and very efficient, however there
+````was always one`major bottle neck in`the development of MOS, that
+````required a significant ammout of work so we will finish on a brief ````````````````````````````````````
+````description of the Hard Drive Driver!`````````````````````````````````````````````````````````````````````
+```````````````````````````````````````````````````````````````````````````````
+``````````````````````````````````````````````````````````````````````````064/???

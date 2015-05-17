@@ -46,7 +46,7 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ timer file programs/timer/timer
 
 
-for i in `seq 1 46`;
+for i in `seq 1 84`;
 do
     ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
 done

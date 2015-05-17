@@ -1,7 +1,7 @@
 ````````````````````````````````````````````````````````````````````````````````
 ````````````````````````The Hard Drive Driver : Caching`````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
-````When the cache is searched for in the cache, the search almost always````
+````When a block is searched for in the cache, the search almost always````
 ````returns 'the same block you wanted last time' this is for the same reason```
 ````that the cache works well: we often read out of the same block sequentially
 ````````````````````````````````````````````````````````````````````````````````

@@ -14,9 +14,9 @@
 `````This means that the scheduler was hundreds of times slower than it `````
 `````could be```````````````````````````````````````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
-`````The scheduler also inst the only module that used the process table either
+`````The scheduler also wasn't the only module that used the process table
 ````````````````````````````````````````````````````````````````````````````````
-`````The IO manager uses it heavily for keeping track of which processes`
+`````The IO manager used it heavily for keeping track of which processes`
 `````have IO and which are hidden for example`````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
 `````We needed a fix: LISTS!``````````````````````````````````````````````````

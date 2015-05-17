@@ -11,8 +11,8 @@
 ````This is achieved in MOS using a simple technique I call 'stack hopping'`````
 ````````````````````````````````````````````````````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
-````Stack Hopping is simply where we enter a function and when we return from```
-````said function, the stack has been changed```````````````````````````````````
+````Stack Hopping is where a function changes the stack that it was called on```
+````to an entirely different one````````````````````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````
 ````````````````````````````````````````````````````````````````````````````````

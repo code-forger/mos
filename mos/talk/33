@@ -1,23 +1,23 @@
-````````````````````````````````````````````````````````````````````````````````
-`````````````````````````````````The Scheduler``````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````The schedulers job is to determine the order in which processes execute`````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````However it also has another more subtle job`: To maintain the illusion``````
-````that every process owns the entire computer`````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````This is achieved in MOS using a simple technique I call 'stack hopping'`````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````Stack Hopping is where a function changes the stack that it was called on```
-````to an entirely different one````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````For this to work the both the source stack and the target stack need to ````
-````be in a specific form, so lets see how that works first.````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-`````````````````````````````````````````````````````````````````````````033/???
+
+                                 The Scheduler
+
+    The schedulers job is to determine the order in which processes execute
+
+
+    However it also has another more subtle job : To maintain the illusion
+    that every process owns the entire computer
+
+
+    This is achieved in MOS using a simple technique I call 'stack hopping'
+
+
+    Stack Hopping is where a function changes the stack that it was called on
+    to an entirely different one
+
+
+    For this to work the both the source stack and the target stack need to
+    be in a specific form, so lets see how that works first.
+
+
+
+                                                                         033/086

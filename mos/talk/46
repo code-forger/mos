@@ -1,23 +1,23 @@
-````````````````````````````````````````````````````````````````````````````````
-``````````````````````````The Scheduler : Stack Hopping`````````````````````````
-````````````````````````````````````````````````````````````````````````````````
-``pc = xxxxxxxxx```````````````````````We need a place to store the remainder```
-``ax = xxxxxxxxx```````````````````````of the information, and lucky we have````
-``bx = xxxxxxxxx```````````````````````one, The Stack:``````````````````````````
-``cx = xxxxxxxxx````````````````````````````````````````````````````````````````
-``dx = xxxxxxxxx`````````````````````````* Push pc and register to stack````````
-````````````````````````````````````````````````````````````````````````````````
-``esp`>`|``oldesp|```````````````````````* Push old esp and epb`````````````````
-````````|``oldepb|``````````````````````````````````````````````````````````````
-````````|``````dx|```````````````````````* set esp and epb to correct location
-````````|``````cx|``````````````````````````````````````````````````````````````
-````````|``````bx|``````````````````````````````````````````````````````````````
-````````|``````ax|`````````````````````This stack is now ready to be hopped````
-``ebp`>`|``````pc|``````````````````````````````````````````````````````````````
-````````|`````fff|`````````````````````To hop TO this stack, the procedure is```
-````````|0f6d7d89|`````````````````````simply reversed.``````````````````
-````````|43424233|``````````````````````````````````````````````````````````````
-````````|``````23|`````````````````````This always leaves the state identical
-````````|````1423|`````````````````````to before this stack was`jumped`````````
-````````````````````````````````````````````````````````````````````````````````
-`````````````````````````````````````````````````````````````````````````046/???
+
+                          The Scheduler : Stack Hopping
+
+  pc = xxxxxxxxx                       We need a place to store the remainder
+  ax = xxxxxxxxx                       of the information, and lucky we have
+  bx = xxxxxxxxx                       one, The Stack:
+  cx = xxxxxxxxx
+  dx = xxxxxxxxx                         * Push pc and register to stack
+
+  esp > |  oldesp|                       * Push old esp and epb
+        |  oldepb|
+        |      dx|                       * set esp and epb to correct location
+        |      cx|
+        |      bx|
+        |      ax|                     This stack is now ready to be hopped
+  ebp > |      pc|
+        |     fff|                     To hop TO this stack, the procedure is
+        |0f6d7d89|                     simply reversed.
+        |43424233|
+        |      23|                     This always leaves the state identical
+        |    1423|                     to before this stack was jumped
+
+                                                                         046/086

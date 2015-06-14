@@ -2,7 +2,7 @@
 #include "fileobjects.h"
 #include "../io/hdd.h"
 #include "block.h"
-#include "malloc.h"
+#include "../kstdlib/kstdlib.h"
 #include "../io/terminal.h"
 
 inode inode_read(uint32_t nodeNumberIn);

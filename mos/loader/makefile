@@ -1,6 +1,6 @@
 all: loader.bin
-GCC = ../../buildtools/local/bin/i686-elf-gcc
-AS = ../../buildtools/local/bin/i686-elf-as
+GCC = ../../buildtools/bin/i686-elf-gcc
+AS = ../../buildtools/bin/i686-elf-as
 
 loader.bin: loader.o boot.o linker.ld io/terminal.o init/gdt.o init/idt.o memory/memory.o io/port.o
 	$(GCC) -T linker.ld -o loader.bin -ffreestanding -nostdlib boot.o loader.o loader-asm.o init/gdt.o init/gdt-asm.o init/idt.o init/idt-asm.o memory/memory.o memory/memory-asm.o io/port.o io/terminal.o -lgcc

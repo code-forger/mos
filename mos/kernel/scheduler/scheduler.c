@@ -404,7 +404,7 @@ void scheduler_time_interupt()
     for (uint32_t i = 0; i < process_table[current_pid].heap_size; i++)
         paging_map_phys_to_virtual(((uint32_t*)PROCESS_HEAP_TABLE)[i],0x80000000 + 0x1000 * i);
 
-    //kprintf("Leaving scheduler to %d", current_pid);
+    //bzr stkprintf("Leaving scheduler to %d\n", current_pid);
 
     asm("movl %%esp, %0":"=r"(kernel_esp)::"ebx");
     asm("movl %%ebp, %0":"=r"(kernel_ebp)::"ebx");

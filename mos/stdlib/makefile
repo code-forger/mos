@@ -1,4 +1,4 @@
-GCC = ../../buildtools/local/bin/i686-elf-gcc
+GCC = ../../buildtools/bin/i686-elf-gcc
 
 all: stdio.o process.o stdmem.o pipe.o start.o string.o time.o file.o
 	$(GCC) -r -o  stdlib.o stdio.o process.o stdmem.o pipe.o start.o string.o time.o file.o -ffreestanding -nostdlib -std=gnu99

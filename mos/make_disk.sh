@@ -46,10 +46,10 @@ cp bdisk.img mrfs-disk.img
 ./mrfs-write mrfs-disk.img /bin/ timer file programs/timer/timer
 
 
-for i in `seq 1 86`;
-do
-    ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
-done
+#for i in `seq 1 86`;
+#do
+#    ./mrfs-write mrfs-disk.img /talk/ $i file talk/$i
+#done
 
 
 
@@ -57,25 +57,25 @@ done
 
 ./mrfs-write mrfs-disk.img / docs dir unused
 
-./mrfs-write mrfs-disk.img /docs/ banner_left file programs/docs/banner_left
-./mrfs-write mrfs-disk.img /docs/ man file programs/docs/man
-./mrfs-write mrfs-disk.img /docs/ fork_bomb file programs/docs/fork_bomb
-./mrfs-write mrfs-disk.img /docs/ init file programs/docs/init
-./mrfs-write mrfs-disk.img /docs/ kill file programs/docs/kill
-./mrfs-write mrfs-disk.img /docs/ mash file programs/docs/mash
-./mrfs-write mrfs-disk.img /docs/ less file programs/docs/less
-./mrfs-write mrfs-disk.img /docs/ ls file programs/docs/ls
-./mrfs-write mrfs-disk.img /docs/ mkdir file programs/docs/mkdir
-./mrfs-write mrfs-disk.img /docs/ mv file programs/docs/mv
-./mrfs-write mrfs-disk.img /docs/ name file programs/docs/name
-./mrfs-write mrfs-disk.img /docs/ notes file programs/docs/notes
-./mrfs-write mrfs-disk.img /docs/ parameter_test file programs/docs/parameter_test
-./mrfs-write mrfs-disk.img /docs/ pong file programs/docs/pong
-./mrfs-write mrfs-disk.img /docs/ processes file programs/docs/processes
-./mrfs-write mrfs-disk.img /docs/ rm file programs/docs/rm
-./mrfs-write mrfs-disk.img /docs/ time file programs/docs/time
-./mrfs-write mrfs-disk.img /docs/ touch file programs/docs/touch
-./mrfs-write mrfs-disk.img /docs/ sys file programs/docs/sys
+#./mrfs-write mrfs-disk.img /docs/ banner_left file programs/docs/banner_left
+#./mrfs-write mrfs-disk.img /docs/ man file programs/docs/man
+#./mrfs-write mrfs-disk.img /docs/ fork_bomb file programs/docs/fork_bomb
+#./mrfs-write mrfs-disk.img /docs/ init file programs/docs/init
+#./mrfs-write mrfs-disk.img /docs/ kill file programs/docs/kill
+#./mrfs-write mrfs-disk.img /docs/ mash file programs/docs/mash
+#./mrfs-write mrfs-disk.img /docs/ less file programs/docs/less
+#./mrfs-write mrfs-disk.img /docs/ ls file programs/docs/ls
+#./mrfs-write mrfs-disk.img /docs/ mkdir file programs/docs/mkdir
+#./mrfs-write mrfs-disk.img /docs/ mv file programs/docs/mv
+#./mrfs-write mrfs-disk.img /docs/ name file programs/docs/name
+#./mrfs-write mrfs-disk.img /docs/ notes file programs/docs/notes
+#./mrfs-write mrfs-disk.img /docs/ parameter_test file programs/docs/parameter_test
+#./mrfs-write mrfs-disk.img /docs/ pong file programs/docs/pong
+#./mrfs-write mrfs-disk.img /docs/ processes file programs/docs/processes
+#./mrfs-write mrfs-disk.img /docs/ rm file programs/docs/rm
+#./mrfs-write mrfs-disk.img /docs/ time file programs/docs/time
+#./mrfs-write mrfs-disk.img /docs/ touch file programs/docs/touch
+#./mrfs-write mrfs-disk.img /docs/ sys file programs/docs/sys
 
 
 

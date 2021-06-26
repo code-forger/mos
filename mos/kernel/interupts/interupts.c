@@ -10,154 +10,154 @@
 void  c_int_zero_division(void)
 {
     kprintf("ZERO_DIVISION_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_debugger(void)
 {
     kprintf("DEBUGGER_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_nmi(void)
 {
     kprintf("NMI_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_breakpoint(void)
 {
     kprintf("BREAKPOINT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_overflow(void)
 {
     kprintf("OVERFLOW_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_bounds(void)
 {
     kprintf("BOUNDS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_invalid_opcode(void)
 {
     kprintf("INVALID_OPCODE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_coprocessor_not_available(void)
 {
     kprintf("COPROCERROR_NOT_AVAILABLE_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_double_fault(void)
 {
     kprintf("DOUBLEFAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_coprocessor_segment_overrun(void)
 {
     kprintf("COPROCESSOR_SEGMENT_OVERRUN_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_invalid_tss(void)
 {
     kprintf("INVALID_TSS_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_segment_not_present(void)
 {
     kprintf("SEGMENT_NOT_PRESENT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_stack_fault(void)
 {
     kprintf("STACK_FAULT_INTERRUPT_HIT IN PROCESS %h!\n", scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_general_protection(void)
 {
     kprintf("GENERAL_PROTECTION_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 static uint32_t page;
@@ -182,73 +182,73 @@ void  c_int_page_fault(void)
         kprintf("PAGE_FAULT_INTERRUPT_HIT AT %h IN PROCESS %d\n", page, scheduler_get_pid());
         asm("cli");
         asm("hlt");
-        send_byte_to(MASTER_PIC, 0x20);
+        send_byte_to(CONTROLLER_PIC, 0x20);
         scheduler_kill(scheduler_get_pid());
         scheduler_from = 1;
         scheduler_time_interupt();
     }
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_reserved(void)
 {
     kprintf("RESERVED_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_math_fault(void)
 {
     kprintf("MATH_FAULT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_alignment_check(void)
 {
     kprintf("ALIGNMENT_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_machine_check(void)
 {
     kprintf("MACHINE_CHECK_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
 void  c_int_simd_floating_point(void)
 {
     kprintf("SIMD_FLOATING_POINT_INTERRUPT_HIT IN PROCESS %h!\n"), scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
     scheduler_kill(scheduler_get_pid());
     scheduler_from = 1;
     scheduler_time_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_default_irq(void)
 {
     //printf("DEFAULT_IRQ_HIT!\n");
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_timer_irq(void)
@@ -257,13 +257,13 @@ void  c_timer_irq(void)
     scheduler_time_interupt();
     scheduler_from = 0;
     asm("mov %0, %%edi":"=r"(scheduler_from)::"esi", "edi", "edx", "eax");
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_keyboard_irq(void)
 {
     keyboard_interupt();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : Bounds Through checked
@@ -277,7 +277,7 @@ void  c_terminal_putchar_syscall(void)
     asm("mov %%edx, %0":"=r"(y)::"esi", "edi", "edx", "eax");
 
     pterminal_putchar_at(c, x, y);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : No input parameters
@@ -286,7 +286,7 @@ void  c_terminal_init_syscall(void)
     PIPE* pipes;
     asm("mov %%esi, %0":"=r"(pipes)::"esi", "edi", "edx", "eax");
     pterminal_setout(pipes);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : No input parameters
@@ -298,7 +298,7 @@ void  c_relinquish_input_syscall(void)
         if (next_input != -1)
             terminal_set_active(next_input);
     }
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : No input parameters
@@ -307,7 +307,7 @@ void  c_stdin_init_syscall(void)
     PIPE* pipes;
     asm("mov %%esi, %0":"=r"(pipes)::"esi", "edi", "edx", "eax");
     pterminal_setin(pipes);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : No input parameters
@@ -316,7 +316,7 @@ void  c_scheduler_fork_syscall(void)
     int32_t *pid;
     asm("mov %%esi, %0":"=r"(pid)::"esi", "edi", "edx", "eax");
     *pid = fork();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : No input parameters
@@ -325,7 +325,7 @@ void  c_scheduler_pid_syscall(void)
     uint32_t *pid;
     asm("mov %%esi, %0":"=r"(pid)::"esi", "edi", "edx", "eax");
     *pid = scheduler_get_pid();
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : Bounds Through checked
@@ -335,7 +335,7 @@ void  c_scheduler_exec_string_syscall(void)
     asm("mov %%esi, %0":"=r"(program_name)::"esi", "edi", "edx", "eax");
     scheduler_exec_string(program_name);
     scheduler_kill(scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : Bounds checked : (cant detect for invalid string pattern in second parameter)
@@ -347,7 +347,7 @@ void  c_scheduler_exec_string_parameters_syscall(void)
     asm("mov %%edi, %0":"=r"(paramters)::"esi", "edi", "edx", "eax");
     scheduler_exec_string_paramters(program_name, paramters);
     scheduler_kill(scheduler_get_pid());
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : no parameter bound.
@@ -356,14 +356,14 @@ void  c_scheduler_sleep_syscall(void)
     uint32_t milliseconds;
     asm("mov %%esi, %0":"=r"(milliseconds)::"esi", "edi", "edx", "eax");
     scheduler_sleep(milliseconds);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : no input parameters.
 void  c_scheduler_pause_syscall(void)
 {
     scheduler_mark_process_as(scheduler_get_pid(), F_PAUSED);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : Bounds Through checked
@@ -372,7 +372,7 @@ void  c_scheduler_kill_syscall(void)
     uint32_t pid;
     asm("mov %%esi, %0":"=r"(pid)::"esi", "edi", "edx", "eax");
     scheduler_kill(pid);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 // Bound checking : Bounds Through checked
@@ -381,7 +381,7 @@ void  c_scheduler_hide_syscall(void)
     uint32_t pid;
     asm("mov %%esi, %0":"=r"(pid)::"esi", "edi", "edx", "eax");
     terminal_hide_process(pid);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -391,7 +391,7 @@ void  c_scheduler_show_syscall(void)
     uint32_t pid;
     asm("mov %%esi, %0":"=r"(pid)::"esi", "edi", "edx", "eax");
     terminal_show_process(pid);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_pipe_pipe_syscall(void)
@@ -402,7 +402,7 @@ void  c_pipe_pipe_syscall(void)
     asm("mov %%edx, %0":"=r"(pipe_tail)::"esi", "edi", "edx", "eax");
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = pipe_create(loc, pipe_head, pipe_tail);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_pipe_write_syscall(void)
@@ -413,7 +413,7 @@ void  c_pipe_write_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     uint8_t data8 = (uint8_t)data;
     *ret = pipe_write(pipe, data8);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_pipe_read_syscall(void)
@@ -424,7 +424,7 @@ void  c_pipe_read_syscall(void)
     asm("mov %%edi, %0":"=r"(data)::"esi", "edi", "edx", "eax");
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = pipe_read(pipe, data);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_open_syscall(void)
@@ -438,7 +438,7 @@ void  c_file_open_syscall(void)
 
     mrfsOpenFile(fname, create, data);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_putc_syscall(void)
@@ -450,7 +450,7 @@ void  c_file_putc_syscall(void)
 
     mrfsPutC(fd, c);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_getc_syscall(void)
@@ -461,7 +461,7 @@ void  c_file_getc_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = mrfsGetC(fd);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_opendir_syscall(void)
@@ -475,7 +475,7 @@ void  c_file_opendir_syscall(void)
 
     mrfsOpenDir(dname, create, dd);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_getfile_syscall(void)
@@ -486,7 +486,7 @@ void  c_file_getfile_syscall(void)
     asm("mov %%eax, %0":"=r"(dd)::"esi", "edi", "edx", "eax");
     mrfsGetFile(dd, ret);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 void  c_file_getnamec_syscall(void)
@@ -497,7 +497,7 @@ void  c_file_getnamec_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = mrfsGetNameC(fd);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -509,7 +509,7 @@ void  c_file_delete_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = mrfsDeleteFileWithDescriptor(fd);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -521,7 +521,7 @@ void  c_file_delete_dir_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = mrfsDeleteDirWithDescriptor(dd);
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -533,7 +533,7 @@ void  c_file_mv_syscall(void)
     asm("mov %%edi, %0":"=r"(fnew)::"esi", "edi", "edx", "eax");
 
     mrfsRename(fold, fnew);
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -543,7 +543,7 @@ void  c_ticks_ms_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = scheduler_ms();
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }
 
 
@@ -553,5 +553,5 @@ void  c_seconds_syscall(void)
     asm("mov %%eax, %0":"=r"(ret)::"esi", "edi", "edx", "eax");
     *ret = scheduler_seconds();
 
-    send_byte_to(MASTER_PIC, 0x20);
+    send_byte_to(CONTROLLER_PIC, 0x20);
 }

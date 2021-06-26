@@ -1,11 +1,11 @@
 #pragma once
 #include "../declarations.h"
 
-#define MASTER_PIC 0x20
-#define SLAVE_PIC 0xA0
+#define CONTROLLER_PIC 0x20
+#define RESPONDER_PIC 0xA0
 
-#define MASTER_PIC_1 0x21
-#define SLAVE_PIC_1 0xA1
+#define CONTROLLER_PIC_1 0x21
+#define RESPONDER_PIC_1 0xA1
 
 #define ICW_1 0x11
 

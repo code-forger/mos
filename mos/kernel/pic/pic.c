@@ -2,8 +2,8 @@
 #include "../io/port.h"
 #include "../init/idt.h"
 
-static uint8_t master_mask;
-static uint8_t slave_mask;
+static uint8_t controller_mask;
+static uint8_t consumer_mask;
 
 
 static void populate_idt()
@@ -28,23 +28,23 @@ static void populate_idt()
 
 void pic_init(void)
 {
-    send_byte_to(MASTER_PIC,ICW_1);
-    send_byte_to(SLAVE_PIC, ICW_1);
+    send_byte_to(CONTROLLER_PIC,ICW_1);
+    send_byte_to(RESPONDER_PIC, ICW_1);
 
-    send_byte_to(MASTER_PIC_1, ICW_2_M);
-    send_byte_to(SLAVE_PIC_1,  ICW_2_S);
+    send_byte_to(CONTROLLER_PIC_1, ICW_2_M);
+    send_byte_to(RESPONDER_PIC_1,  ICW_2_S);
 
-    send_byte_to(MASTER_PIC_1, ICW_3_M);
-    send_byte_to(SLAVE_PIC_1,  ICW_3_S) ;
+    send_byte_to(CONTROLLER_PIC_1, ICW_3_M);
+    send_byte_to(RESPONDER_PIC_1,  ICW_3_S) ;
 
-    send_byte_to(MASTER_PIC_1, ICW_4);
-    send_byte_to(SLAVE_PIC_1,  ICW_4);
+    send_byte_to(CONTROLLER_PIC_1, ICW_4);
+    send_byte_to(RESPONDER_PIC_1,  ICW_4);
 
-    master_mask = 0x00;
-    slave_mask = 0x00;
+    controller_mask = 0x00;
+    consumer_mask = 0x00;
 
-    send_byte_to(MASTER_PIC_1, 0x00);
-    send_byte_to(SLAVE_PIC_1,  0x00);
+    send_byte_to(CONTROLLER_PIC_1, 0x00);
+    send_byte_to(RESPONDER_PIC_1,  0x00);
 
     populate_idt();
 }

@@ -20,7 +20,7 @@ static void hdd_ident_write(uint8_t channel, uint8_t reg, uint8_t data) {
     else if (reg < 0x0E)
         send_byte_to(channels[channel].ctrl  + reg - 0x0A, data);
     else if (reg < 0x16)
-        send_byte_to(channels[channel].master + reg - 0x0E, data);
+        send_byte_to(channels[channel].controller + reg - 0x0E, data);
     if (reg > 0x07 && reg < 0x0C)
         hdd_ident_write(channel, 0x0C, channels[channel].noint);
 }
@@ -37,7 +37,7 @@ uint8_t hdd_ident_read(uint8_t channel, uint8_t reg)
     else if (reg < 0x0E)
         result = get_byte_from(channels[channel].ctrl  + reg - 0x0A);
     else if (reg < 0x16)
-        result = get_byte_from(channels[channel].master + reg - 0x0E);
+        result = get_byte_from(channels[channel].controller + reg - 0x0E);
     if (reg > 0x07 && reg < 0x0C)
         hdd_ident_write(channel, 0x0C, channels[channel].noint);
     return result;
@@ -55,7 +55,7 @@ void hdd_ident_read_buffer(uint8_t channel, uint8_t reg, uint32_t buffer,
    else if (reg < 0x0E)
       insl(channels[channel].ctrl  + reg - 0x0A, buffer, quads);
    else if (reg < 0x16)
-      insl(channels[channel].master + reg - 0x0E, buffer, quads);
+      insl(channels[channel].controller + reg - 0x0E, buffer, quads);
    //asm("popw %es;");
    if (reg > 0x07 && reg < 0x0C)
       hdd_ident_write(channel, 0x0C, channels[channel].noint);
@@ -88,7 +88,7 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
     uint8_t lba_mode, cmd;
     uint8_t lba_io[6];
     uint32_t channel = drives[drive].channel;
-    uint32_t slavebit = drives[drive].drive;
+    uint32_t secondarybit = drives[drive].drive;
     uint32_t bus = channels[channel].addr;
     uint32_t words = 256;
     uint16_t cyl, i;
@@ -135,9 +135,9 @@ uint8_t ide_ata_access(uint8_t direction, uint8_t drive, uint32_t lba, uint8_t n
     //printf("head %d\n", head);
 
     if (lba_mode == 0)
-        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xA0 | (slavebit << 4) | head);
+        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xA0 | (secondarybit << 4) | head);
     else
-        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xE0 | (slavebit << 4) | head);
+        hdd_ident_write(channel, HDD_REG_HDDEVSEL, 0xE0 | (secondarybit << 4) | head);
 
     if (lba_mode == 2) {
         hdd_ident_write(channel, HDD_REG_SECCOUNT1,   0);
@@ -221,8 +221,8 @@ void hdd_init()
     channels[0].ctrl  = 0x40cc;
     channels[1].addr  = 0x170;
     channels[1].ctrl  = 0x370;
-    channels[0].master = 0;
-    channels[1].master = 8;
+    channels[0].controller = 0;
+    channels[1].controller = 8;
 
     hdd_ident_write(0, 0x0C, 2);
     hdd_ident_write(1, 0x0C, 2);

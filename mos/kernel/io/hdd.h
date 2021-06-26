@@ -54,8 +54,8 @@
 #define IDE_ATA        0x00
 #define IDE_ATAPI      0x01
 
-#define ATA_MASTER     0x00
-#define ATA_SLAVE      0x01
+#define ATA_CONTROLLER     0x00
+#define ATA_RESPONDER      0x01
 
 #define HDD_REG_DATA       0x00
 #define HDD_REG_ERROR      0x01
@@ -86,14 +86,14 @@
 struct channel {
    uint16_t addr;
    uint16_t ctrl;
-   uint16_t master;
+   uint16_t controller;
    uint8_t  noint;
 };
 
 struct hdd {
    uint8_t  reserved;    // 0 (Empty) or 1 (This Drive really exists).
    uint8_t  channel;     // 0 (Primary Channel) or 1 (Secondary Channel).
-   uint8_t  drive;       // 0 (Master Drive) or 1 (Slave Drive).
+   uint8_t  drive;       // 0 (Primary Drive) or 1 (Secondary Drive).
    uint16_t type;        // 0: ATA, 1:ATAPI.
    uint16_t signature;   // Drive Signature
    uint16_t capabilities;// Features.
